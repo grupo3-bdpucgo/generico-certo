@@ -160,25 +160,31 @@ ax.tick_params(which="minor", length=0)
 fig.tight_layout()
 salvar(fig, "fig3-acerto-por-categoria")
 
-# Figura 4: tempo de resposta do banco por consulta (mediana de 5 repetições)
+# Figura 4: tempo no servidor e ponta a ponta, por consulta (mediana de 5 repetições).
+# Dois painéis com escalas próprias: as grandezas diferem em uma ordem de magnitude.
 consultas_novas = {c["id"] for c in R["consultas"] if not c["desenvolvimento"]}
-fig, ax = plt.subplots(figsize=(7.6, 2.9))
+fig, eixos = plt.subplots(1, 2, figsize=(8.4, 3.1), sharey=True)
 ordem = list(reversed(MOTORES))
-maximo = 0
-for i, m in enumerate(ordem):
-    tempos = [x["tempo_banco_ms"] for x in R["medicoes"] if x["motor"] == m and x["consulta_id"] in consultas_novas]
-    maximo = max(maximo, max(tempos))
-    deslocamentos = [((k % 5) - 2) * 0.07 for k in range(len(tempos))]
-    ax.scatter(tempos, [i + d for d in deslocamentos], s=22, color=CORES[m], edgecolor=FUNDO, linewidth=1, zorder=3)
-    med = statistics.median(tempos)
-    ax.plot([med, med], [i - 0.32, i + 0.32], color=TEXTO, linewidth=2, zorder=4)
-    ax.text(med, i + 0.36, f"mediana {dec(med, 0)} ms", ha="center", fontsize=8, color=TEXTO)
-ax.set_yticks(range(len(ordem)), [NOMES_LINHA[m] for m in ordem])
-ax.set_xlim(0, maximo * 1.08)
-ax.set_ylim(-0.6, len(ordem) - 0.2)
-ax.set_xlabel("tempo de resposta do banco (ms, mediana de 5 repetições por consulta)")
-limpar_eixos(ax)
-fig.tight_layout()
+for ax, (campo, titulo, casas) in zip(eixos, [
+    ("tempo_servidor_ms", "No servidor (processamento do banco)", 1),
+    ("tempo_banco_ms", "Ponta a ponta (inclui a rede)", 0),
+]):
+    maximo = 0
+    for i, m in enumerate(ordem):
+        tempos = [x[campo] for x in R["medicoes"] if x["motor"] == m and x["consulta_id"] in consultas_novas]
+        maximo = max(maximo, max(tempos))
+        deslocamentos = [((k % 5) - 2) * 0.07 for k in range(len(tempos))]
+        ax.scatter(tempos, [i + d for d in deslocamentos], s=20, color=CORES[m], edgecolor=FUNDO, linewidth=1, zorder=3)
+        med = statistics.median(tempos)
+        ax.plot([med, med], [i - 0.32, i + 0.32], color=TEXTO, linewidth=2, zorder=4)
+        ax.text(med, i + 0.36, f"{dec(med, casas)} ms", ha="center", fontsize=8, color=TEXTO)
+    ax.set_yticks(range(len(ordem)), [NOMES_LINHA[m] for m in ordem])
+    ax.set_xlim(0, maximo * 1.1)
+    ax.set_ylim(-0.6, len(ordem) - 0.2)
+    ax.set_title(titulo, loc="left", fontsize=9)
+    ax.set_xlabel("ms")
+    limpar_eixos(ax)
+fig.tight_layout(w_pad=2)
 salvar(fig, "fig4-tempo-de-resposta")
 
 # Figura 5: posição do primeiro resultado correto, por consulta e motor

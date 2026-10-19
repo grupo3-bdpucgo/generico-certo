@@ -3,12 +3,22 @@
 // Uso: npm run benchmark
 //
 // Procedimento de medição:
-//  - aquecimento: RODADAS_AQUECIMENTO consultas descartadas por motor antes de medir (o Neon free
+//  - aquecimento: RODADAS_AQUECIMENTO consultas genéricas descartadas por motor e, em seguida, uma
+//    passada completa pelas consultas do conjunto, também descartada, antes de medir (o Neon free
 //    suspende o computador quando ocioso e a primeira consulta leva segundos; o Qdrant e o modelo
 //    de embeddings também têm custo de primeira chamada)
+//  - revisão do procedimento (19/10/2026): a primeira execução usava só as 5 consultas genéricas;
+//    o cache frio do vetor "denso", recém-regravado, deixou as consultas 1 a 16 do denso enriquecido
+//    e do híbrido entre 70 e 85 ms e inflou o p95. A passada completa foi acrescentada e só o tempo
+//    foi refeito (a acurácia não muda, os motores são determinísticos)
 //  - cada consulta roda REPETICOES vezes por motor, alternando os motores; o tempo reportado é a mediana
 //  - a acurácia vem da primeira repetição (os cinco motores são determinísticos)
-//  - tempo de banco e tempo de embedding são medidos separadamente
+//  - três tempos por consulta: embedding (no cliente), banco ponta a ponta (no cliente, inclui rede)
+//    e banco no servidor (campo "time" do Qdrant; planejamento + execução do EXPLAIN ANALYZE no
+//    PostgreSQL). A segunda revisão (19/10/2026) acrescentou o tempo de servidor: respostas do
+//    Qdrant acima de ~1,5 KB ganhavam +40 ms fixos no cliente (interação entre o algoritmo de Nagle
+//    e o ACK atrasado do TCP), o que media a pilha de rede e não o motor. Os dois bancos passaram a
+//    devolver o mesmo conjunto reduzido de campos (CAMPOS_EXIBIDOS)
 //
 // Dificuldade: para cada consulta, a probabilidade de acerto no top 5 de um motor que sorteasse
 // resultados ao acaso (p_acaso). A média ponderada usa peso 1 - p_acaso, para que consultas com
@@ -49,13 +59,17 @@ const dificuldade = Object.fromEntries(
   }),
 );
 
+// O EXPLAIN ANALYZE roda depois da consulta medida, então não interfere no tempo ponta a ponta.
+let medirServidor = false;
+
 async function executar(motor: Motor, consulta: string) {
   if (motor === "ilike" || motor === "fulltext") {
-    const r = motor === "ilike" ? await buscarIlike(consulta, { limite: LIMITE }) : await buscarFullText(consulta, { limite: LIMITE });
-    return { resultados: r.resultados, tempoBancoMs: r.tempoBancoMs, tempoEmbeddingMs: 0, relaxado: r.relaxado ?? false };
+    const opcoes = { limite: LIMITE, medirServidor };
+    const r = motor === "ilike" ? await buscarIlike(consulta, opcoes) : await buscarFullText(consulta, opcoes);
+    return { resultados: r.resultados, tempoBancoMs: r.tempoBancoMs, tempoServidorMs: r.tempoServidorMs ?? 0, tempoEmbeddingMs: 0, relaxado: r.relaxado ?? false };
   }
   const r = await buscarVetorial(consulta, motor, { limite: LIMITE });
-  return { resultados: r.resultados, tempoBancoMs: r.tempoBancoMs, tempoEmbeddingMs: r.tempoEmbeddingMs, relaxado: false };
+  return { resultados: r.resultados, tempoBancoMs: r.tempoBancoMs, tempoServidorMs: r.tempoServidorMs, tempoEmbeddingMs: r.tempoEmbeddingMs, relaxado: false };
 }
 
 const mediana = (xs: number[]) => {
@@ -73,6 +87,11 @@ await embedConsulta("aquecimento do modelo");
 for (let i = 0; i < RODADAS_AQUECIMENTO; i++) {
   for (const motor of MOTORES) await executar(motor, `aquecimento ${i}`);
 }
+medirServidor = true;
+console.log(`Aquecimento: passada completa descartada pelas ${consultas.length} consultas em cada motor`);
+for (const motor of MOTORES) {
+  for (const c of consultas) await executar(motor, c.consulta);
+}
 
 interface Medicao {
   consulta_id: number;
@@ -85,14 +104,16 @@ interface Medicao {
   relaxado: boolean;
   tempo_banco_ms: number;
   tempo_banco_ms_amostras: number[];
+  tempo_servidor_ms: number;
+  tempo_servidor_ms_amostras: number[];
   tempo_embedding_ms: number;
   top5: { produto: string; substancia: string; selo: string; pmc: number; correto: boolean }[];
 }
 const medicoes: Medicao[] = [];
 
 for (const c of consultas) {
-  const tempos: Record<Motor, { banco: number[]; emb: number[] }> = Object.fromEntries(
-    MOTORES.map((m) => [m, { banco: [], emb: [] }]),
+  const tempos: Record<Motor, { banco: number[]; servidor: number[]; emb: number[] }> = Object.fromEntries(
+    MOTORES.map((m) => [m, { banco: [], servidor: [], emb: [] }]),
   ) as never;
   const primeira: Partial<Record<Motor, { resultados: ResultadoBusca[]; relaxado: boolean }>> = {};
 
@@ -100,6 +121,7 @@ for (const c of consultas) {
     for (const motor of MOTORES) {
       const r = await executar(motor, c.consulta);
       tempos[motor].banco.push(r.tempoBancoMs);
+      tempos[motor].servidor.push(r.tempoServidorMs);
       tempos[motor].emb.push(r.tempoEmbeddingMs);
       if (rep === 0) primeira[motor] = { resultados: r.resultados, relaxado: r.relaxado };
     }
@@ -121,6 +143,8 @@ for (const c of consultas) {
       relaxado,
       tempo_banco_ms: arred(mediana(tempos[motor].banco)),
       tempo_banco_ms_amostras: tempos[motor].banco.map((t) => arred(t)),
+      tempo_servidor_ms: arred(mediana(tempos[motor].servidor), 3),
+      tempo_servidor_ms_amostras: tempos[motor].servidor.map((t) => arred(t, 3)),
       tempo_embedding_ms: arred(mediana(tempos[motor].emb)),
       top5: resultados.slice(0, 5).map((x, i) => ({
         produto: x.medicamento.produto,
@@ -158,6 +182,8 @@ function agregar(filtro: (c: ConsultaTeste) => boolean) {
           sem_resultado: ms.filter((m) => m.total_resultados === 0).length,
           tempo_banco_mediana_ms: arred(mediana(bancos)),
           tempo_banco_p95_ms: arred(percentil(bancos, 95)),
+          tempo_servidor_mediana_ms: arred(mediana(ms.map((m) => m.tempo_servidor_ms)), 3),
+          tempo_servidor_p95_ms: arred(percentil(ms.map((m) => m.tempo_servidor_ms), 95), 3),
           tempo_embedding_mediana_ms: arred(mediana(ms.map((m) => m.tempo_embedding_ms))),
         },
       ];
@@ -172,8 +198,16 @@ const resultado = {
     limite: LIMITE,
     repeticoes: REPETICOES,
     rodadas_aquecimento: RODADAS_AQUECIMENTO,
+    aquecimento: "5 consultas genéricas + uma passada completa pelo conjunto, por motor, descartadas",
+    revisao:
+      "Na primeira execução o aquecimento tinha só as 5 consultas genéricas; o cache frio do vetor denso " +
+      "recém-gravado inflava o p95 do denso enriquecido e do híbrido. A passada completa foi acrescentada " +
+      "e o tempo foi medido de novo; a acurácia não muda.",
     filtros: "padrão do site: oculta apresentações de uso restrito hospitalar",
-    tempo: "mediana das repetições; tempo de banco medido no cliente, inclui ida e volta pela rede",
+    tempo:
+      "mediana das repetições; tempo_banco = ponta a ponta no cliente (inclui rede); tempo_servidor = " +
+      "campo time do Qdrant ou Planning + Execution Time do EXPLAIN ANALYZE no PostgreSQL",
+    campos_devolvidos: "CAMPOS_EXIBIDOS (iguais nos dois bancos)",
     registros_elegiveis: elegiveis.length,
     ponderacao: "acerto_top5_ponderado usa peso 1 - p_acaso_top5 por consulta",
   },
@@ -191,13 +225,13 @@ const resultado = {
 };
 writeFileSync("benchmark/resultados.json", JSON.stringify(resultado, null, 2));
 
-console.log("\nMotor                              | acerto@5 | MRR@10 | pos. média | não achou | banco (mediana)");
+console.log("\nMotor                              | acerto@5 | MRR@10 | pos. média | não achou | ponta a ponta | servidor");
 for (const [rotulo, ag] of [["todas", resultado.agregados.todas], ["sem desenvolvimento", resultado.agregados.sem_desenvolvimento]] as const) {
   console.log(`-- ${rotulo}`);
   for (const motor of MOTORES) {
     const a = ag[motor];
     console.log(
-      `${ROTULOS[motor].padEnd(34)} | ${(a.acerto_top5 * 100).toFixed(0).padStart(7)}% | ${(a.acerto_top5_ponderado * 100).toFixed(1).padStart(8)}% | ${a.mrr_top10.toFixed(3)} | ${String(a.posicao_media ?? "-").padStart(10)} | ${String(a.nao_encontrados_top10).padStart(9)} | ${a.tempo_banco_mediana_ms} ms`,
+      `${ROTULOS[motor].padEnd(34)} | ${(a.acerto_top5 * 100).toFixed(0).padStart(7)}% | ${(a.acerto_top5_ponderado * 100).toFixed(1).padStart(8)}% | ${a.mrr_top10.toFixed(3)} | ${String(a.posicao_media ?? "-").padStart(10)} | ${String(a.nao_encontrados_top10).padStart(9)} | ${a.tempo_banco_mediana_ms} ms | ${a.tempo_servidor_mediana_ms} ms`,
     );
   }
 }

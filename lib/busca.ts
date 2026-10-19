@@ -5,8 +5,8 @@
 
 import { embedConsulta } from "./embeddings";
 import { vetorTrigramasConsulta } from "./lexical";
-import { COLLECTION, EF_BUSCA, VETOR, qdrant } from "./qdrant";
-import type { Medicamento } from "./normalizacao";
+import { CAMPOS_EXIBIDOS, type MedicamentoResumo } from "./normalizacao";
+import { EF_BUSCA, VETOR, consultarQdrant } from "./qdrant";
 
 export type MotorVetorial = "denso_base" | "denso" | "hibrido";
 
@@ -21,18 +21,34 @@ export interface FiltrosBusca {
 export interface ResultadoBusca {
   id: number;
   score: number;
-  medicamento: Omit<Medicamento, "id">;
+  /** Cosseno entre a consulta e o vetor denso do item (só quando pedido). */
+  similaridade?: number | null;
+  medicamento: MedicamentoResumo;
 }
 
 export interface RespostaBusca {
   motor: MotorVetorial;
   resultados: ResultadoBusca[];
   tempoEmbeddingMs: number;
+  /** Ponta a ponta, medido no cliente: inclui rede. */
   tempoBancoMs: number;
+  /** Tempo de processamento informado pelo próprio Qdrant. */
+  tempoServidorMs: number;
 }
 
 // Quantos candidatos cada ramo entrega para a fusão RRF.
 const CANDIDATOS_FUSAO = 50;
+// Folga além do corte, para que o desempate não dependa da ordem em que o Qdrant devolve empatados.
+const FOLGA_DESEMPATE = 10;
+
+/**
+ * Ordem determinística: escore decrescente e, no empate, id crescente. A RRF produz empates
+ * exatos (o 1º de cada ramo recebe o mesmo escore) e o Qdrant não garante a ordem entre eles;
+ * sem isso, duas execuções iguais podiam trocar as posições 1 e 2. O critério é cego ao conteúdo.
+ */
+function ordenar<T extends { id: number; score: number }>(xs: T[]): T[] {
+  return [...xs].sort((a, b) => b.score - a.score || a.id - b.id);
+}
 
 export function filtroQdrant(f: FiltrosBusca = {}) {
   const must: object[] = [];
@@ -43,52 +59,60 @@ export function filtroQdrant(f: FiltrosBusca = {}) {
   return must.length ? { must } : undefined;
 }
 
+/** Cosseno entre a consulta e o vetor denso de cada id, numa chamada pequena (sem payload). */
+async function similaridades(vetor: number[], using: string, ids: number[]): Promise<Map<number, number>> {
+  if (!ids.length) return new Map();
+  const { points } = await consultarQdrant({
+    query: vetor,
+    using,
+    filter: { must: [{ has_id: ids }] },
+    limit: ids.length,
+    with_payload: false,
+  });
+  return new Map(points.map((p) => [Number(p.id), p.score]));
+}
+
 export async function buscarVetorial(
   consulta: string,
   motor: MotorVetorial,
-  opcoes: { filtros?: FiltrosBusca; limite?: number; deslocamento?: number } = {},
+  opcoes: { filtros?: FiltrosBusca; limite?: number; deslocamento?: number; comSimilaridade?: boolean } = {},
 ): Promise<RespostaBusca> {
   const limite = opcoes.limite ?? 10;
   const offset = opcoes.deslocamento ?? 0;
   const filter = filtroQdrant(opcoes.filtros);
   const params = { hnsw_ef: EF_BUSCA };
+  const buscar = offset + limite + FOLGA_DESEMPATE;
+  const usingDenso = motor === "denso_base" ? VETOR.base : VETOR.denso;
 
   const t0 = performance.now();
   const vetor = await embedConsulta(consulta);
   const tempoEmbeddingMs = performance.now() - t0;
 
-  const t1 = performance.now();
-  const resposta =
+  const corpo =
     motor === "hibrido"
-      ? await qdrant().query(COLLECTION, {
+      ? {
           prefetch: [
             { query: vetor, using: VETOR.denso, limit: CANDIDATOS_FUSAO, filter, params },
             { query: vetorTrigramasConsulta(consulta), using: VETOR.lexical, limit: CANDIDATOS_FUSAO, filter },
           ],
           query: { fusion: "rrf" },
-          limit: limite,
-          offset,
-          with_payload: true,
-        })
-      : await qdrant().query(COLLECTION, {
-          query: vetor,
-          using: motor === "denso" ? VETOR.denso : VETOR.base,
-          filter,
-          params,
-          limit: limite,
-          offset,
-          with_payload: true,
-        });
+          limit: buscar,
+          with_payload: CAMPOS_EXIBIDOS,
+        }
+      : { query: vetor, using: usingDenso, filter, params, limit: buscar, with_payload: CAMPOS_EXIBIDOS };
+
+  const t1 = performance.now();
+  const { points, tempoServidorMs } = await consultarQdrant(corpo);
   const tempoBancoMs = performance.now() - t1;
 
-  return {
-    motor,
-    tempoEmbeddingMs,
-    tempoBancoMs,
-    resultados: resposta.points.map((p) => ({
-      id: Number(p.id),
-      score: p.score,
-      medicamento: p.payload as unknown as Omit<Medicamento, "id">,
-    })),
-  };
+  const resultados: ResultadoBusca[] = ordenar(
+    points.map((p) => ({ id: Number(p.id), score: p.score, medicamento: p.payload as unknown as MedicamentoResumo })),
+  ).slice(offset, offset + limite);
+
+  if (opcoes.comSimilaridade) {
+    const cos = motor === "hibrido" ? await similaridades(vetor, usingDenso, resultados.map((r) => r.id)) : null;
+    for (const r of resultados) r.similaridade = cos ? (cos.get(r.id) ?? null) : r.score;
+  }
+
+  return { motor, tempoEmbeddingMs, tempoBancoMs, tempoServidorMs, resultados };
 }

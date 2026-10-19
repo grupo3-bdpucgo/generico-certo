@@ -5,14 +5,17 @@
 
 import pg from "pg";
 import type { FiltrosBusca, ResultadoBusca } from "./busca";
-import type { Medicamento } from "./normalizacao";
+import { CAMPOS_EXIBIDOS, type MedicamentoResumo } from "./normalizacao";
 
 export type MotorRelacional = "ilike" | "fulltext";
 
 export interface RespostaRelacional {
   motor: MotorRelacional;
   resultados: ResultadoBusca[];
+  /** Ponta a ponta, medido no cliente: inclui rede. */
   tempoBancoMs: number;
+  /** Planejamento + execução no servidor (EXPLAIN ANALYZE), só quando medirServidor = true. */
+  tempoServidorMs: number | null;
   /** Só no full text: true quando foi preciso relaxar de E para OU. */
   relaxado?: boolean;
 }
@@ -38,7 +41,22 @@ export const COLUNAS = [
   "chave_equivalencia", "chave_equivalencia_ampla", "termos_populares", "texto_embedding", "texto_enriquecido",
 ] as const;
 
-const SELECT = COLUNAS.join(", ");
+// Mesmos campos que a busca vetorial devolve (ver CAMPOS_EXIBIDOS).
+const SELECT = ["id", ...CAMPOS_EXIBIDOS].join(", ");
+
+interface OpcoesRelacional {
+  filtros?: FiltrosBusca;
+  limite?: number;
+  deslocamento?: number;
+  /** Roda também EXPLAIN (ANALYZE) da mesma consulta para obter o tempo no servidor. */
+  medirServidor?: boolean;
+}
+
+async function tempoServidor(sql: string, params: unknown[]): Promise<number> {
+  const { rows } = await pool().query(`EXPLAIN (ANALYZE, FORMAT JSON) ${sql}`, params);
+  const plano = rows[0]["QUERY PLAN"][0];
+  return plano["Planning Time"] + plano["Execution Time"];
+}
 
 function filtroSql(f: FiltrosBusca = {}, params: unknown[]): string {
   const partes: string[] = [];
@@ -57,7 +75,7 @@ function filtroSql(f: FiltrosBusca = {}, params: unknown[]): string {
 
 function paraResultado(linha: Record<string, unknown>, score: number): ResultadoBusca {
   const { id, rank: _rank, ...resto } = linha;
-  return { id: Number(id), score, medicamento: resto as unknown as Omit<Medicamento, "id"> };
+  return { id: Number(id), score, medicamento: resto as unknown as MedicamentoResumo };
 }
 
 /** Palavras da consulta sem acento e em minúsculas; nenhuma é descartada (busca literal). */
@@ -70,12 +88,9 @@ export function palavrasConsulta(consulta: string): string[] {
     .filter(Boolean);
 }
 
-export async function buscarIlike(
-  consulta: string,
-  opcoes: { filtros?: FiltrosBusca; limite?: number; deslocamento?: number } = {},
-): Promise<RespostaRelacional> {
+export async function buscarIlike(consulta: string, opcoes: OpcoesRelacional = {}): Promise<RespostaRelacional> {
   const palavras = palavrasConsulta(consulta);
-  if (!palavras.length) return { motor: "ilike", resultados: [], tempoBancoMs: 0 };
+  if (!palavras.length) return { motor: "ilike", resultados: [], tempoBancoMs: 0, tempoServidorMs: null };
   const params: unknown[] = [palavras.map((p) => `%${p}%`), `${palavras[0]}%`];
   const where = filtroSql(opcoes.filtros, params);
   params.push(opcoes.limite ?? 10, opcoes.deslocamento ?? 0);
@@ -83,19 +98,17 @@ export async function buscarIlike(
   const sql = `
     SELECT ${SELECT} FROM medicamentos
     WHERE f_unaccent(lower(texto_enriquecido)) LIKE ALL($1::text[])${where}
-    ORDER BY (f_unaccent(lower(produto)) LIKE $2) DESC, length(produto), pmc
+    ORDER BY (f_unaccent(lower(produto)) LIKE $2) DESC, length(produto), pmc, id
     LIMIT $${params.length - 1} OFFSET $${params.length}`;
   const t = performance.now();
   const { rows } = await pool().query(sql, params);
   const tempoBancoMs = performance.now() - t;
-  return { motor: "ilike", tempoBancoMs, resultados: rows.map((r) => paraResultado(r, 1)) };
+  const tempoServidorMs = opcoes.medirServidor ? await tempoServidor(sql, params) : null;
+  return { motor: "ilike", tempoBancoMs, tempoServidorMs, resultados: rows.map((r) => paraResultado(r, 1)) };
 }
 
-export async function buscarFullText(
-  consulta: string,
-  opcoes: { filtros?: FiltrosBusca; limite?: number; deslocamento?: number } = {},
-): Promise<RespostaRelacional> {
-  const executar = async (tsquery: string) => {
+export async function buscarFullText(consulta: string, opcoes: OpcoesRelacional = {}): Promise<RespostaRelacional> {
+  const montar = (tsquery: string) => {
     const params: unknown[] = [consulta];
     const where = filtroSql(opcoes.filtros, params);
     params.push(opcoes.limite ?? 10, opcoes.deslocamento ?? 0);
@@ -103,25 +116,33 @@ export async function buscarFullText(
       WITH q AS (SELECT ${tsquery} AS tq)
       SELECT ${SELECT}, ts_rank_cd(busca, q.tq) AS rank FROM medicamentos, q
       WHERE busca @@ q.tq${where}
-      ORDER BY rank DESC, pmc
+      ORDER BY rank DESC, pmc, id
       LIMIT $${params.length - 1} OFFSET $${params.length}`;
-    return pool().query(sql, params);
+    return { sql, params };
   };
+  const E = montar("websearch_to_tsquery('pt_unaccent', $1)");
+  // OU entre os lexemas da consulta (stopwords já removidas pelo dicionário português).
+  const OU = montar(
+    "(SELECT coalesce(to_tsquery('pt_unaccent', string_agg(lexeme, ' | ')), ''::tsquery) FROM unnest(to_tsvector('pt_unaccent', $1)))",
+  );
 
   const t = performance.now();
-  let { rows } = await executar("websearch_to_tsquery('pt_unaccent', $1)");
+  let { rows } = await pool().query(E.sql, E.params);
   let relaxado = false;
   if (!rows.length) {
-    // OU entre os lexemas da consulta (stopwords já removidas pelo dicionário português).
-    ({ rows } = await executar(
-      "(SELECT coalesce(to_tsquery('pt_unaccent', string_agg(lexeme, ' | ')), ''::tsquery) FROM unnest(to_tsvector('pt_unaccent', $1)))",
-    ));
+    ({ rows } = await pool().query(OU.sql, OU.params));
     relaxado = true;
   }
   const tempoBancoMs = performance.now() - t;
+  let tempoServidorMs: number | null = null;
+  if (opcoes.medirServidor) {
+    tempoServidorMs = await tempoServidor(E.sql, E.params);
+    if (relaxado) tempoServidorMs += await tempoServidor(OU.sql, OU.params);
+  }
   return {
     motor: "fulltext",
     tempoBancoMs,
+    tempoServidorMs,
     relaxado,
     resultados: rows.map((r) => paraResultado(r, Number(r.rank))),
   };

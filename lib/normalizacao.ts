@@ -35,6 +35,19 @@ export interface Medicamento {
   texto_enriquecido: string;
 }
 
+/**
+ * Campos devolvidos pelas buscas nos dois bancos: só o que a interface exibe e o que o gabarito
+ * avalia. Os textos de indexação ficam de fora, para que Qdrant e PostgreSQL transfiram o mesmo
+ * conteúdo e a resposta seja pequena.
+ */
+export const CAMPOS_EXIBIDOS = [
+  "produto", "substancia", "laboratorio", "apresentacao", "classe", "tipo_produto", "selo", "pmc",
+  "tarja", "generico", "restricao_hospitalar", "dosagem", "forma", "quantidade_num", "unidade",
+  "preco_por_unidade", "chave_equivalencia_ampla",
+] as const;
+
+export type MedicamentoResumo = Pick<Medicamento, (typeof CAMPOS_EXIBIDOS)[number]>;
+
 export interface DicionarioIndicacoes {
   classes: Record<string, string[]>;
   substancias: Record<string, string[]>;

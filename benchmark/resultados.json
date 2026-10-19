@@ -1,11 +1,14 @@
 {
-  "gerado_em": "2026-10-19T20:03:48.350Z",
+  "gerado_em": "2026-10-19T20:24:07.999Z",
   "procedimento": {
     "limite": 10,
     "repeticoes": 5,
     "rodadas_aquecimento": 5,
+    "aquecimento": "5 consultas genéricas + uma passada completa pelo conjunto, por motor, descartadas",
+    "revisao": "Na primeira execução o aquecimento tinha só as 5 consultas genéricas; o cache frio do vetor denso recém-gravado inflava o p95 do denso enriquecido e do híbrido. A passada completa foi acrescentada e o tempo foi medido de novo; a acurácia não muda.",
     "filtros": "padrão do site: oculta apresentações de uso restrito hospitalar",
-    "tempo": "mediana das repetições; tempo de banco medido no cliente, inclui ida e volta pela rede",
+    "tempo": "mediana das repetições; tempo_banco = ponta a ponta no cliente (inclui rede); tempo_servidor = campo time do Qdrant ou Planning + Execution Time do EXPLAIN ANALYZE no PostgreSQL",
+    "campos_devolvidos": "CAMPOS_EXIBIDOS (iguais nos dois bancos)",
     "registros_elegiveis": 10996,
     "ponderacao": "acerto_top5_ponderado usa peso 1 - p_acaso_top5 por consulta"
   },
@@ -636,9 +639,11 @@
         "nao_encontrados_top10": 18,
         "precisao_top5": 0.15,
         "sem_resultado": 0,
-        "tempo_banco_mediana_ms": 29.41,
-        "tempo_banco_p95_ms": 33.23,
-        "tempo_embedding_mediana_ms": 6.3
+        "tempo_banco_mediana_ms": 28.36,
+        "tempo_banco_p95_ms": 34.14,
+        "tempo_servidor_mediana_ms": 1.469,
+        "tempo_servidor_p95_ms": 1.584,
+        "tempo_embedding_mediana_ms": 6.93
       },
       "denso": {
         "consultas": 28,
@@ -650,23 +655,27 @@
         "nao_encontrados_top10": 16,
         "precisao_top5": 0.2929,
         "sem_resultado": 0,
-        "tempo_banco_mediana_ms": 33.98,
-        "tempo_banco_p95_ms": 79.26,
-        "tempo_embedding_mediana_ms": 8.26
+        "tempo_banco_mediana_ms": 38.02,
+        "tempo_banco_p95_ms": 75.41,
+        "tempo_servidor_mediana_ms": 1.433,
+        "tempo_servidor_p95_ms": 1.492,
+        "tempo_embedding_mediana_ms": 7.76
       },
       "hibrido": {
         "consultas": 28,
         "acerto_top5": 0.8214,
         "acerto_top5_ponderado": 0.8181,
         "acaso_top5_medio": 0.0805,
-        "mrr_top10": 0.6382,
-        "posicao_media": 2.31,
+        "mrr_top10": 0.6941,
+        "posicao_media": 2.19,
         "nao_encontrados_top10": 2,
-        "precisao_top5": 0.4429,
+        "precisao_top5": 0.4571,
         "sem_resultado": 0,
-        "tempo_banco_mediana_ms": 34.07,
-        "tempo_banco_p95_ms": 85.83,
-        "tempo_embedding_mediana_ms": 10.85
+        "tempo_banco_mediana_ms": 73.29,
+        "tempo_banco_p95_ms": 80.98,
+        "tempo_servidor_mediana_ms": 2.87,
+        "tempo_servidor_p95_ms": 3.037,
+        "tempo_embedding_mediana_ms": 7.9
       },
       "ilike": {
         "consultas": 28,
@@ -678,8 +687,10 @@
         "nao_encontrados_top10": 18,
         "precisao_top5": 0.35,
         "sem_resultado": 18,
-        "tempo_banco_mediana_ms": 69.57,
-        "tempo_banco_p95_ms": 74.33,
+        "tempo_banco_mediana_ms": 66.86,
+        "tempo_banco_p95_ms": 69.16,
+        "tempo_servidor_mediana_ms": 45.07,
+        "tempo_servidor_p95_ms": 46.497,
         "tempo_embedding_mediana_ms": 0
       },
       "fulltext": {
@@ -687,13 +698,15 @@
         "acerto_top5": 0.6786,
         "acerto_top5_ponderado": 0.6698,
         "acaso_top5_medio": 0.0805,
-        "mrr_top10": 0.6131,
-        "posicao_media": 1.45,
+        "mrr_top10": 0.631,
+        "posicao_media": 1.4,
         "nao_encontrados_top10": 8,
         "precisao_top5": 0.6286,
         "sem_resultado": 6,
-        "tempo_banco_mediana_ms": 45.7,
-        "tempo_banco_p95_ms": 51.04,
+        "tempo_banco_mediana_ms": 42.11,
+        "tempo_banco_p95_ms": 47.39,
+        "tempo_servidor_mediana_ms": 0.435,
+        "tempo_servidor_p95_ms": 4.181,
         "tempo_embedding_mediana_ms": 0
       }
     },
@@ -708,9 +721,11 @@
         "nao_encontrados_top10": 17,
         "precisao_top5": 0.16,
         "sem_resultado": 0,
-        "tempo_banco_mediana_ms": 29.4,
-        "tempo_banco_p95_ms": 33.23,
-        "tempo_embedding_mediana_ms": 6.24
+        "tempo_banco_mediana_ms": 28.3,
+        "tempo_banco_p95_ms": 34.14,
+        "tempo_servidor_mediana_ms": 1.469,
+        "tempo_servidor_p95_ms": 1.584,
+        "tempo_embedding_mediana_ms": 6.89
       },
       "denso": {
         "consultas": 25,
@@ -722,23 +737,27 @@
         "nao_encontrados_top10": 15,
         "precisao_top5": 0.248,
         "sem_resultado": 0,
-        "tempo_banco_mediana_ms": 34.67,
-        "tempo_banco_p95_ms": 77.58,
-        "tempo_embedding_mediana_ms": 8.25
+        "tempo_banco_mediana_ms": 42.06,
+        "tempo_banco_p95_ms": 75.41,
+        "tempo_servidor_mediana_ms": 1.427,
+        "tempo_servidor_p95_ms": 1.492,
+        "tempo_embedding_mediana_ms": 7.49
       },
       "hibrido": {
         "consultas": 25,
         "acerto_top5": 0.8,
         "acerto_top5_ponderado": 0.7973,
         "acaso_top5_medio": 0.0755,
-        "mrr_top10": 0.6148,
-        "posicao_media": 2.43,
+        "mrr_top10": 0.6574,
+        "posicao_media": 2.35,
         "nao_encontrados_top10": 2,
-        "precisao_top5": 0.416,
+        "precisao_top5": 0.424,
         "sem_resultado": 0,
-        "tempo_banco_mediana_ms": 33.78,
-        "tempo_banco_p95_ms": 83.06,
-        "tempo_embedding_mediana_ms": 11.09
+        "tempo_banco_mediana_ms": 73.34,
+        "tempo_banco_p95_ms": 80.98,
+        "tempo_servidor_mediana_ms": 2.869,
+        "tempo_servidor_p95_ms": 3.037,
+        "tempo_embedding_mediana_ms": 7.76
       },
       "ilike": {
         "consultas": 25,
@@ -750,8 +769,10 @@
         "nao_encontrados_top10": 16,
         "precisao_top5": 0.352,
         "sem_resultado": 16,
-        "tempo_banco_mediana_ms": 69.48,
-        "tempo_banco_p95_ms": 74.33,
+        "tempo_banco_mediana_ms": 66.81,
+        "tempo_banco_p95_ms": 69.16,
+        "tempo_servidor_mediana_ms": 45.089,
+        "tempo_servidor_p95_ms": 46.178,
         "tempo_embedding_mediana_ms": 0
       },
       "fulltext": {
@@ -759,13 +780,15 @@
         "acerto_top5": 0.68,
         "acerto_top5_ponderado": 0.6723,
         "acaso_top5_medio": 0.0755,
-        "mrr_top10": 0.6267,
-        "posicao_media": 1.44,
+        "mrr_top10": 0.6467,
+        "posicao_media": 1.39,
         "nao_encontrados_top10": 7,
         "precisao_top5": 0.64,
         "sem_resultado": 6,
-        "tempo_banco_mediana_ms": 45.57,
-        "tempo_banco_p95_ms": 50.04,
+        "tempo_banco_mediana_ms": 41.8,
+        "tempo_banco_p95_ms": 47.39,
+        "tempo_servidor_mediana_ms": 0.432,
+        "tempo_servidor_p95_ms": 2.982,
         "tempo_embedding_mediana_ms": 0
       }
     },
@@ -781,9 +804,11 @@
           "nao_encontrados_top10": 3,
           "precisao_top5": 0.16,
           "sem_resultado": 0,
-          "tempo_banco_mediana_ms": 29.34,
-          "tempo_banco_p95_ms": 30.58,
-          "tempo_embedding_mediana_ms": 6.33
+          "tempo_banco_mediana_ms": 28.8,
+          "tempo_banco_p95_ms": 30.75,
+          "tempo_servidor_mediana_ms": 1.492,
+          "tempo_servidor_p95_ms": 2.603,
+          "tempo_embedding_mediana_ms": 5.27
         },
         "denso": {
           "consultas": 5,
@@ -795,23 +820,27 @@
           "nao_encontrados_top10": 3,
           "precisao_top5": 0.32,
           "sem_resultado": 0,
-          "tempo_banco_mediana_ms": 72.98,
-          "tempo_banco_p95_ms": 79.88,
-          "tempo_embedding_mediana_ms": 5.83
+          "tempo_banco_mediana_ms": 72.07,
+          "tempo_banco_p95_ms": 73.13,
+          "tempo_servidor_mediana_ms": 1.462,
+          "tempo_servidor_p95_ms": 1.492,
+          "tempo_embedding_mediana_ms": 6.06
         },
         "hibrido": {
           "consultas": 5,
           "acerto_top5": 1,
           "acerto_top5_ponderado": 1,
           "acaso_top5_medio": 0.0224,
-          "mrr_top10": 0.6,
-          "posicao_media": 1.8,
+          "mrr_top10": 0.8,
+          "posicao_media": 1.4,
           "nao_encontrados_top10": 0,
-          "precisao_top5": 0.56,
+          "precisao_top5": 0.64,
           "sem_resultado": 0,
-          "tempo_banco_mediana_ms": 34.36,
-          "tempo_banco_p95_ms": 86.52,
-          "tempo_embedding_mediana_ms": 8.99
+          "tempo_banco_mediana_ms": 73.81,
+          "tempo_banco_p95_ms": 77.6,
+          "tempo_servidor_mediana_ms": 2.895,
+          "tempo_servidor_p95_ms": 3.037,
+          "tempo_embedding_mediana_ms": 6.97
         },
         "ilike": {
           "consultas": 5,
@@ -823,8 +852,10 @@
           "nao_encontrados_top10": 0,
           "precisao_top5": 0.96,
           "sem_resultado": 0,
-          "tempo_banco_mediana_ms": 69.7,
-          "tempo_banco_p95_ms": 73.92,
+          "tempo_banco_mediana_ms": 66.11,
+          "tempo_banco_p95_ms": 69.16,
+          "tempo_servidor_mediana_ms": 45.232,
+          "tempo_servidor_p95_ms": 45.434,
           "tempo_embedding_mediana_ms": 0
         },
         "fulltext": {
@@ -832,13 +863,15 @@
           "acerto_top5": 1,
           "acerto_top5_ponderado": 1,
           "acaso_top5_medio": 0.0224,
-          "mrr_top10": 0.8,
-          "posicao_media": 1.4,
+          "mrr_top10": 0.9,
+          "posicao_media": 1.2,
           "nao_encontrados_top10": 0,
           "precisao_top5": 0.84,
           "sem_resultado": 0,
-          "tempo_banco_mediana_ms": 24.58,
-          "tempo_banco_p95_ms": 25.13,
+          "tempo_banco_mediana_ms": 21.27,
+          "tempo_banco_p95_ms": 21.39,
+          "tempo_servidor_mediana_ms": 0.232,
+          "tempo_servidor_p95_ms": 0.246,
           "tempo_embedding_mediana_ms": 0
         }
       },
@@ -853,9 +886,11 @@
           "nao_encontrados_top10": 2,
           "precisao_top5": 0.32,
           "sem_resultado": 0,
-          "tempo_banco_mediana_ms": 29.4,
-          "tempo_banco_p95_ms": 32.96,
-          "tempo_embedding_mediana_ms": 5.24
+          "tempo_banco_mediana_ms": 28.71,
+          "tempo_banco_p95_ms": 36.76,
+          "tempo_servidor_mediana_ms": 1.474,
+          "tempo_servidor_p95_ms": 1.49,
+          "tempo_embedding_mediana_ms": 5
         },
         "denso": {
           "consultas": 5,
@@ -867,23 +902,27 @@
           "nao_encontrados_top10": 2,
           "precisao_top5": 0.4,
           "sem_resultado": 0,
-          "tempo_banco_mediana_ms": 70.65,
-          "tempo_banco_p95_ms": 77.34,
-          "tempo_embedding_mediana_ms": 7.56
+          "tempo_banco_mediana_ms": 70.93,
+          "tempo_banco_p95_ms": 78.92,
+          "tempo_servidor_mediana_ms": 1.428,
+          "tempo_servidor_p95_ms": 1.465,
+          "tempo_embedding_mediana_ms": 5.99
         },
         "hibrido": {
           "consultas": 5,
           "acerto_top5": 0.8,
           "acerto_top5_ponderado": 0.7954,
           "acaso_top5_medio": 0.0384,
-          "mrr_top10": 0.64,
-          "posicao_media": 2,
+          "mrr_top10": 0.44,
+          "posicao_media": 2.5,
           "nao_encontrados_top10": 1,
-          "precisao_top5": 0.4,
+          "precisao_top5": 0.32,
           "sem_resultado": 0,
-          "tempo_banco_mediana_ms": 42.97,
-          "tempo_banco_p95_ms": 83.06,
-          "tempo_embedding_mediana_ms": 11.97
+          "tempo_banco_mediana_ms": 75.92,
+          "tempo_banco_p95_ms": 77.68,
+          "tempo_servidor_mediana_ms": 2.882,
+          "tempo_servidor_p95_ms": 2.924,
+          "tempo_embedding_mediana_ms": 6.61
         },
         "ilike": {
           "consultas": 5,
@@ -895,8 +934,10 @@
           "nao_encontrados_top10": 5,
           "precisao_top5": 0,
           "sem_resultado": 5,
-          "tempo_banco_mediana_ms": 69.9,
-          "tempo_banco_p95_ms": 73.15,
+          "tempo_banco_mediana_ms": 66.91,
+          "tempo_banco_p95_ms": 68.5,
+          "tempo_servidor_mediana_ms": 44.957,
+          "tempo_servidor_p95_ms": 45.988,
           "tempo_embedding_mediana_ms": 0
         },
         "fulltext": {
@@ -909,8 +950,10 @@
           "nao_encontrados_top10": 5,
           "precisao_top5": 0,
           "sem_resultado": 5,
-          "tempo_banco_mediana_ms": 45.57,
-          "tempo_banco_p95_ms": 48.06,
+          "tempo_banco_mediana_ms": 41.8,
+          "tempo_banco_p95_ms": 44.24,
+          "tempo_servidor_mediana_ms": 0.432,
+          "tempo_servidor_p95_ms": 0.439,
           "tempo_embedding_mediana_ms": 0
         }
       },
@@ -925,9 +968,11 @@
           "nao_encontrados_top10": 1,
           "precisao_top5": 0,
           "sem_resultado": 0,
-          "tempo_banco_mediana_ms": 29.42,
-          "tempo_banco_p95_ms": 29.42,
-          "tempo_embedding_mediana_ms": 4.98
+          "tempo_banco_mediana_ms": 31.56,
+          "tempo_banco_p95_ms": 31.56,
+          "tempo_servidor_mediana_ms": 1.463,
+          "tempo_servidor_p95_ms": 1.463,
+          "tempo_embedding_mediana_ms": 6.97
         },
         "denso": {
           "consultas": 1,
@@ -939,9 +984,11 @@
           "nao_encontrados_top10": 1,
           "precisao_top5": 0,
           "sem_resultado": 0,
-          "tempo_banco_mediana_ms": 72.62,
-          "tempo_banco_p95_ms": 72.62,
-          "tempo_embedding_mediana_ms": 5.71
+          "tempo_banco_mediana_ms": 32.73,
+          "tempo_banco_p95_ms": 32.73,
+          "tempo_servidor_mediana_ms": 1.424,
+          "tempo_servidor_p95_ms": 1.424,
+          "tempo_embedding_mediana_ms": 7.34
         },
         "hibrido": {
           "consultas": 1,
@@ -953,9 +1000,11 @@
           "nao_encontrados_top10": 1,
           "precisao_top5": 0,
           "sem_resultado": 0,
-          "tempo_banco_mediana_ms": 85.83,
-          "tempo_banco_p95_ms": 85.83,
-          "tempo_embedding_mediana_ms": 9.52
+          "tempo_banco_mediana_ms": 71.36,
+          "tempo_banco_p95_ms": 71.36,
+          "tempo_servidor_mediana_ms": 2.858,
+          "tempo_servidor_p95_ms": 2.858,
+          "tempo_embedding_mediana_ms": 7.31
         },
         "ilike": {
           "consultas": 1,
@@ -967,8 +1016,10 @@
           "nao_encontrados_top10": 1,
           "precisao_top5": 0,
           "sem_resultado": 1,
-          "tempo_banco_mediana_ms": 69.48,
-          "tempo_banco_p95_ms": 69.48,
+          "tempo_banco_mediana_ms": 66.61,
+          "tempo_banco_p95_ms": 66.61,
+          "tempo_servidor_mediana_ms": 45.051,
+          "tempo_servidor_p95_ms": 45.051,
           "tempo_embedding_mediana_ms": 0
         },
         "fulltext": {
@@ -981,8 +1032,10 @@
           "nao_encontrados_top10": 1,
           "precisao_top5": 0,
           "sem_resultado": 1,
-          "tempo_banco_mediana_ms": 46.7,
-          "tempo_banco_p95_ms": 46.7,
+          "tempo_banco_mediana_ms": 44.19,
+          "tempo_banco_p95_ms": 44.19,
+          "tempo_servidor_mediana_ms": 0.417,
+          "tempo_servidor_p95_ms": 0.417,
           "tempo_embedding_mediana_ms": 0
         }
       },
@@ -997,9 +1050,11 @@
           "nao_encontrados_top10": 4,
           "precisao_top5": 0,
           "sem_resultado": 0,
-          "tempo_banco_mediana_ms": 31.8,
-          "tempo_banco_p95_ms": 34.19,
-          "tempo_embedding_mediana_ms": 7.11
+          "tempo_banco_mediana_ms": 28.13,
+          "tempo_banco_p95_ms": 34.14,
+          "tempo_servidor_mediana_ms": 1.456,
+          "tempo_servidor_p95_ms": 1.468,
+          "tempo_embedding_mediana_ms": 8.35
         },
         "denso": {
           "consultas": 5,
@@ -1011,23 +1066,27 @@
           "nao_encontrados_top10": 4,
           "precisao_top5": 0.16,
           "sem_resultado": 0,
-          "tempo_banco_mediana_ms": 34.67,
-          "tempo_banco_p95_ms": 77.58,
-          "tempo_embedding_mediana_ms": 8.27
+          "tempo_banco_mediana_ms": 30.4,
+          "tempo_banco_p95_ms": 70.32,
+          "tempo_servidor_mediana_ms": 1.415,
+          "tempo_servidor_p95_ms": 1.425,
+          "tempo_embedding_mediana_ms": 9.52
         },
         "hibrido": {
           "consultas": 5,
           "acerto_top5": 0.8,
           "acerto_top5_ponderado": 0.7994,
           "acaso_top5_medio": 0.0224,
-          "mrr_top10": 0.6333,
-          "posicao_media": 2.4,
+          "mrr_top10": 0.7333,
+          "posicao_media": 2.2,
           "nao_encontrados_top10": 0,
-          "precisao_top5": 0.4,
+          "precisao_top5": 0.44,
           "sem_resultado": 0,
-          "tempo_banco_mediana_ms": 41.39,
-          "tempo_banco_p95_ms": 79.97,
-          "tempo_embedding_mediana_ms": 11.09
+          "tempo_banco_mediana_ms": 30.82,
+          "tempo_banco_p95_ms": 74.46,
+          "tempo_servidor_mediana_ms": 2.815,
+          "tempo_servidor_p95_ms": 3.054,
+          "tempo_embedding_mediana_ms": 9.31
         },
         "ilike": {
           "consultas": 5,
@@ -1039,8 +1098,10 @@
           "nao_encontrados_top10": 0,
           "precisao_top5": 1,
           "sem_resultado": 0,
-          "tempo_banco_mediana_ms": 72.31,
-          "tempo_banco_p95_ms": 75.76,
+          "tempo_banco_mediana_ms": 67.01,
+          "tempo_banco_p95_ms": 68.12,
+          "tempo_servidor_mediana_ms": 45.089,
+          "tempo_servidor_p95_ms": 47.063,
           "tempo_embedding_mediana_ms": 0
         },
         "fulltext": {
@@ -1053,8 +1114,10 @@
           "nao_encontrados_top10": 0,
           "precisao_top5": 1,
           "sem_resultado": 0,
-          "tempo_banco_mediana_ms": 24.39,
-          "tempo_banco_p95_ms": 26.46,
+          "tempo_banco_mediana_ms": 21.3,
+          "tempo_banco_p95_ms": 23.31,
+          "tempo_servidor_mediana_ms": 0.336,
+          "tempo_servidor_p95_ms": 0.375,
           "tempo_embedding_mediana_ms": 0
         }
       },
@@ -1069,9 +1132,11 @@
           "nao_encontrados_top10": 6,
           "precisao_top5": 0.1778,
           "sem_resultado": 0,
-          "tempo_banco_mediana_ms": 29.03,
-          "tempo_banco_p95_ms": 31.87,
-          "tempo_embedding_mediana_ms": 6.83
+          "tempo_banco_mediana_ms": 27.84,
+          "tempo_banco_p95_ms": 29.68,
+          "tempo_servidor_mediana_ms": 1.468,
+          "tempo_servidor_p95_ms": 1.502,
+          "tempo_embedding_mediana_ms": 7.28
         },
         "denso": {
           "consultas": 9,
@@ -1083,23 +1148,27 @@
           "nao_encontrados_top10": 4,
           "precisao_top5": 0.4,
           "sem_resultado": 0,
-          "tempo_banco_mediana_ms": 30.66,
-          "tempo_banco_p95_ms": 79.26,
-          "tempo_embedding_mediana_ms": 10.89
+          "tempo_banco_mediana_ms": 30.5,
+          "tempo_banco_p95_ms": 74.03,
+          "tempo_servidor_mediana_ms": 1.444,
+          "tempo_servidor_p95_ms": 1.489,
+          "tempo_embedding_mediana_ms": 9.52
         },
         "hibrido": {
           "consultas": 9,
           "acerto_top5": 0.8889,
           "acerto_top5_ponderado": 0.8967,
           "acaso_top5_medio": 0.1837,
-          "mrr_top10": 0.7068,
-          "posicao_media": 2.44,
+          "mrr_top10": 0.8272,
+          "posicao_media": 2.11,
           "nao_encontrados_top10": 0,
-          "precisao_top5": 0.5111,
+          "precisao_top5": 0.5333,
           "sem_resultado": 0,
-          "tempo_banco_mediana_ms": 33.07,
-          "tempo_banco_p95_ms": 41.35,
-          "tempo_embedding_mediana_ms": 9.94
+          "tempo_banco_mediana_ms": 73.34,
+          "tempo_banco_p95_ms": 85.97,
+          "tempo_servidor_mediana_ms": 2.872,
+          "tempo_servidor_p95_ms": 2.945,
+          "tempo_embedding_mediana_ms": 9.73
         },
         "ilike": {
           "consultas": 9,
@@ -1111,8 +1180,10 @@
           "nao_encontrados_top10": 9,
           "precisao_top5": 0,
           "sem_resultado": 9,
-          "tempo_banco_mediana_ms": 69.37,
-          "tempo_banco_p95_ms": 74.33,
+          "tempo_banco_mediana_ms": 67.06,
+          "tempo_banco_p95_ms": 70.9,
+          "tempo_servidor_mediana_ms": 45.229,
+          "tempo_servidor_p95_ms": 46.497,
           "tempo_embedding_mediana_ms": 0
         },
         "fulltext": {
@@ -1125,8 +1196,10 @@
           "nao_encontrados_top10": 1,
           "precisao_top5": 0.7111,
           "sem_resultado": 0,
-          "tempo_banco_mediana_ms": 47.02,
-          "tempo_banco_p95_ms": 52.22,
+          "tempo_banco_mediana_ms": 43.9,
+          "tempo_banco_p95_ms": 47.64,
+          "tempo_servidor_mediana_ms": 1.558,
+          "tempo_servidor_p95_ms": 4.181,
           "tempo_embedding_mediana_ms": 0
         }
       },
@@ -1141,9 +1214,11 @@
           "nao_encontrados_top10": 2,
           "precisao_top5": 0.0667,
           "sem_resultado": 0,
-          "tempo_banco_mediana_ms": 31.95,
-          "tempo_banco_p95_ms": 32.81,
-          "tempo_embedding_mediana_ms": 11.6
+          "tempo_banco_mediana_ms": 27.97,
+          "tempo_banco_p95_ms": 28.07,
+          "tempo_servidor_mediana_ms": 1.45,
+          "tempo_servidor_p95_ms": 1.454,
+          "tempo_embedding_mediana_ms": 6.64
         },
         "denso": {
           "consultas": 3,
@@ -1155,23 +1230,27 @@
           "nao_encontrados_top10": 2,
           "precisao_top5": 0.0667,
           "sem_resultado": 0,
-          "tempo_banco_mediana_ms": 31.76,
-          "tempo_banco_p95_ms": 32.85,
-          "tempo_embedding_mediana_ms": 13.91
+          "tempo_banco_mediana_ms": 28.56,
+          "tempo_banco_p95_ms": 75.41,
+          "tempo_servidor_mediana_ms": 1.469,
+          "tempo_servidor_p95_ms": 1.516,
+          "tempo_embedding_mediana_ms": 9.44
         },
         "hibrido": {
           "consultas": 3,
           "acerto_top5": 0.6667,
           "acerto_top5_ponderado": 0.6519,
           "acaso_top5_medio": 0.0524,
-          "mrr_top10": 0.7143,
-          "posicao_media": 3,
+          "mrr_top10": 0.7083,
+          "posicao_media": 3.33,
           "nao_encontrados_top10": 0,
           "precisao_top5": 0.3333,
           "sem_resultado": 0,
-          "tempo_banco_mediana_ms": 31.06,
-          "tempo_banco_p95_ms": 32.15,
-          "tempo_embedding_mediana_ms": 11.42
+          "tempo_banco_mediana_ms": 78.55,
+          "tempo_banco_p95_ms": 80.98,
+          "tempo_servidor_mediana_ms": 2.86,
+          "tempo_servidor_p95_ms": 2.981,
+          "tempo_embedding_mediana_ms": 8.19
         },
         "ilike": {
           "consultas": 3,
@@ -1183,8 +1262,10 @@
           "nao_encontrados_top10": 3,
           "precisao_top5": 0,
           "sem_resultado": 3,
-          "tempo_banco_mediana_ms": 68.51,
-          "tempo_banco_p95_ms": 68.79,
+          "tempo_banco_mediana_ms": 66.81,
+          "tempo_banco_p95_ms": 67.06,
+          "tempo_servidor_mediana_ms": 44.721,
+          "tempo_servidor_p95_ms": 45.792,
           "tempo_embedding_mediana_ms": 0
         },
         "fulltext": {
@@ -1197,8 +1278,10 @@
           "nao_encontrados_top10": 1,
           "precisao_top5": 0.6667,
           "sem_resultado": 0,
-          "tempo_banco_mediana_ms": 48.37,
-          "tempo_banco_p95_ms": 51.04,
+          "tempo_banco_mediana_ms": 43.73,
+          "tempo_banco_p95_ms": 47.39,
+          "tempo_servidor_mediana_ms": 1.448,
+          "tempo_servidor_p95_ms": 5.26,
           "tempo_embedding_mediana_ms": 0
         }
       }
@@ -1215,9 +1298,11 @@
           "nao_encontrados_top10": 3,
           "precisao_top5": 0.2,
           "sem_resultado": 0,
-          "tempo_banco_mediana_ms": 29.45,
-          "tempo_banco_p95_ms": 30.58,
-          "tempo_embedding_mediana_ms": 6.14
+          "tempo_banco_mediana_ms": 28.55,
+          "tempo_banco_p95_ms": 28.85,
+          "tempo_servidor_mediana_ms": 1.537,
+          "tempo_servidor_p95_ms": 2.603,
+          "tempo_embedding_mediana_ms": 5.36
         },
         "denso": {
           "consultas": 4,
@@ -1229,23 +1314,27 @@
           "nao_encontrados_top10": 3,
           "precisao_top5": 0.15,
           "sem_resultado": 0,
-          "tempo_banco_mediana_ms": 71.3,
-          "tempo_banco_p95_ms": 74.55,
-          "tempo_embedding_mediana_ms": 5.83
+          "tempo_banco_mediana_ms": 72.28,
+          "tempo_banco_p95_ms": 73.13,
+          "tempo_servidor_mediana_ms": 1.445,
+          "tempo_servidor_p95_ms": 1.492,
+          "tempo_embedding_mediana_ms": 6.24
         },
         "hibrido": {
           "consultas": 4,
           "acerto_top5": 1,
           "acerto_top5_ponderado": 1,
           "acaso_top5_medio": 0.0253,
-          "mrr_top10": 0.625,
-          "posicao_media": 1.75,
+          "mrr_top10": 0.75,
+          "posicao_media": 1.5,
           "nao_encontrados_top10": 0,
-          "precisao_top5": 0.55,
+          "precisao_top5": 0.65,
           "sem_resultado": 0,
-          "tempo_banco_mediana_ms": 34.07,
-          "tempo_banco_p95_ms": 78.4,
-          "tempo_embedding_mediana_ms": 9.19
+          "tempo_banco_mediana_ms": 72.79,
+          "tempo_banco_p95_ms": 75.68,
+          "tempo_servidor_mediana_ms": 2.928,
+          "tempo_servidor_p95_ms": 3.037,
+          "tempo_embedding_mediana_ms": 7.03
         },
         "ilike": {
           "consultas": 4,
@@ -1257,8 +1346,10 @@
           "nao_encontrados_top10": 0,
           "precisao_top5": 0.95,
           "sem_resultado": 0,
-          "tempo_banco_mediana_ms": 69.68,
-          "tempo_banco_p95_ms": 73.92,
+          "tempo_banco_mediana_ms": 65.97,
+          "tempo_banco_p95_ms": 69.16,
+          "tempo_servidor_mediana_ms": 45.265,
+          "tempo_servidor_p95_ms": 45.434,
           "tempo_embedding_mediana_ms": 0
         },
         "fulltext": {
@@ -1266,13 +1357,15 @@
           "acerto_top5": 1,
           "acerto_top5_ponderado": 1,
           "acaso_top5_medio": 0.0253,
-          "mrr_top10": 0.875,
-          "posicao_media": 1.25,
+          "mrr_top10": 1,
+          "posicao_media": 1,
           "nao_encontrados_top10": 0,
           "precisao_top5": 0.9,
           "sem_resultado": 0,
-          "tempo_banco_mediana_ms": 24.41,
-          "tempo_banco_p95_ms": 25.13,
+          "tempo_banco_mediana_ms": 21.25,
+          "tempo_banco_p95_ms": 21.31,
+          "tempo_servidor_mediana_ms": 0.224,
+          "tempo_servidor_p95_ms": 0.233,
           "tempo_embedding_mediana_ms": 0
         }
       },
@@ -1287,9 +1380,11 @@
           "nao_encontrados_top10": 2,
           "precisao_top5": 0.32,
           "sem_resultado": 0,
-          "tempo_banco_mediana_ms": 29.4,
-          "tempo_banco_p95_ms": 32.96,
-          "tempo_embedding_mediana_ms": 5.24
+          "tempo_banco_mediana_ms": 28.71,
+          "tempo_banco_p95_ms": 36.76,
+          "tempo_servidor_mediana_ms": 1.474,
+          "tempo_servidor_p95_ms": 1.49,
+          "tempo_embedding_mediana_ms": 5
         },
         "denso": {
           "consultas": 5,
@@ -1301,23 +1396,27 @@
           "nao_encontrados_top10": 2,
           "precisao_top5": 0.4,
           "sem_resultado": 0,
-          "tempo_banco_mediana_ms": 70.65,
-          "tempo_banco_p95_ms": 77.34,
-          "tempo_embedding_mediana_ms": 7.56
+          "tempo_banco_mediana_ms": 70.93,
+          "tempo_banco_p95_ms": 78.92,
+          "tempo_servidor_mediana_ms": 1.428,
+          "tempo_servidor_p95_ms": 1.465,
+          "tempo_embedding_mediana_ms": 5.99
         },
         "hibrido": {
           "consultas": 5,
           "acerto_top5": 0.8,
           "acerto_top5_ponderado": 0.7954,
           "acaso_top5_medio": 0.0384,
-          "mrr_top10": 0.64,
-          "posicao_media": 2,
+          "mrr_top10": 0.44,
+          "posicao_media": 2.5,
           "nao_encontrados_top10": 1,
-          "precisao_top5": 0.4,
+          "precisao_top5": 0.32,
           "sem_resultado": 0,
-          "tempo_banco_mediana_ms": 42.97,
-          "tempo_banco_p95_ms": 83.06,
-          "tempo_embedding_mediana_ms": 11.97
+          "tempo_banco_mediana_ms": 75.92,
+          "tempo_banco_p95_ms": 77.68,
+          "tempo_servidor_mediana_ms": 2.882,
+          "tempo_servidor_p95_ms": 2.924,
+          "tempo_embedding_mediana_ms": 6.61
         },
         "ilike": {
           "consultas": 5,
@@ -1329,8 +1428,10 @@
           "nao_encontrados_top10": 5,
           "precisao_top5": 0,
           "sem_resultado": 5,
-          "tempo_banco_mediana_ms": 69.9,
-          "tempo_banco_p95_ms": 73.15,
+          "tempo_banco_mediana_ms": 66.91,
+          "tempo_banco_p95_ms": 68.5,
+          "tempo_servidor_mediana_ms": 44.957,
+          "tempo_servidor_p95_ms": 45.988,
           "tempo_embedding_mediana_ms": 0
         },
         "fulltext": {
@@ -1343,8 +1444,10 @@
           "nao_encontrados_top10": 5,
           "precisao_top5": 0,
           "sem_resultado": 5,
-          "tempo_banco_mediana_ms": 45.57,
-          "tempo_banco_p95_ms": 48.06,
+          "tempo_banco_mediana_ms": 41.8,
+          "tempo_banco_p95_ms": 44.24,
+          "tempo_servidor_mediana_ms": 0.432,
+          "tempo_servidor_p95_ms": 0.439,
           "tempo_embedding_mediana_ms": 0
         }
       },
@@ -1359,9 +1462,11 @@
           "nao_encontrados_top10": 1,
           "precisao_top5": 0,
           "sem_resultado": 0,
-          "tempo_banco_mediana_ms": 29.42,
-          "tempo_banco_p95_ms": 29.42,
-          "tempo_embedding_mediana_ms": 4.98
+          "tempo_banco_mediana_ms": 31.56,
+          "tempo_banco_p95_ms": 31.56,
+          "tempo_servidor_mediana_ms": 1.463,
+          "tempo_servidor_p95_ms": 1.463,
+          "tempo_embedding_mediana_ms": 6.97
         },
         "denso": {
           "consultas": 1,
@@ -1373,9 +1478,11 @@
           "nao_encontrados_top10": 1,
           "precisao_top5": 0,
           "sem_resultado": 0,
-          "tempo_banco_mediana_ms": 72.62,
-          "tempo_banco_p95_ms": 72.62,
-          "tempo_embedding_mediana_ms": 5.71
+          "tempo_banco_mediana_ms": 32.73,
+          "tempo_banco_p95_ms": 32.73,
+          "tempo_servidor_mediana_ms": 1.424,
+          "tempo_servidor_p95_ms": 1.424,
+          "tempo_embedding_mediana_ms": 7.34
         },
         "hibrido": {
           "consultas": 1,
@@ -1387,9 +1494,11 @@
           "nao_encontrados_top10": 1,
           "precisao_top5": 0,
           "sem_resultado": 0,
-          "tempo_banco_mediana_ms": 85.83,
-          "tempo_banco_p95_ms": 85.83,
-          "tempo_embedding_mediana_ms": 9.52
+          "tempo_banco_mediana_ms": 71.36,
+          "tempo_banco_p95_ms": 71.36,
+          "tempo_servidor_mediana_ms": 2.858,
+          "tempo_servidor_p95_ms": 2.858,
+          "tempo_embedding_mediana_ms": 7.31
         },
         "ilike": {
           "consultas": 1,
@@ -1401,8 +1510,10 @@
           "nao_encontrados_top10": 1,
           "precisao_top5": 0,
           "sem_resultado": 1,
-          "tempo_banco_mediana_ms": 69.48,
-          "tempo_banco_p95_ms": 69.48,
+          "tempo_banco_mediana_ms": 66.61,
+          "tempo_banco_p95_ms": 66.61,
+          "tempo_servidor_mediana_ms": 45.051,
+          "tempo_servidor_p95_ms": 45.051,
           "tempo_embedding_mediana_ms": 0
         },
         "fulltext": {
@@ -1415,8 +1526,10 @@
           "nao_encontrados_top10": 1,
           "precisao_top5": 0,
           "sem_resultado": 1,
-          "tempo_banco_mediana_ms": 46.7,
-          "tempo_banco_p95_ms": 46.7,
+          "tempo_banco_mediana_ms": 44.19,
+          "tempo_banco_p95_ms": 44.19,
+          "tempo_servidor_mediana_ms": 0.417,
+          "tempo_servidor_p95_ms": 0.417,
           "tempo_embedding_mediana_ms": 0
         }
       },
@@ -1431,9 +1544,11 @@
           "nao_encontrados_top10": 4,
           "precisao_top5": 0,
           "sem_resultado": 0,
-          "tempo_banco_mediana_ms": 31.8,
-          "tempo_banco_p95_ms": 34.19,
-          "tempo_embedding_mediana_ms": 7.11
+          "tempo_banco_mediana_ms": 28.13,
+          "tempo_banco_p95_ms": 34.14,
+          "tempo_servidor_mediana_ms": 1.456,
+          "tempo_servidor_p95_ms": 1.468,
+          "tempo_embedding_mediana_ms": 8.35
         },
         "denso": {
           "consultas": 5,
@@ -1445,23 +1560,27 @@
           "nao_encontrados_top10": 4,
           "precisao_top5": 0.16,
           "sem_resultado": 0,
-          "tempo_banco_mediana_ms": 34.67,
-          "tempo_banco_p95_ms": 77.58,
-          "tempo_embedding_mediana_ms": 8.27
+          "tempo_banco_mediana_ms": 30.4,
+          "tempo_banco_p95_ms": 70.32,
+          "tempo_servidor_mediana_ms": 1.415,
+          "tempo_servidor_p95_ms": 1.425,
+          "tempo_embedding_mediana_ms": 9.52
         },
         "hibrido": {
           "consultas": 5,
           "acerto_top5": 0.8,
           "acerto_top5_ponderado": 0.7994,
           "acaso_top5_medio": 0.0224,
-          "mrr_top10": 0.6333,
-          "posicao_media": 2.4,
+          "mrr_top10": 0.7333,
+          "posicao_media": 2.2,
           "nao_encontrados_top10": 0,
-          "precisao_top5": 0.4,
+          "precisao_top5": 0.44,
           "sem_resultado": 0,
-          "tempo_banco_mediana_ms": 41.39,
-          "tempo_banco_p95_ms": 79.97,
-          "tempo_embedding_mediana_ms": 11.09
+          "tempo_banco_mediana_ms": 30.82,
+          "tempo_banco_p95_ms": 74.46,
+          "tempo_servidor_mediana_ms": 2.815,
+          "tempo_servidor_p95_ms": 3.054,
+          "tempo_embedding_mediana_ms": 9.31
         },
         "ilike": {
           "consultas": 5,
@@ -1473,8 +1592,10 @@
           "nao_encontrados_top10": 0,
           "precisao_top5": 1,
           "sem_resultado": 0,
-          "tempo_banco_mediana_ms": 72.31,
-          "tempo_banco_p95_ms": 75.76,
+          "tempo_banco_mediana_ms": 67.01,
+          "tempo_banco_p95_ms": 68.12,
+          "tempo_servidor_mediana_ms": 45.089,
+          "tempo_servidor_p95_ms": 47.063,
           "tempo_embedding_mediana_ms": 0
         },
         "fulltext": {
@@ -1487,8 +1608,10 @@
           "nao_encontrados_top10": 0,
           "precisao_top5": 1,
           "sem_resultado": 0,
-          "tempo_banco_mediana_ms": 24.39,
-          "tempo_banco_p95_ms": 26.46,
+          "tempo_banco_mediana_ms": 21.3,
+          "tempo_banco_p95_ms": 23.31,
+          "tempo_servidor_mediana_ms": 0.336,
+          "tempo_servidor_p95_ms": 0.375,
           "tempo_embedding_mediana_ms": 0
         }
       },
@@ -1503,9 +1626,11 @@
           "nao_encontrados_top10": 5,
           "precisao_top5": 0.2,
           "sem_resultado": 0,
-          "tempo_banco_mediana_ms": 28.57,
-          "tempo_banco_p95_ms": 31.23,
-          "tempo_embedding_mediana_ms": 6.27
+          "tempo_banco_mediana_ms": 27.84,
+          "tempo_banco_p95_ms": 29.37,
+          "tempo_servidor_mediana_ms": 1.479,
+          "tempo_servidor_p95_ms": 1.502,
+          "tempo_embedding_mediana_ms": 9.21
         },
         "denso": {
           "consultas": 7,
@@ -1517,23 +1642,27 @@
           "nao_encontrados_top10": 3,
           "precisao_top5": 0.3714,
           "sem_resultado": 0,
-          "tempo_banco_mediana_ms": 30.66,
-          "tempo_banco_p95_ms": 79.26,
-          "tempo_embedding_mediana_ms": 8.38
+          "tempo_banco_mediana_ms": 30.5,
+          "tempo_banco_p95_ms": 74.03,
+          "tempo_servidor_mediana_ms": 1.437,
+          "tempo_servidor_p95_ms": 1.477,
+          "tempo_embedding_mediana_ms": 8.82
         },
         "hibrido": {
           "consultas": 7,
           "acerto_top5": 0.8571,
           "acerto_top5_ponderado": 0.867,
           "acaso_top5_medio": 0.1853,
-          "mrr_top10": 0.623,
-          "posicao_media": 2.86,
+          "mrr_top10": 0.7778,
+          "posicao_media": 2.43,
           "nao_encontrados_top10": 0,
           "precisao_top5": 0.4571,
           "sem_resultado": 0,
-          "tempo_banco_mediana_ms": 33.07,
-          "tempo_banco_p95_ms": 38.24,
-          "tempo_embedding_mediana_ms": 9.94
+          "tempo_banco_mediana_ms": 74.62,
+          "tempo_banco_p95_ms": 85.97,
+          "tempo_servidor_mediana_ms": 2.871,
+          "tempo_servidor_p95_ms": 2.945,
+          "tempo_embedding_mediana_ms": 8.65
         },
         "ilike": {
           "consultas": 7,
@@ -1545,8 +1674,10 @@
           "nao_encontrados_top10": 7,
           "precisao_top5": 0,
           "sem_resultado": 7,
-          "tempo_banco_mediana_ms": 68.95,
-          "tempo_banco_p95_ms": 74.33,
+          "tempo_banco_mediana_ms": 67.28,
+          "tempo_banco_p95_ms": 70.9,
+          "tempo_servidor_mediana_ms": 45.229,
+          "tempo_servidor_p95_ms": 46.178,
           "tempo_embedding_mediana_ms": 0
         },
         "fulltext": {
@@ -1559,8 +1690,10 @@
           "nao_encontrados_top10": 0,
           "precisao_top5": 0.7714,
           "sem_resultado": 0,
-          "tempo_banco_mediana_ms": 46.77,
-          "tempo_banco_p95_ms": 50.04,
+          "tempo_banco_mediana_ms": 43.29,
+          "tempo_banco_p95_ms": 47.64,
+          "tempo_servidor_mediana_ms": 1.067,
+          "tempo_servidor_p95_ms": 2.982,
           "tempo_embedding_mediana_ms": 0
         }
       },
@@ -1575,9 +1708,11 @@
           "nao_encontrados_top10": 2,
           "precisao_top5": 0.0667,
           "sem_resultado": 0,
-          "tempo_banco_mediana_ms": 31.95,
-          "tempo_banco_p95_ms": 32.81,
-          "tempo_embedding_mediana_ms": 11.6
+          "tempo_banco_mediana_ms": 27.97,
+          "tempo_banco_p95_ms": 28.07,
+          "tempo_servidor_mediana_ms": 1.45,
+          "tempo_servidor_p95_ms": 1.454,
+          "tempo_embedding_mediana_ms": 6.64
         },
         "denso": {
           "consultas": 3,
@@ -1589,23 +1724,27 @@
           "nao_encontrados_top10": 2,
           "precisao_top5": 0.0667,
           "sem_resultado": 0,
-          "tempo_banco_mediana_ms": 31.76,
-          "tempo_banco_p95_ms": 32.85,
-          "tempo_embedding_mediana_ms": 13.91
+          "tempo_banco_mediana_ms": 28.56,
+          "tempo_banco_p95_ms": 75.41,
+          "tempo_servidor_mediana_ms": 1.469,
+          "tempo_servidor_p95_ms": 1.516,
+          "tempo_embedding_mediana_ms": 9.44
         },
         "hibrido": {
           "consultas": 3,
           "acerto_top5": 0.6667,
           "acerto_top5_ponderado": 0.6519,
           "acaso_top5_medio": 0.0524,
-          "mrr_top10": 0.7143,
-          "posicao_media": 3,
+          "mrr_top10": 0.7083,
+          "posicao_media": 3.33,
           "nao_encontrados_top10": 0,
           "precisao_top5": 0.3333,
           "sem_resultado": 0,
-          "tempo_banco_mediana_ms": 31.06,
-          "tempo_banco_p95_ms": 32.15,
-          "tempo_embedding_mediana_ms": 11.42
+          "tempo_banco_mediana_ms": 78.55,
+          "tempo_banco_p95_ms": 80.98,
+          "tempo_servidor_mediana_ms": 2.86,
+          "tempo_servidor_p95_ms": 2.981,
+          "tempo_embedding_mediana_ms": 8.19
         },
         "ilike": {
           "consultas": 3,
@@ -1617,8 +1756,10 @@
           "nao_encontrados_top10": 3,
           "precisao_top5": 0,
           "sem_resultado": 3,
-          "tempo_banco_mediana_ms": 68.51,
-          "tempo_banco_p95_ms": 68.79,
+          "tempo_banco_mediana_ms": 66.81,
+          "tempo_banco_p95_ms": 67.06,
+          "tempo_servidor_mediana_ms": 44.721,
+          "tempo_servidor_p95_ms": 45.792,
           "tempo_embedding_mediana_ms": 0
         },
         "fulltext": {
@@ -1631,8 +1772,10 @@
           "nao_encontrados_top10": 1,
           "precisao_top5": 0.6667,
           "sem_resultado": 0,
-          "tempo_banco_mediana_ms": 48.37,
-          "tempo_banco_p95_ms": 51.04,
+          "tempo_banco_mediana_ms": 43.73,
+          "tempo_banco_p95_ms": 47.39,
+          "tempo_servidor_mediana_ms": 1.448,
+          "tempo_servidor_p95_ms": 5.26,
           "tempo_embedding_mediana_ms": 0
         }
       }
@@ -1648,15 +1791,23 @@
       "corretos_top5": 0,
       "total_resultados": 10,
       "relaxado": false,
-      "tempo_banco_ms": 28.94,
+      "tempo_banco_ms": 30.75,
       "tempo_banco_ms_amostras": [
-        28.7,
-        30.67,
-        28.73,
-        28.94,
-        30.92
+        89.72,
+        47.78,
+        27.98,
+        30.75,
+        30.59
       ],
-      "tempo_embedding_ms": 7.55,
+      "tempo_servidor_ms": 1.492,
+      "tempo_servidor_ms_amostras": [
+        1.619,
+        3.08,
+        1.472,
+        1.492,
+        1.467
+      ],
+      "tempo_embedding_ms": 4.5,
       "top5": [
         {
           "produto": "DOXURAN",
@@ -1669,14 +1820,14 @@
           "produto": "DOXICLIN",
           "substancia": "CLORIDRATO DE DOXICICLINA",
           "selo": "Similar",
-          "pmc": 47.07,
+          "pmc": 47,
           "correto": false
         },
         {
           "produto": "DOXICLIN",
           "substancia": "CLORIDRATO DE DOXICICLINA",
           "selo": "Similar",
-          "pmc": 47,
+          "pmc": 47.07,
           "correto": false
         },
         {
@@ -1704,16 +1855,31 @@
       "corretos_top5": 5,
       "total_resultados": 10,
       "relaxado": false,
-      "tempo_banco_ms": 79.88,
+      "tempo_banco_ms": 67.44,
       "tempo_banco_ms_amostras": [
-        68.77,
-        79.93,
-        83.1,
-        76.71,
-        79.88
+        71.49,
+        28.24,
+        67.44,
+        89.92,
+        29.98
       ],
-      "tempo_embedding_ms": 5.76,
+      "tempo_servidor_ms": 1.469,
+      "tempo_servidor_ms_amostras": [
+        1.469,
+        1.465,
+        1.489,
+        2.084,
+        1.431
+      ],
+      "tempo_embedding_ms": 5.48,
       "top5": [
+        {
+          "produto": "DORICIN",
+          "substancia": "CITRATO DE ORFENADRINA + CAFEÍNA ANIDRA + DIPIRONA MONOIDRATADA",
+          "selo": "Similar",
+          "pmc": 19.22,
+          "correto": true
+        },
         {
           "produto": "DORICIN",
           "substancia": "CITRATO DE ORFENADRINA + CAFEÍNA ANIDRA + DIPIRONA MONOIDRATADA",
@@ -1726,13 +1892,6 @@
           "substancia": "CITRATO DE ORFENADRINA + CAFEÍNA ANIDRA + DIPIRONA MONOIDRATADA",
           "selo": "Similar",
           "pmc": 39.94,
-          "correto": true
-        },
-        {
-          "produto": "DORICIN",
-          "substancia": "CITRATO DE ORFENADRINA + CAFEÍNA ANIDRA + DIPIRONA MONOIDRATADA",
-          "selo": "Similar",
-          "pmc": 19.22,
           "correto": true
         },
         {
@@ -1755,21 +1914,36 @@
       "consulta_id": 1,
       "motor": "hibrido",
       "acerto_top5": true,
-      "posicao_primeiro_correto": 2,
-      "rr": 0.5,
+      "posicao_primeiro_correto": 1,
+      "rr": 1,
       "corretos_top5": 3,
       "total_resultados": 10,
       "relaxado": false,
-      "tempo_banco_ms": 86.52,
+      "tempo_banco_ms": 77.6,
       "tempo_banco_ms_amostras": [
-        75.37,
-        157.71,
-        75.09,
-        86.52,
-        118.06
+        75.82,
+        77.6,
+        73.77,
+        80.43,
+        85.05
       ],
-      "tempo_embedding_ms": 7.08,
+      "tempo_servidor_ms": 2.868,
+      "tempo_servidor_ms_amostras": [
+        2.893,
+        2.82,
+        2.765,
+        2.868,
+        2.938
+      ],
+      "tempo_embedding_ms": 6.75,
       "top5": [
+        {
+          "produto": "DORICIN",
+          "substancia": "CITRATO DE ORFENADRINA + CAFEÍNA ANIDRA + DIPIRONA MONOIDRATADA",
+          "selo": "Similar",
+          "pmc": 39.94,
+          "correto": true
+        },
         {
           "produto": "DORFLEX DIP",
           "substancia": "DIPIRONA MONOIDRATADA",
@@ -1781,7 +1955,7 @@
           "produto": "DORICIN",
           "substancia": "CITRATO DE ORFENADRINA + CAFEÍNA ANIDRA + DIPIRONA MONOIDRATADA",
           "selo": "Similar",
-          "pmc": 39.94,
+          "pmc": 240.5,
           "correto": true
         },
         {
@@ -1790,13 +1964,6 @@
           "selo": "Similar",
           "pmc": 35.11,
           "correto": false
-        },
-        {
-          "produto": "DORICIN",
-          "substancia": "CITRATO DE ORFENADRINA + CAFEÍNA ANIDRA + DIPIRONA MONOIDRATADA",
-          "selo": "Similar",
-          "pmc": 240.5,
-          "correto": true
         },
         {
           "produto": "DORFLEX",
@@ -1816,13 +1983,21 @@
       "corretos_top5": 5,
       "total_resultados": 10,
       "relaxado": false,
-      "tempo_banco_ms": 70.13,
+      "tempo_banco_ms": 67.72,
       "tempo_banco_ms_amostras": [
-        68.45,
-        101.79,
-        66.54,
-        73.51,
-        70.13
+        65.47,
+        69.16,
+        65.71,
+        67.74,
+        67.72
+      ],
+      "tempo_servidor_ms": 45.004,
+      "tempo_servidor_ms_amostras": [
+        45.889,
+        44.474,
+        44.94,
+        45.38,
+        45.004
       ],
       "tempo_embedding_ms": 0,
       "top5": [
@@ -1872,13 +2047,21 @@
       "corretos_top5": 3,
       "total_resultados": 10,
       "relaxado": false,
-      "tempo_banco_ms": 24.58,
+      "tempo_banco_ms": 21.39,
       "tempo_banco_ms_amostras": [
-        24.74,
-        23.94,
-        24.29,
-        27.12,
-        24.58
+        20.57,
+        20.81,
+        27.32,
+        21.39,
+        21.53
+      ],
+      "tempo_servidor_ms": 0.246,
+      "tempo_servidor_ms_amostras": [
+        0.229,
+        0.238,
+        0.252,
+        0.248,
+        0.246
       ],
       "tempo_embedding_ms": 0,
       "top5": [
@@ -1928,21 +2111,36 @@
       "corretos_top5": 0,
       "total_resultados": 10,
       "relaxado": false,
-      "tempo_banco_ms": 29.55,
+      "tempo_banco_ms": 28.11,
       "tempo_banco_ms_amostras": [
-        41.32,
-        30.58,
-        28.79,
-        29.55,
-        27.85
+        27.79,
+        29.17,
+        28.62,
+        27.74,
+        28.11
       ],
-      "tempo_embedding_ms": 5.95,
+      "tempo_servidor_ms": 1.584,
+      "tempo_servidor_ms_amostras": [
+        1.584,
+        2.53,
+        2.28,
+        1.429,
+        1.499
+      ],
+      "tempo_embedding_ms": 5.44,
       "top5": [
         {
           "produto": "BENEFIX",
           "substancia": "ALFANONACOGUE",
           "selo": "Biológico",
           "pmc": 5852.46,
+          "correto": false
+        },
+        {
+          "produto": "ALPRAZOLAM",
+          "substancia": "ALPRAZOLAM",
+          "selo": "Genérico",
+          "pmc": 60.24,
           "correto": false
         },
         {
@@ -1963,13 +2161,6 @@
           "produto": "ALPRAZOLAM",
           "substancia": "ALPRAZOLAM",
           "selo": "Genérico",
-          "pmc": 60.24,
-          "correto": false
-        },
-        {
-          "produto": "ALPRAZOLAM",
-          "substancia": "ALPRAZOLAM",
-          "selo": "Genérico",
           "pmc": 86.48,
           "correto": false
         }
@@ -1984,15 +2175,23 @@
       "corretos_top5": 0,
       "total_resultados": 10,
       "relaxado": false,
-      "tempo_banco_ms": 74.55,
+      "tempo_banco_ms": 72.07,
       "tempo_banco_ms_amostras": [
-        74.55,
-        70.36,
-        79.76,
-        28.45,
-        77.74
+        73.16,
+        28.81,
+        72.07,
+        75.94,
+        40.69
       ],
-      "tempo_embedding_ms": 5.83,
+      "tempo_servidor_ms": 1.427,
+      "tempo_servidor_ms_amostras": [
+        1.422,
+        1.416,
+        1.427,
+        8.61,
+        1.464
+      ],
+      "tempo_embedding_ms": 5.22,
       "top5": [
         {
           "produto": "BENEFIX",
@@ -2037,18 +2236,26 @@
       "acerto_top5": true,
       "posicao_primeiro_correto": 2,
       "rr": 0.5,
-      "corretos_top5": 2,
+      "corretos_top5": 3,
       "total_resultados": 10,
       "relaxado": false,
-      "tempo_banco_ms": 78.4,
+      "tempo_banco_ms": 73.81,
       "tempo_banco_ms_amostras": [
-        78.4,
-        84.02,
-        75.87,
-        69.62,
-        79.98
+        87.46,
+        31.2,
+        78.38,
+        73.81,
+        29.59
       ],
-      "tempo_embedding_ms": 5.77,
+      "tempo_servidor_ms": 2.96,
+      "tempo_servidor_ms_amostras": [
+        2.96,
+        3.999,
+        2.9,
+        3.07,
+        2.882
+      ],
+      "tempo_embedding_ms": 6.48,
       "top5": [
         {
           "produto": "BENEFIX",
@@ -2065,6 +2272,13 @@
           "correto": true
         },
         {
+          "produto": "ALLEGRA",
+          "substancia": "CLORIDRATO DE FEXOFENADINA",
+          "selo": "Referência",
+          "pmc": 91.02,
+          "correto": true
+        },
+        {
           "produto": "DICLORIDRATO DE BETAISTINA",
           "substancia": "DICLORIDRATO DE BETAISTINA",
           "selo": "Genérico",
@@ -2075,15 +2289,8 @@
           "produto": "ALLEGRA",
           "substancia": "CLORIDRATO DE FEXOFENADINA",
           "selo": "Referência",
-          "pmc": 91.02,
+          "pmc": 40.59,
           "correto": true
-        },
-        {
-          "produto": "LIVTÓS",
-          "substancia": "MIKANIA GLOMERATA SPRENG.",
-          "selo": "Fitoterápico",
-          "pmc": 17.36,
-          "correto": false
         }
       ]
     },
@@ -2096,13 +2303,21 @@
       "corretos_top5": 5,
       "total_resultados": 10,
       "relaxado": false,
-      "tempo_banco_ms": 69.66,
+      "tempo_banco_ms": 66.11,
       "tempo_banco_ms_amostras": [
-        69.59,
-        76.08,
-        70.31,
-        69.66,
-        68.88
+        67.47,
+        70.27,
+        65.79,
+        66.11,
+        65.69
+      ],
+      "tempo_servidor_ms": 45.434,
+      "tempo_servidor_ms_amostras": [
+        53.806,
+        50.326,
+        44.105,
+        44.76,
+        45.434
       ],
       "tempo_embedding_ms": 0,
       "top5": [
@@ -2152,13 +2367,21 @@
       "corretos_top5": 5,
       "total_resultados": 10,
       "relaxado": false,
-      "tempo_banco_ms": 25.13,
+      "tempo_banco_ms": 21.27,
       "tempo_banco_ms_amostras": [
-        25.46,
-        25.13,
-        24.75,
-        31.86,
-        23.71
+        21.03,
+        21.94,
+        20.27,
+        21.73,
+        21.27
+      ],
+      "tempo_servidor_ms": 0.216,
+      "tempo_servidor_ms_amostras": [
+        0.245,
+        0.253,
+        0.213,
+        0.216,
+        0.204
       ],
       "tempo_embedding_ms": 0,
       "top5": [
@@ -2208,15 +2431,23 @@
       "corretos_top5": 0,
       "total_resultados": 10,
       "relaxado": false,
-      "tempo_banco_ms": 29.34,
+      "tempo_banco_ms": 28.85,
       "tempo_banco_ms_amostras": [
-        29.1,
-        29.35,
-        28.53,
-        29.34,
-        35.79
+        26.89,
+        28.85,
+        32.97,
+        28.47,
+        29.55
       ],
-      "tempo_embedding_ms": 5.95,
+      "tempo_servidor_ms": 2.603,
+      "tempo_servidor_ms_amostras": [
+        1.494,
+        1.602,
+        3.074,
+        2.603,
+        3.576
+      ],
+      "tempo_embedding_ms": 4.61,
       "top5": [
         {
           "produto": "COGNITUS",
@@ -2264,15 +2495,23 @@
       "corretos_top5": 0,
       "total_resultados": 10,
       "relaxado": false,
-      "tempo_banco_ms": 72.98,
+      "tempo_banco_ms": 73.13,
       "tempo_banco_ms_amostras": [
-        123.11,
-        72.98,
-        82.77,
-        39.07,
-        32.38
+        35.84,
+        76.7,
+        31.04,
+        86.99,
+        73.13
       ],
-      "tempo_embedding_ms": 5.64,
+      "tempo_servidor_ms": 1.462,
+      "tempo_servidor_ms_amostras": [
+        1.47,
+        1.392,
+        1.547,
+        1.462,
+        1.381
+      ],
+      "tempo_embedding_ms": 6.06,
       "top5": [
         {
           "produto": "COGNITUS",
@@ -2299,14 +2538,14 @@
           "produto": "LABIRIN",
           "substancia": "CLORIDRATO DE BETAISTINA",
           "selo": "Referência",
-          "pmc": 130.82,
+          "pmc": 66.03,
           "correto": false
         },
         {
           "produto": "LABIRIN",
           "substancia": "CLORIDRATO DE BETAISTINA",
           "selo": "Referência",
-          "pmc": 66.03,
+          "pmc": 130.82,
           "correto": false
         }
       ]
@@ -2317,18 +2556,26 @@
       "acerto_top5": true,
       "posicao_primeiro_correto": 2,
       "rr": 0.5,
-      "corretos_top5": 2,
+      "corretos_top5": 3,
       "total_resultados": 10,
       "relaxado": false,
-      "tempo_banco_ms": 33.78,
+      "tempo_banco_ms": 75.68,
       "tempo_banco_ms_amostras": [
-        33.78,
-        36.05,
-        79.49,
-        32.42,
-        30.33
+        87.5,
+        31.92,
+        75.68,
+        87.08,
+        70.28
       ],
-      "tempo_embedding_ms": 8.99,
+      "tempo_servidor_ms": 2.895,
+      "tempo_servidor_ms_amostras": [
+        2.882,
+        2.91,
+        5.407,
+        2.873,
+        2.895
+      ],
+      "tempo_embedding_ms": 7.09,
       "top5": [
         {
           "produto": "COGNITUS",
@@ -2359,11 +2606,11 @@
           "correto": false
         },
         {
-          "produto": "LABIRIN",
-          "substancia": "CLORIDRATO DE BETAISTINA",
-          "selo": "Similar",
-          "pmc": 49.34,
-          "correto": false
+          "produto": "BUSCOPAN",
+          "substancia": "BUTILBROMETO DE ESCOPOLAMINA",
+          "selo": "Referência",
+          "pmc": 29.86,
+          "correto": true
         }
       ]
     },
@@ -2376,13 +2623,21 @@
       "corretos_top5": 4,
       "total_resultados": 8,
       "relaxado": false,
-      "tempo_banco_ms": 69.7,
+      "tempo_banco_ms": 65.1,
       "tempo_banco_ms_amostras": [
-        74.63,
-        66.29,
-        65.51,
-        69.89,
-        69.7
+        64.84,
+        65.95,
+        65.1,
+        67.64,
+        65
+      ],
+      "tempo_servidor_ms": 43.825,
+      "tempo_servidor_ms_amostras": [
+        43.825,
+        43.498,
+        44.824,
+        46.66,
+        42.846
       ],
       "tempo_embedding_ms": 0,
       "top5": [
@@ -2427,41 +2682,49 @@
       "consulta_id": 3,
       "motor": "fulltext",
       "acerto_top5": true,
-      "posicao_primeiro_correto": 2,
-      "rr": 0.5,
+      "posicao_primeiro_correto": 1,
+      "rr": 1,
       "corretos_top5": 3,
       "total_resultados": 8,
       "relaxado": false,
-      "tempo_banco_ms": 24.92,
+      "tempo_banco_ms": 21.24,
       "tempo_banco_ms_amostras": [
-        22.26,
-        22.88,
-        25.02,
-        36.81,
-        24.92
+        20,
+        21.2,
+        22.01,
+        21.24,
+        22.8
+      ],
+      "tempo_servidor_ms": 0.205,
+      "tempo_servidor_ms_amostras": [
+        0.205,
+        0.2,
+        0.189,
+        0.222,
+        0.229
       ],
       "tempo_embedding_ms": 0,
       "top5": [
+        {
+          "produto": "BUSCOPAN",
+          "substancia": "BUTILBROMETO DE ESCOPOLAMINA",
+          "selo": "Referência",
+          "pmc": 29.85,
+          "correto": true
+        },
+        {
+          "produto": "BUSCOPAN",
+          "substancia": "BUTILBROMETO DE ESCOPOLAMINA",
+          "selo": "Referência",
+          "pmc": 29.85,
+          "correto": true
+        },
         {
           "produto": "BUSCOPAN COMPOSTO",
           "substancia": "DIPIRONA MONOIDRATADA + BUTILBROMETO DE ESCOPOLAMINA",
           "selo": "Referência",
           "pmc": 29.85,
           "correto": false
-        },
-        {
-          "produto": "BUSCOPAN",
-          "substancia": "BUTILBROMETO DE ESCOPOLAMINA",
-          "selo": "Referência",
-          "pmc": 29.85,
-          "correto": true
-        },
-        {
-          "produto": "BUSCOPAN",
-          "substancia": "BUTILBROMETO DE ESCOPOLAMINA",
-          "selo": "Referência",
-          "pmc": 29.85,
-          "correto": true
         },
         {
           "produto": "BUSCOPAN",
@@ -2488,15 +2751,23 @@
       "corretos_top5": 0,
       "total_resultados": 10,
       "relaxado": false,
-      "tempo_banco_ms": 28.59,
+      "tempo_banco_ms": 28.8,
       "tempo_banco_ms_amostras": [
-        45.08,
-        27.68,
-        28.59,
-        32.24,
-        27.96
+        28.8,
+        29.13,
+        28.22,
+        27.94,
+        29.49
       ],
-      "tempo_embedding_ms": 7.8,
+      "tempo_servidor_ms": 1.489,
+      "tempo_servidor_ms_amostras": [
+        1.468,
+        2.29,
+        1.556,
+        1.489,
+        1.469
+      ],
+      "tempo_embedding_ms": 5.27,
       "top5": [
         {
           "produto": "NISTATINA",
@@ -2516,6 +2787,13 @@
           "produto": "NISTATINA",
           "substancia": "NISTATINA",
           "selo": "Genérico",
+          "pmc": 1224.8,
+          "correto": false
+        },
+        {
+          "produto": "NISTATINA",
+          "substancia": "NISTATINA",
+          "selo": "Genérico",
           "pmc": 26.11,
           "correto": false
         },
@@ -2524,13 +2802,6 @@
           "substancia": "NISTATINA",
           "selo": "Genérico",
           "pmc": 26.71,
-          "correto": false
-        },
-        {
-          "produto": "NISTATINA",
-          "substancia": "NISTATINA",
-          "selo": "Genérico",
-          "pmc": 19.04,
           "correto": false
         }
       ]
@@ -2544,15 +2815,23 @@
       "corretos_top5": 0,
       "total_resultados": 10,
       "relaxado": false,
-      "tempo_banco_ms": 69.62,
+      "tempo_banco_ms": 72.5,
       "tempo_banco_ms_amostras": [
-        41.19,
-        69.62,
-        82.04,
-        46.52,
-        72.35
+        67.97,
+        84.4,
+        72.5,
+        42.34,
+        86.63
       ],
-      "tempo_embedding_ms": 5.83,
+      "tempo_servidor_ms": 1.424,
+      "tempo_servidor_ms_amostras": [
+        1.383,
+        2.27,
+        1.403,
+        1.477,
+        1.424
+      ],
+      "tempo_embedding_ms": 6.74,
       "top5": [
         {
           "produto": "NISTATINA",
@@ -2586,7 +2865,7 @@
           "produto": "NISTATINA",
           "substancia": "NISTATINA",
           "selo": "Genérico",
-          "pmc": 19.04,
+          "pmc": 1224.8,
           "correto": false
         }
       ]
@@ -2595,34 +2874,42 @@
       "consulta_id": 4,
       "motor": "hibrido",
       "acerto_top5": true,
-      "posicao_primeiro_correto": 2,
-      "rr": 0.5,
-      "corretos_top5": 2,
+      "posicao_primeiro_correto": 1,
+      "rr": 1,
+      "corretos_top5": 3,
       "total_resultados": 10,
       "relaxado": false,
-      "tempo_banco_ms": 34.36,
+      "tempo_banco_ms": 71.77,
       "tempo_banco_ms_amostras": [
-        34.18,
-        81.12,
-        31.66,
-        34.36,
-        71.96
+        85.52,
+        30.81,
+        90.14,
+        32.46,
+        71.77
       ],
-      "tempo_embedding_ms": 9.39,
+      "tempo_servidor_ms": 3.037,
+      "tempo_servidor_ms_amostras": [
+        2.897,
+        3.908,
+        3.037,
+        2.868,
+        3.941
+      ],
+      "tempo_embedding_ms": 8.04,
       "top5": [
-        {
-          "produto": "NISTATINA",
-          "substancia": "NISTATINA",
-          "selo": "Genérico",
-          "pmc": 28.01,
-          "correto": false
-        },
         {
           "produto": "NOVALGINA",
           "substancia": "DIPIRONA MONOIDRATADA",
           "selo": "Referência",
           "pmc": 49.63,
           "correto": true
+        },
+        {
+          "produto": "NISTATINA",
+          "substancia": "NISTATINA",
+          "selo": "Genérico",
+          "pmc": 28.01,
+          "correto": false
         },
         {
           "produto": "NOVALGINA",
@@ -2639,11 +2926,11 @@
           "correto": false
         },
         {
-          "produto": "NISTATINA",
-          "substancia": "NISTATINA",
-          "selo": "Genérico",
-          "pmc": 18.06,
-          "correto": false
+          "produto": "NOVALGINA",
+          "substancia": "DIPIRONA MONOIDRATADA",
+          "selo": "Referência",
+          "pmc": 32.84,
+          "correto": true
         }
       ]
     },
@@ -2656,13 +2943,21 @@
       "corretos_top5": 5,
       "total_resultados": 10,
       "relaxado": false,
-      "tempo_banco_ms": 68.78,
+      "tempo_banco_ms": 69.16,
       "tempo_banco_ms_amostras": [
-        68.61,
-        66.69,
-        69.95,
-        68.78,
-        70.55
+        69.16,
+        64.98,
+        71.01,
+        77.24,
+        68.62
+      ],
+      "tempo_servidor_ms": 45.298,
+      "tempo_servidor_ms_amostras": [
+        45.364,
+        48.146,
+        45.298,
+        44.53,
+        44.565
       ],
       "tempo_embedding_ms": 0,
       "top5": [
@@ -2712,13 +3007,21 @@
       "corretos_top5": 5,
       "total_resultados": 10,
       "relaxado": false,
-      "tempo_banco_ms": 23.91,
+      "tempo_banco_ms": 21.31,
       "tempo_banco_ms_amostras": [
-        26.78,
-        23.91,
-        25.8,
-        23.03,
-        21.98
+        22.1,
+        20.64,
+        49.41,
+        21.31,
+        21.02
+      ],
+      "tempo_servidor_ms": 0.232,
+      "tempo_servidor_ms_amostras": [
+        0.223,
+        0.234,
+        0.229,
+        0.255,
+        0.232
       ],
       "tempo_embedding_ms": 0,
       "top5": [
@@ -2768,15 +3071,23 @@
       "corretos_top5": 4,
       "total_resultados": 10,
       "relaxado": false,
-      "tempo_banco_ms": 30.58,
+      "tempo_banco_ms": 28.3,
       "tempo_banco_ms_amostras": [
-        27.63,
-        27.84,
-        30.58,
-        46.66,
-        31.06
+        34.75,
+        28.4,
+        27.68,
+        28.3,
+        28.15
       ],
-      "tempo_embedding_ms": 6.33,
+      "tempo_servidor_ms": 1.486,
+      "tempo_servidor_ms_amostras": [
+        8.264,
+        1.406,
+        1.486,
+        1.449,
+        2.023
+      ],
+      "tempo_embedding_ms": 7.09,
       "top5": [
         {
           "produto": "PURAN T4",
@@ -2824,15 +3135,23 @@
       "corretos_top5": 3,
       "total_resultados": 10,
       "relaxado": false,
-      "tempo_banco_ms": 31.44,
+      "tempo_banco_ms": 71.17,
       "tempo_banco_ms_amostras": [
-        31.44,
-        85.82,
-        79.2,
-        30.1,
-        29.54
+        85.89,
+        80.01,
+        67.94,
+        71.17,
+        46.73
       ],
-      "tempo_embedding_ms": 7.2,
+      "tempo_servidor_ms": 1.492,
+      "tempo_servidor_ms_amostras": [
+        3.315,
+        1.358,
+        1.492,
+        1.375,
+        2.46
+      ],
+      "tempo_embedding_ms": 6.42,
       "top5": [
         {
           "produto": "PURAN T4",
@@ -2877,18 +3196,26 @@
       "acerto_top5": true,
       "posicao_primeiro_correto": 1,
       "rr": 1,
-      "corretos_top5": 5,
+      "corretos_top5": 4,
       "total_resultados": 10,
       "relaxado": false,
-      "tempo_banco_ms": 31.24,
+      "tempo_banco_ms": 71.63,
       "tempo_banco_ms_amostras": [
-        30.75,
-        74.35,
-        29.25,
-        36.43,
-        31.24
+        76.01,
+        30.84,
+        80.07,
+        71.63,
+        30.06
       ],
-      "tempo_embedding_ms": 10.61,
+      "tempo_servidor_ms": 2.736,
+      "tempo_servidor_ms_amostras": [
+        3.794,
+        2.576,
+        2.736,
+        2.61,
+        3.896
+      ],
+      "tempo_embedding_ms": 6.97,
       "top5": [
         {
           "produto": "PURAN T4",
@@ -2919,11 +3246,11 @@
           "correto": true
         },
         {
-          "produto": "PURAN T4",
-          "substancia": "LEVOTIROXINA SÓDICA",
+          "produto": "OLUMIANT",
+          "substancia": "BARICITINIBE",
           "selo": "Referência",
-          "pmc": 19.04,
-          "correto": true
+          "pmc": 8217.18,
+          "correto": false
         }
       ]
     },
@@ -2936,13 +3263,21 @@
       "corretos_top5": 5,
       "total_resultados": 10,
       "relaxado": false,
-      "tempo_banco_ms": 73.92,
+      "tempo_banco_ms": 65.82,
       "tempo_banco_ms_amostras": [
-        70.15,
-        73.92,
-        68.03,
-        77.32,
-        76.77
+        66.13,
+        65.02,
+        65.35,
+        65.82,
+        68.15
+      ],
+      "tempo_servidor_ms": 45.232,
+      "tempo_servidor_ms_amostras": [
+        45.232,
+        43.624,
+        44.668,
+        45.585,
+        48.315
       ],
       "tempo_embedding_ms": 0,
       "top5": [
@@ -2992,13 +3327,21 @@
       "corretos_top5": 5,
       "total_resultados": 10,
       "relaxado": false,
-      "tempo_banco_ms": 22.15,
+      "tempo_banco_ms": 20.83,
       "tempo_banco_ms_amostras": [
-        24.07,
-        21.63,
-        21.69,
-        22.15,
-        22.95
+        83.11,
+        20.25,
+        20.41,
+        20.83,
+        20.92
+      ],
+      "tempo_servidor_ms": 0.233,
+      "tempo_servidor_ms_amostras": [
+        0.25,
+        0.233,
+        0.224,
+        0.233,
+        0.254
       ],
       "tempo_embedding_ms": 0,
       "top5": [
@@ -3048,15 +3391,23 @@
       "corretos_top5": 0,
       "total_resultados": 10,
       "relaxado": false,
-      "tempo_banco_ms": 28.54,
+      "tempo_banco_ms": 29.33,
       "tempo_banco_ms_amostras": [
-        28.54,
-        35.73,
-        27.87,
-        29.34,
-        27.84
+        28.99,
+        34.73,
+        29.33,
+        32.89,
+        28.11
       ],
-      "tempo_embedding_ms": 5.13,
+      "tempo_servidor_ms": 1.49,
+      "tempo_servidor_ms_amostras": [
+        2.518,
+        1.49,
+        1.437,
+        1.532,
+        1.458
+      ],
+      "tempo_embedding_ms": 4.83,
       "top5": [
         {
           "produto": "APLAUSE",
@@ -3076,14 +3427,14 @@
           "produto": "CELEBRA",
           "substancia": "CELECOXIBE",
           "selo": "Referência",
-          "pmc": 127.02,
+          "pmc": 85.83,
           "correto": false
         },
         {
           "produto": "CELEBRA",
           "substancia": "CELECOXIBE",
           "selo": "Referência",
-          "pmc": 85.83,
+          "pmc": 127.02,
           "correto": false
         },
         {
@@ -3104,15 +3455,23 @@
       "corretos_top5": 0,
       "total_resultados": 10,
       "relaxado": false,
-      "tempo_banco_ms": 70.99,
+      "tempo_banco_ms": 71.07,
       "tempo_banco_ms_amostras": [
-        70.99,
-        29.33,
-        90.56,
-        73.2,
-        33.52
+        71.07,
+        29.03,
+        81.16,
+        31.53,
+        73.58
       ],
-      "tempo_embedding_ms": 7.72,
+      "tempo_servidor_ms": 1.424,
+      "tempo_servidor_ms_amostras": [
+        1.426,
+        1.406,
+        1.424,
+        2.008,
+        1.336
+      ],
+      "tempo_embedding_ms": 5.5,
       "top5": [
         {
           "produto": "APLAUSE",
@@ -3160,15 +3519,23 @@
       "corretos_top5": 0,
       "total_resultados": 10,
       "relaxado": false,
-      "tempo_banco_ms": 47.52,
+      "tempo_banco_ms": 73.24,
       "tempo_banco_ms_amostras": [
-        50.2,
-        41.9,
-        48.37,
-        47.52,
-        42.38
+        78.2,
+        86.3,
+        73.19,
+        31.97,
+        73.24
       ],
-      "tempo_embedding_ms": 12.35,
+      "tempo_servidor_ms": 2.882,
+      "tempo_servidor_ms_amostras": [
+        2.932,
+        2.825,
+        2.936,
+        2.821,
+        2.882
+      ],
+      "tempo_embedding_ms": 6.61,
       "top5": [
         {
           "produto": "APLAUSE",
@@ -3199,10 +3566,10 @@
           "correto": false
         },
         {
-          "produto": "JUNEVE",
-          "substancia": "DIMESILATO DE LISDEXANFETAMINA",
-          "selo": "Similar",
-          "pmc": 607.56,
+          "produto": "PATANOL",
+          "substancia": "CLORIDRATO DE OLOPATADINA",
+          "selo": "Referência",
+          "pmc": 85.36,
           "correto": false
         }
       ]
@@ -3216,13 +3583,21 @@
       "corretos_top5": 0,
       "total_resultados": 0,
       "relaxado": false,
-      "tempo_banco_ms": 66.77,
+      "tempo_banco_ms": 67.21,
       "tempo_banco_ms_amostras": [
-        80.14,
-        66.36,
-        66.62,
-        66.87,
-        66.77
+        68.66,
+        66.76,
+        66.95,
+        67.21,
+        68.95
+      ],
+      "tempo_servidor_ms": 45.988,
+      "tempo_servidor_ms_amostras": [
+        47.098,
+        45.47,
+        44.394,
+        45.988,
+        47.722
       ],
       "tempo_embedding_ms": 0,
       "top5": []
@@ -3236,13 +3611,21 @@
       "corretos_top5": 0,
       "total_resultados": 0,
       "relaxado": true,
-      "tempo_banco_ms": 47.26,
+      "tempo_banco_ms": 41.68,
       "tempo_banco_ms_amostras": [
-        49.17,
-        47.26,
-        44.35,
-        51.96,
-        44.4
+        41.41,
+        49.83,
+        45.02,
+        41.68,
+        41.08
+      ],
+      "tempo_servidor_ms": 0.432,
+      "tempo_servidor_ms_amostras": [
+        0.447,
+        0.422,
+        0.443,
+        0.432,
+        0.374
       ],
       "tempo_embedding_ms": 0,
       "top5": []
@@ -3256,15 +3639,23 @@
       "corretos_top5": 2,
       "total_resultados": 10,
       "relaxado": false,
-      "tempo_banco_ms": 32.96,
+      "tempo_banco_ms": 28.14,
       "tempo_banco_ms_amostras": [
-        31.88,
-        30.41,
-        34.1,
-        66.52,
-        32.96
+        27.89,
+        30.65,
+        29.01,
+        28.14,
+        27.84
       ],
-      "tempo_embedding_ms": 5.7,
+      "tempo_servidor_ms": 1.47,
+      "tempo_servidor_ms_amostras": [
+        1.605,
+        1.47,
+        1.525,
+        1.441,
+        1.468
+      ],
+      "tempo_embedding_ms": 5,
       "top5": [
         {
           "produto": "EPREX",
@@ -3312,15 +3703,23 @@
       "corretos_top5": 4,
       "total_resultados": 10,
       "relaxado": false,
-      "tempo_banco_ms": 36.43,
+      "tempo_banco_ms": 67.39,
       "tempo_banco_ms_amostras": [
-        37.04,
-        83.41,
-        36.43,
-        34.37,
-        28.36
+        67.39,
+        78.27,
+        28.35,
+        75.45,
+        28.43
       ],
-      "tempo_embedding_ms": 10.12,
+      "tempo_servidor_ms": 1.465,
+      "tempo_servidor_ms_amostras": [
+        1.404,
+        2.194,
+        1.436,
+        1.465,
+        1.566
+      ],
+      "tempo_embedding_ms": 6.45,
       "top5": [
         {
           "produto": "OMOPREL",
@@ -3333,14 +3732,14 @@
           "produto": "OMOPREL",
           "substancia": "OMEPRAZOL",
           "selo": "Similar",
-          "pmc": 44.23,
+          "pmc": 27.98,
           "correto": true
         },
         {
           "produto": "OMOPREL",
           "substancia": "OMEPRAZOL",
           "selo": "Similar",
-          "pmc": 27.98,
+          "pmc": 44.23,
           "correto": true
         },
         {
@@ -3363,28 +3762,29 @@
       "consulta_id": 7,
       "motor": "hibrido",
       "acerto_top5": true,
-      "posicao_primeiro_correto": 1,
-      "rr": 1,
+      "posicao_primeiro_correto": 2,
+      "rr": 0.5,
       "corretos_top5": 2,
       "total_resultados": 10,
       "relaxado": false,
-      "tempo_banco_ms": 33.71,
+      "tempo_banco_ms": 75.92,
       "tempo_banco_ms_amostras": [
-        31.26,
-        33.71,
-        31.51,
-        78.05,
-        79.73
+        75.06,
+        73.01,
+        76.86,
+        77.35,
+        75.92
       ],
-      "tempo_embedding_ms": 15.22,
+      "tempo_servidor_ms": 2.677,
+      "tempo_servidor_ms_amostras": [
+        3.834,
+        2.677,
+        2.603,
+        2.431,
+        3.712
+      ],
+      "tempo_embedding_ms": 6.01,
       "top5": [
-        {
-          "produto": "OMOPREL",
-          "substancia": "OMEPRAZOL",
-          "selo": "Similar",
-          "pmc": 44.72,
-          "correto": true
-        },
         {
           "produto": "IOMERON",
           "substancia": "IOMEPROL",
@@ -3396,7 +3796,7 @@
           "produto": "OMOPREL",
           "substancia": "OMEPRAZOL",
           "selo": "Similar",
-          "pmc": 44.23,
+          "pmc": 44.72,
           "correto": true
         },
         {
@@ -3405,6 +3805,13 @@
           "selo": "Referência",
           "pmc": 2756.13,
           "correto": false
+        },
+        {
+          "produto": "OMOPREL",
+          "substancia": "OMEPRAZOL",
+          "selo": "Similar",
+          "pmc": 44.23,
+          "correto": true
         },
         {
           "produto": "IOMERON",
@@ -3424,13 +3831,21 @@
       "corretos_top5": 0,
       "total_resultados": 0,
       "relaxado": false,
-      "tempo_banco_ms": 72.09,
+      "tempo_banco_ms": 66.27,
       "tempo_banco_ms_amostras": [
-        72.09,
-        68.03,
-        74.55,
-        71.46,
-        73.37
+        70.43,
+        65.8,
+        66.27,
+        65.78,
+        66.62
+      ],
+      "tempo_servidor_ms": 45.161,
+      "tempo_servidor_ms_amostras": [
+        49.569,
+        45.161,
+        45.125,
+        45.089,
+        49.229
       ],
       "tempo_embedding_ms": 0,
       "top5": []
@@ -3444,13 +3859,21 @@
       "corretos_top5": 0,
       "total_resultados": 0,
       "relaxado": true,
-      "tempo_banco_ms": 45.22,
+      "tempo_banco_ms": 41.42,
       "tempo_banco_ms_amostras": [
-        43.74,
-        44.62,
-        45.96,
-        60.69,
-        45.22
+        45.47,
+        44.51,
+        41.31,
+        41.31,
+        41.42
+      ],
+      "tempo_servidor_ms": 0.439,
+      "tempo_servidor_ms_amostras": [
+        0.439,
+        0.428,
+        0.439,
+        0.446,
+        0.436
       ],
       "tempo_embedding_ms": 0,
       "top5": []
@@ -3464,15 +3887,23 @@
       "corretos_top5": 1,
       "total_resultados": 10,
       "relaxado": false,
-      "tempo_banco_ms": 29.4,
+      "tempo_banco_ms": 28.71,
       "tempo_banco_ms_amostras": [
-        29.4,
-        29.04,
-        29.36,
-        36.93,
-        50.02
+        28.71,
+        28.8,
+        27.73,
+        28.02,
+        29.8
       ],
-      "tempo_embedding_ms": 5.37,
+      "tempo_servidor_ms": 1.469,
+      "tempo_servidor_ms_amostras": [
+        1.469,
+        1.495,
+        1.467,
+        1.469,
+        2.702
+      ],
+      "tempo_embedding_ms": 6.53,
       "top5": [
         {
           "produto": "AMBROL",
@@ -3506,7 +3937,7 @@
           "produto": "AMOXIL",
           "substancia": "AMOXICILINA TRIHIDRATADA",
           "selo": "Referência",
-          "pmc": 131.68,
+          "pmc": 100.35,
           "correto": true
         }
       ]
@@ -3520,15 +3951,23 @@
       "corretos_top5": 1,
       "total_resultados": 10,
       "relaxado": false,
-      "tempo_banco_ms": 33.29,
+      "tempo_banco_ms": 28.9,
       "tempo_banco_ms_amostras": [
-        77.78,
-        45.39,
-        33.29,
-        33.16,
-        28.65
+        27.56,
+        28.64,
+        43.4,
+        28.9,
+        82.17
       ],
-      "tempo_embedding_ms": 7.56,
+      "tempo_servidor_ms": 1.428,
+      "tempo_servidor_ms_amostras": [
+        1.428,
+        1.353,
+        1.404,
+        1.485,
+        2.356
+      ],
+      "tempo_embedding_ms": 5.98,
       "top5": [
         {
           "produto": "AMBROL",
@@ -3576,15 +4015,23 @@
       "corretos_top5": 1,
       "total_resultados": 10,
       "relaxado": false,
-      "tempo_banco_ms": 42.97,
+      "tempo_banco_ms": 76.88,
       "tempo_banco_ms_amostras": [
-        72.22,
-        42.97,
-        33.68,
-        35.46,
-        71.62
+        76.93,
+        76.88,
+        38.25,
+        78.42,
+        75.39
       ],
-      "tempo_embedding_ms": 11.42,
+      "tempo_servidor_ms": 2.598,
+      "tempo_servidor_ms_amostras": [
+        2.598,
+        2.573,
+        2.499,
+        3.687,
+        3.413
+      ],
+      "tempo_embedding_ms": 6.84,
       "top5": [
         {
           "produto": "AMINOFILINA",
@@ -3632,13 +4079,21 @@
       "corretos_top5": 0,
       "total_resultados": 0,
       "relaxado": false,
-      "tempo_banco_ms": 73.15,
+      "tempo_banco_ms": 68.5,
       "tempo_banco_ms_amostras": [
-        73.15,
-        73.73,
-        72.45,
-        73.32,
-        66.69
+        66.2,
+        74.48,
+        68.5,
+        74.83,
+        68.19
+      ],
+      "tempo_servidor_ms": 44.957,
+      "tempo_servidor_ms_amostras": [
+        44.957,
+        44.365,
+        43.873,
+        45.938,
+        46.851
       ],
       "tempo_embedding_ms": 0,
       "top5": []
@@ -3652,13 +4107,21 @@
       "corretos_top5": 0,
       "total_resultados": 0,
       "relaxado": true,
-      "tempo_banco_ms": 48.06,
+      "tempo_banco_ms": 44.24,
       "tempo_banco_ms_amostras": [
-        49.71,
-        44.6,
-        48.65,
-        48.06,
-        44.08
+        42.56,
+        42.34,
+        64.29,
+        44.24,
+        44.65
+      ],
+      "tempo_servidor_ms": 0.439,
+      "tempo_servidor_ms_amostras": [
+        0.411,
+        0.458,
+        0.439,
+        0.436,
+        0.464
       ],
       "tempo_embedding_ms": 0,
       "top5": []
@@ -3672,15 +4135,23 @@
       "corretos_top5": 5,
       "total_resultados": 10,
       "relaxado": false,
-      "tempo_banco_ms": 28.71,
+      "tempo_banco_ms": 36.76,
       "tempo_banco_ms_amostras": [
-        28.71,
-        27.95,
-        38.45,
-        31.43,
-        28.32
+        37.79,
+        29.66,
+        36.76,
+        47.72,
+        30.91
       ],
-      "tempo_embedding_ms": 5.24,
+      "tempo_servidor_ms": 1.48,
+      "tempo_servidor_ms_amostras": [
+        1.441,
+        1.48,
+        1.429,
+        1.485,
+        1.56
+      ],
+      "tempo_embedding_ms": 7.11,
       "top5": [
         {
           "produto": "IBUPRIL",
@@ -3707,14 +4178,14 @@
           "produto": "IBUVIX",
           "substancia": "IBUPROFENO",
           "selo": "Similar",
-          "pmc": 57.47,
+          "pmc": 41.49,
           "correto": true
         },
         {
           "produto": "IBUVIX",
           "substancia": "IBUPROFENO",
           "selo": "Similar",
-          "pmc": 41.49,
+          "pmc": 57.47,
           "correto": true
         }
       ]
@@ -3728,15 +4199,23 @@
       "corretos_top5": 5,
       "total_resultados": 10,
       "relaxado": false,
-      "tempo_banco_ms": 70.65,
+      "tempo_banco_ms": 78.92,
       "tempo_banco_ms_amostras": [
-        70.65,
-        27.76,
-        35.84,
-        76.45,
-        81.49
+        41.51,
+        78.92,
+        110.64,
+        39.17,
+        95.67
       ],
-      "tempo_embedding_ms": 7.09,
+      "tempo_servidor_ms": 1.401,
+      "tempo_servidor_ms_amostras": [
+        1.465,
+        1.397,
+        2.653,
+        1.401,
+        1.395
+      ],
+      "tempo_embedding_ms": 6.85,
       "top5": [
         {
           "produto": "IBUPRIL",
@@ -3779,28 +4258,29 @@
       "consulta_id": 9,
       "motor": "hibrido",
       "acerto_top5": true,
-      "posicao_primeiro_correto": 1,
-      "rr": 1,
-      "corretos_top5": 4,
+      "posicao_primeiro_correto": 2,
+      "rr": 0.5,
+      "corretos_top5": 3,
       "total_resultados": 10,
       "relaxado": false,
-      "tempo_banco_ms": 83.06,
+      "tempo_banco_ms": 31.52,
       "tempo_banco_ms_amostras": [
-        38.58,
-        83.06,
-        106.4,
-        86.38,
-        34.7
+        30.25,
+        84.15,
+        34.43,
+        31.52,
+        29.82
       ],
-      "tempo_embedding_ms": 11.97,
+      "tempo_servidor_ms": 2.918,
+      "tempo_servidor_ms_amostras": [
+        2.918,
+        9.004,
+        5.987,
+        2.868,
+        2.842
+      ],
+      "tempo_embedding_ms": 6.68,
       "top5": [
-        {
-          "produto": "IBUPRIL",
-          "substancia": "IBUPROFENO",
-          "selo": "Similar",
-          "pmc": 44.33,
-          "correto": true
-        },
         {
           "produto": "TARGUS",
           "substancia": "FLURBIPROFENO",
@@ -3809,10 +4289,10 @@
           "correto": false
         },
         {
-          "produto": "ALUDOR",
+          "produto": "IBUPRIL",
           "substancia": "IBUPROFENO",
           "selo": "Similar",
-          "pmc": 18.38,
+          "pmc": 44.33,
           "correto": true
         },
         {
@@ -3823,11 +4303,18 @@
           "correto": true
         },
         {
-          "produto": "IBUFRAN",
+          "produto": "ALUDOR",
           "substancia": "IBUPROFENO",
           "selo": "Similar",
-          "pmc": 73.55,
+          "pmc": 18.38,
           "correto": true
+        },
+        {
+          "produto": "STREPSILS",
+          "substancia": "FLURBIPROFENO",
+          "selo": "Referência",
+          "pmc": 18.62,
+          "correto": false
         }
       ]
     },
@@ -3840,13 +4327,21 @@
       "corretos_top5": 0,
       "total_resultados": 0,
       "relaxado": false,
-      "tempo_banco_ms": 69.9,
+      "tempo_banco_ms": 66.91,
       "tempo_banco_ms_amostras": [
-        67,
-        136.34,
-        70.11,
-        69.9,
-        69.08
+        66.02,
+        66.91,
+        72.45,
+        66.13,
+        71.2
+      ],
+      "tempo_servidor_ms": 44.335,
+      "tempo_servidor_ms_amostras": [
+        44.444,
+        44.465,
+        44.196,
+        44.121,
+        44.335
       ],
       "tempo_embedding_ms": 0,
       "top5": []
@@ -3860,13 +4355,21 @@
       "corretos_top5": 0,
       "total_resultados": 0,
       "relaxado": true,
-      "tempo_banco_ms": 44.83,
+      "tempo_banco_ms": 43.23,
       "tempo_banco_ms_amostras": [
-        44.12,
-        44.67,
-        44.83,
-        46.82,
-        47.03
+        42.02,
+        43.51,
+        42.13,
+        43.23,
+        44.6
+      ],
+      "tempo_servidor_ms": 0.395,
+      "tempo_servidor_ms_amostras": [
+        0.335,
+        0.395,
+        0.417,
+        0.378,
+        0.443
       ],
       "tempo_embedding_ms": 0,
       "top5": []
@@ -3880,15 +4383,23 @@
       "corretos_top5": 0,
       "total_resultados": 10,
       "relaxado": false,
-      "tempo_banco_ms": 29.89,
+      "tempo_banco_ms": 28.45,
       "tempo_banco_ms_amostras": [
-        30.02,
         28.22,
-        28.79,
-        29.89,
-        30.55
+        28.45,
+        28.42,
+        31.26,
+        46.68
       ],
-      "tempo_embedding_ms": 4.79,
+      "tempo_servidor_ms": 1.474,
+      "tempo_servidor_ms_amostras": [
+        1.543,
+        1.474,
+        1.469,
+        1.459,
+        2.153
+      ],
+      "tempo_embedding_ms": 4.78,
       "top5": [
         {
           "produto": "BENEFIX",
@@ -3936,15 +4447,23 @@
       "corretos_top5": 0,
       "total_resultados": 10,
       "relaxado": false,
-      "tempo_banco_ms": 77.34,
+      "tempo_banco_ms": 70.93,
       "tempo_banco_ms_amostras": [
-        28.18,
-        47.75,
-        77.34,
-        88.12,
-        80.77
+        71.57,
+        76.19,
+        70.93,
+        28.38,
+        28.13
       ],
-      "tempo_embedding_ms": 5.78,
+      "tempo_servidor_ms": 1.451,
+      "tempo_servidor_ms_amostras": [
+        1.42,
+        1.475,
+        4.77,
+        1.445,
+        1.451
+      ],
+      "tempo_embedding_ms": 5.99,
       "top5": [
         {
           "produto": "NISTATINA",
@@ -3989,18 +4508,26 @@
       "acerto_top5": true,
       "posicao_primeiro_correto": 1,
       "rr": 1,
-      "corretos_top5": 3,
+      "corretos_top5": 2,
       "total_resultados": 10,
       "relaxado": false,
-      "tempo_banco_ms": 33.75,
+      "tempo_banco_ms": 77.68,
       "tempo_banco_ms_amostras": [
-        79.77,
-        33.75,
-        37.05,
-        32.5,
-        33.55
+        74.88,
+        73.33,
+        83.92,
+        77.68,
+        78.39
       ],
-      "tempo_embedding_ms": 10.55,
+      "tempo_servidor_ms": 2.924,
+      "tempo_servidor_ms_amostras": [
+        2.921,
+        2.882,
+        3.764,
+        2.943,
+        2.924
+      ],
+      "tempo_embedding_ms": 5.88,
       "top5": [
         {
           "produto": "NIMESULIDA",
@@ -4031,11 +4558,11 @@
           "correto": true
         },
         {
-          "produto": "NIMESULIDA",
-          "substancia": "NIMESULIDA",
+          "produto": "DICLORIDRATO DE BETAISTINA",
+          "substancia": "DICLORIDRATO DE BETAISTINA",
           "selo": "Genérico",
-          "pmc": 32.79,
-          "correto": true
+          "pmc": 26.55,
+          "correto": false
         }
       ]
     },
@@ -4048,13 +4575,21 @@
       "corretos_top5": 0,
       "total_resultados": 0,
       "relaxado": false,
-      "tempo_banco_ms": 67.55,
+      "tempo_banco_ms": 65.82,
       "tempo_banco_ms_amostras": [
-        66.16,
-        76.28,
-        66.99,
-        67.55,
-        71.66
+        68.39,
+        70.49,
+        65.32,
+        64.9,
+        65.82
+      ],
+      "tempo_servidor_ms": 44,
+      "tempo_servidor_ms_amostras": [
+        44.695,
+        43.824,
+        43.72,
+        44.942,
+        44
       ],
       "tempo_embedding_ms": 0,
       "top5": []
@@ -4068,13 +4603,21 @@
       "corretos_top5": 0,
       "total_resultados": 0,
       "relaxado": true,
-      "tempo_banco_ms": 45.57,
+      "tempo_banco_ms": 41.8,
       "tempo_banco_ms_amostras": [
-        44.59,
-        46.73,
-        45.57,
-        45.79,
-        45.04
+        40.13,
+        41.8,
+        41.29,
+        44.63,
+        44.07
+      ],
+      "tempo_servidor_ms": 0.412,
+      "tempo_servidor_ms_amostras": [
+        0.437,
+        0.452,
+        0.353,
+        0.412,
+        0.402
       ],
       "tempo_embedding_ms": 0,
       "top5": []
@@ -4088,15 +4631,23 @@
       "corretos_top5": 0,
       "total_resultados": 10,
       "relaxado": false,
-      "tempo_banco_ms": 29.42,
+      "tempo_banco_ms": 31.56,
       "tempo_banco_ms_amostras": [
-        29.97,
-        29.91,
-        27.93,
-        29.42,
-        27.83
+        40.26,
+        27.21,
+        47.77,
+        28.11,
+        31.56
       ],
-      "tempo_embedding_ms": 4.98,
+      "tempo_servidor_ms": 1.463,
+      "tempo_servidor_ms_amostras": [
+        2.652,
+        1.431,
+        1.455,
+        1.473,
+        1.463
+      ],
+      "tempo_embedding_ms": 6.97,
       "top5": [
         {
           "produto": "BENEFIX",
@@ -4144,15 +4695,23 @@
       "corretos_top5": 0,
       "total_resultados": 10,
       "relaxado": false,
-      "tempo_banco_ms": 72.62,
+      "tempo_banco_ms": 32.73,
       "tempo_banco_ms_amostras": [
-        32.28,
-        89.37,
-        82.59,
-        71.31,
-        72.62
+        32.73,
+        27.63,
+        43.67,
+        81.75,
+        28.88
       ],
-      "tempo_embedding_ms": 5.71,
+      "tempo_servidor_ms": 1.424,
+      "tempo_servidor_ms_amostras": [
+        2.171,
+        1.424,
+        1.43,
+        1.381,
+        1.391
+      ],
+      "tempo_embedding_ms": 7.34,
       "top5": [
         {
           "produto": "JUNEVE",
@@ -4200,15 +4759,23 @@
       "corretos_top5": 0,
       "total_resultados": 10,
       "relaxado": false,
-      "tempo_banco_ms": 85.83,
+      "tempo_banco_ms": 71.36,
       "tempo_banco_ms_amostras": [
-        118.88,
-        89.14,
-        85.83,
-        29.48,
-        32.96
+        30.52,
+        72.86,
+        31.27,
+        83.58,
+        71.36
       ],
-      "tempo_embedding_ms": 9.52,
+      "tempo_servidor_ms": 2.858,
+      "tempo_servidor_ms_amostras": [
+        3.991,
+        3.142,
+        2.858,
+        2.854,
+        2.843
+      ],
+      "tempo_embedding_ms": 7.31,
       "top5": [
         {
           "produto": "JUNEVE",
@@ -4225,13 +4792,6 @@
           "correto": false
         },
         {
-          "produto": "NISTATINA",
-          "substancia": "NISTATINA",
-          "selo": "Genérico",
-          "pmc": 34.29,
-          "correto": false
-        },
-        {
           "produto": "BENEFIX",
           "substancia": "ALFANONACOGUE",
           "selo": "Biológico",
@@ -4242,7 +4802,14 @@
           "produto": "NISTATINA",
           "substancia": "NISTATINA",
           "selo": "Genérico",
-          "pmc": 38.09,
+          "pmc": 34.29,
+          "correto": false
+        },
+        {
+          "produto": "VITALIA XR",
+          "substancia": "DICLORIDRATO DE BETAISTINA",
+          "selo": "Similar",
+          "pmc": 129.01,
           "correto": false
         }
       ]
@@ -4256,13 +4823,21 @@
       "corretos_top5": 0,
       "total_resultados": 0,
       "relaxado": false,
-      "tempo_banco_ms": 69.48,
+      "tempo_banco_ms": 66.61,
       "tempo_banco_ms_amostras": [
-        70.6,
-        69.09,
-        69.32,
-        69.48,
-        69.91
+        72.87,
+        65.86,
+        66.61,
+        67.15,
+        64.98
+      ],
+      "tempo_servidor_ms": 45.051,
+      "tempo_servidor_ms_amostras": [
+        43.565,
+        45.934,
+        43.868,
+        46.058,
+        45.051
       ],
       "tempo_embedding_ms": 0,
       "top5": []
@@ -4276,13 +4851,21 @@
       "corretos_top5": 0,
       "total_resultados": 0,
       "relaxado": true,
-      "tempo_banco_ms": 46.7,
+      "tempo_banco_ms": 44.19,
       "tempo_banco_ms_amostras": [
-        49.78,
-        43.47,
-        49.93,
-        46.7,
-        45.19
+        43.67,
+        47.18,
+        44.53,
+        44.19,
+        43.25
+      ],
+      "tempo_servidor_ms": 0.417,
+      "tempo_servidor_ms_amostras": [
+        0.393,
+        0.428,
+        0.38,
+        0.417,
+        0.47
       ],
       "tempo_embedding_ms": 0,
       "top5": []
@@ -4296,28 +4879,36 @@
       "corretos_top5": 0,
       "total_resultados": 10,
       "relaxado": false,
-      "tempo_banco_ms": 33.23,
+      "tempo_banco_ms": 29.7,
       "tempo_banco_ms_amostras": [
-        27.61,
-        27.25,
-        60.06,
-        33.23,
-        33.29
+        29.7,
+        28.87,
+        30.86,
+        28.52,
+        30.72
       ],
-      "tempo_embedding_ms": 5.75,
+      "tempo_servidor_ms": 1.456,
+      "tempo_servidor_ms_amostras": [
+        2.104,
+        1.454,
+        1.534,
+        1.456,
+        1.451
+      ],
+      "tempo_embedding_ms": 8.35,
       "top5": [
         {
           "produto": "CELEBRA",
           "substancia": "CELECOXIBE",
           "selo": "Referência",
-          "pmc": 127.02,
+          "pmc": 85.83,
           "correto": false
         },
         {
           "produto": "CELEBRA",
           "substancia": "CELECOXIBE",
           "selo": "Referência",
-          "pmc": 85.83,
+          "pmc": 127.02,
           "correto": false
         },
         {
@@ -4331,7 +4922,7 @@
           "produto": "PARZO",
           "substancia": "CELECOXIBE",
           "selo": "Similar",
-          "pmc": 100.18,
+          "pmc": 13.36,
           "correto": false
         },
         {
@@ -4352,15 +4943,23 @@
       "corretos_top5": 0,
       "total_resultados": 10,
       "relaxado": false,
-      "tempo_banco_ms": 33.02,
+      "tempo_banco_ms": 30.4,
       "tempo_banco_ms_amostras": [
-        52.07,
-        36,
-        33.02,
-        27.47,
-        29.97
+        79.94,
+        27.8,
+        89.66,
+        27.19,
+        30.4
       ],
-      "tempo_embedding_ms": 8.27,
+      "tempo_servidor_ms": 1.393,
+      "tempo_servidor_ms_amostras": [
+        1.406,
+        1.379,
+        1.427,
+        1.38,
+        1.393
+      ],
+      "tempo_embedding_ms": 8.04,
       "top5": [
         {
           "produto": "LASIX",
@@ -4373,7 +4972,7 @@
           "produto": "HIDRION",
           "substancia": "FUROSEMIDA + CLORETO DE POTÁSSIO",
           "selo": "Referência",
-          "pmc": 150.79,
+          "pmc": 30.85,
           "correto": false
         },
         {
@@ -4387,14 +4986,14 @@
           "produto": "HIDRION",
           "substancia": "FUROSEMIDA + CLORETO DE POTÁSSIO",
           "selo": "Referência",
-          "pmc": 30.85,
+          "pmc": 150.79,
           "correto": false
         },
         {
           "produto": "FUROSEMIDA",
           "substancia": "FUROSEMIDA",
           "selo": "Genérico",
-          "pmc": 27.87,
+          "pmc": 13,
           "correto": false
         }
       ]
@@ -4408,28 +5007,36 @@
       "corretos_top5": 0,
       "total_resultados": 10,
       "relaxado": false,
-      "tempo_banco_ms": 31.98,
+      "tempo_banco_ms": 74.46,
       "tempo_banco_ms_amostras": [
-        31.61,
-        32.28,
-        30.49,
-        31.98,
-        82.16
+        76.81,
+        77.79,
+        74.46,
+        29.62,
+        71.59
       ],
-      "tempo_embedding_ms": 12.2,
+      "tempo_servidor_ms": 2.811,
+      "tempo_servidor_ms_amostras": [
+        2.811,
+        2.753,
+        2.842,
+        2.867,
+        2.769
+      ],
+      "tempo_embedding_ms": 7.76,
       "top5": [
-        {
-          "produto": "LOSARTANA POTÁSSICA",
-          "substancia": "LOSARTANA POTÁSSICA",
-          "selo": "Genérico",
-          "pmc": 107.31,
-          "correto": false
-        },
         {
           "produto": "LASIX",
           "substancia": "FUROSEMIDA",
           "selo": "Referência",
           "pmc": 27.87,
+          "correto": false
+        },
+        {
+          "produto": "LOSARTANA POTÁSSICA",
+          "substancia": "LOSARTANA POTÁSSICA",
+          "selo": "Genérico",
+          "pmc": 107.31,
           "correto": false
         },
         {
@@ -4464,13 +5071,21 @@
       "corretos_top5": 5,
       "total_resultados": 10,
       "relaxado": false,
-      "tempo_banco_ms": 75.76,
+      "tempo_banco_ms": 68.12,
       "tempo_banco_ms_amostras": [
-        78.76,
-        67.67,
-        75.76,
-        71.24,
-        90.01
+        72.37,
+        66.81,
+        66.85,
+        69.61,
+        68.12
+      ],
+      "tempo_servidor_ms": 46.093,
+      "tempo_servidor_ms_amostras": [
+        47.65,
+        46.447,
+        44.777,
+        45.467,
+        46.093
       ],
       "tempo_embedding_ms": 0,
       "top5": [
@@ -4520,13 +5135,21 @@
       "corretos_top5": 5,
       "total_resultados": 10,
       "relaxado": false,
-      "tempo_banco_ms": 23.59,
+      "tempo_banco_ms": 23.31,
       "tempo_banco_ms_amostras": [
-        25.62,
-        23.59,
-        22.44,
-        35.42,
-        22.24
+        23.31,
+        22.05,
+        21.29,
+        26.76,
+        24.97
+      ],
+      "tempo_servidor_ms": 0.375,
+      "tempo_servidor_ms_amostras": [
+        0.374,
+        0.347,
+        0.375,
+        0.378,
+        0.378
       ],
       "tempo_embedding_ms": 0,
       "top5": [
@@ -4576,15 +5199,23 @@
       "corretos_top5": 0,
       "total_resultados": 10,
       "relaxado": false,
-      "tempo_banco_ms": 28.17,
+      "tempo_banco_ms": 28.13,
       "tempo_banco_ms_amostras": [
-        27.8,
-        33.64,
-        28.17,
-        27.39,
-        29.59
+        31.04,
+        32.37,
+        27.92,
+        28.11,
+        28.13
       ],
-      "tempo_embedding_ms": 5.56,
+      "tempo_servidor_ms": 1.468,
+      "tempo_servidor_ms_amostras": [
+        1.586,
+        1.448,
+        2.261,
+        1.468,
+        1.458
+      ],
+      "tempo_embedding_ms": 7.05,
       "top5": [
         {
           "produto": "REFORTRIX IPV",
@@ -4632,15 +5263,23 @@
       "corretos_top5": 0,
       "total_resultados": 10,
       "relaxado": false,
-      "tempo_banco_ms": 77.58,
+      "tempo_banco_ms": 70.32,
       "tempo_banco_ms_amostras": [
-        73.89,
-        35.25,
-        77.9,
-        82.95,
-        77.58
+        71.29,
+        38.26,
+        26.9,
+        74.51,
+        70.32
       ],
-      "tempo_embedding_ms": 6.11,
+      "tempo_servidor_ms": 1.415,
+      "tempo_servidor_ms_amostras": [
+        1.426,
+        1.438,
+        1.415,
+        1.381,
+        1.414
+      ],
+      "tempo_embedding_ms": 7.49,
       "top5": [
         {
           "produto": "REFORTRIX IPV",
@@ -4685,18 +5324,26 @@
       "acerto_top5": true,
       "posicao_primeiro_correto": 1,
       "rr": 1,
-      "corretos_top5": 2,
+      "corretos_top5": 3,
       "total_resultados": 10,
       "relaxado": false,
-      "tempo_banco_ms": 38.9,
+      "tempo_banco_ms": 71.68,
       "tempo_banco_ms_amostras": [
-        37.05,
-        38.9,
-        77.94,
-        39.24,
-        33.04
+        84.19,
+        37.35,
+        71.28,
+        71.68,
+        137.9
       ],
-      "tempo_embedding_ms": 11.09,
+      "tempo_servidor_ms": 3.054,
+      "tempo_servidor_ms_amostras": [
+        2.851,
+        7.677,
+        3.054,
+        3.595,
+        2.831
+      ],
+      "tempo_embedding_ms": 6.36,
       "top5": [
         {
           "produto": "ATORVASTATINA CALCICA",
@@ -4713,13 +5360,6 @@
           "correto": false
         },
         {
-          "produto": "DYSPORT",
-          "substancia": "TOXINA BOTULÍNICA A",
-          "selo": "Biológico",
-          "pmc": 2220.61,
-          "correto": false
-        },
-        {
           "produto": "ATORVASTATINA CALCICA",
           "substancia": "ATORVASTATINA CÁLCICA",
           "selo": "Genérico",
@@ -4730,8 +5370,15 @@
           "produto": "DYSPORT",
           "substancia": "TOXINA BOTULÍNICA A",
           "selo": "Biológico",
-          "pmc": 3691.85,
+          "pmc": 2220.61,
           "correto": false
+        },
+        {
+          "produto": "ATORVASTATINA CÁLCICA",
+          "substancia": "ATORVASTATINA CÁLCICA",
+          "selo": "Genérico",
+          "pmc": 88.3,
+          "correto": true
         }
       ]
     },
@@ -4744,13 +5391,21 @@
       "corretos_top5": 5,
       "total_resultados": 10,
       "relaxado": false,
-      "tempo_banco_ms": 70.04,
+      "tempo_banco_ms": 66.65,
       "tempo_banco_ms_amostras": [
-        68.27,
-        70.04,
-        74.51,
-        67.39,
-        79.78
+        66.54,
+        66.65,
+        75.38,
+        67.09,
+        66.57
+      ],
+      "tempo_servidor_ms": 47.063,
+      "tempo_servidor_ms_amostras": [
+        48.147,
+        47.063,
+        44.849,
+        49.218,
+        44.62
       ],
       "tempo_embedding_ms": 0,
       "top5": [
@@ -4800,13 +5455,21 @@
       "corretos_top5": 5,
       "total_resultados": 10,
       "relaxado": false,
-      "tempo_banco_ms": 24.39,
+      "tempo_banco_ms": 21.39,
       "tempo_banco_ms_amostras": [
-        24.39,
-        26.39,
-        23.52,
-        23.37,
-        27.22
+        20.85,
+        22.87,
+        21.84,
+        20.62,
+        21.39
+      ],
+      "tempo_servidor_ms": 0.291,
+      "tempo_servidor_ms_amostras": [
+        0.285,
+        0.291,
+        0.303,
+        0.306,
+        0.27
       ],
       "tempo_embedding_ms": 0,
       "top5": [
@@ -4856,15 +5519,23 @@
       "corretos_top5": 0,
       "total_resultados": 10,
       "relaxado": false,
-      "tempo_banco_ms": 31.8,
+      "tempo_banco_ms": 27.67,
       "tempo_banco_ms_amostras": [
-        27.53,
-        31.98,
-        31.8,
-        34.56,
-        28.12
+        27.04,
+        31.17,
+        27.37,
+        27.67,
+        28.35
       ],
-      "tempo_embedding_ms": 8.72,
+      "tempo_servidor_ms": 1.43,
+      "tempo_servidor_ms_amostras": [
+        1.444,
+        1.531,
+        1.429,
+        1.43,
+        1.419
+      ],
+      "tempo_embedding_ms": 6.89,
       "top5": [
         {
           "produto": "APETIVAN BC",
@@ -4912,15 +5583,23 @@
       "corretos_top5": 0,
       "total_resultados": 10,
       "relaxado": false,
-      "tempo_banco_ms": 72.37,
+      "tempo_banco_ms": 28.81,
       "tempo_banco_ms_amostras": [
-        72.37,
-        92.88,
-        31.73,
-        32.7,
-        86.75
+        72.57,
+        27.63,
+        28.81,
+        27.82,
+        78.57
       ],
-      "tempo_embedding_ms": 12.06,
+      "tempo_servidor_ms": 1.407,
+      "tempo_servidor_ms_amostras": [
+        1.407,
+        1.423,
+        1.393,
+        1.376,
+        1.408
+      ],
+      "tempo_embedding_ms": 9.52,
       "top5": [
         {
           "produto": "APETIVAN BC",
@@ -4968,15 +5647,23 @@
       "corretos_top5": 3,
       "total_resultados": 10,
       "relaxado": false,
-      "tempo_banco_ms": 41.39,
+      "tempo_banco_ms": 30.25,
       "tempo_banco_ms_amostras": [
-        36.97,
-        75.94,
-        41.39,
-        29.34,
-        77.05
+        86.61,
+        30.25,
+        77.63,
+        28.57,
+        29.25
       ],
-      "tempo_embedding_ms": 9.58,
+      "tempo_servidor_ms": 2.869,
+      "tempo_servidor_ms_amostras": [
+        2.841,
+        4.019,
+        2.869,
+        2.745,
+        2.907
+      ],
+      "tempo_embedding_ms": 10.56,
       "top5": [
         {
           "produto": "APETIVAN BC",
@@ -4993,18 +5680,18 @@
           "correto": true
         },
         {
-          "produto": "NPLATE",
-          "substancia": "ROMIPLOSTIM",
-          "selo": "Biológico",
-          "pmc": 3585.92,
-          "correto": false
-        },
-        {
           "produto": "CLORIDRATO DE SERTRALINA",
           "substancia": "CLORIDRATO DE SERTRALINA",
           "selo": "Genérico",
           "pmc": 108.67,
           "correto": true
+        },
+        {
+          "produto": "NPLATE",
+          "substancia": "ROMIPLOSTIM",
+          "selo": "Biológico",
+          "pmc": 3585.92,
+          "correto": false
         },
         {
           "produto": "CLORIDRATO DE SERTRALINA",
@@ -5024,13 +5711,21 @@
       "corretos_top5": 5,
       "total_resultados": 10,
       "relaxado": false,
-      "tempo_banco_ms": 72.31,
+      "tempo_banco_ms": 65.95,
       "tempo_banco_ms_amostras": [
-        69.75,
-        74.9,
-        72.31,
-        143.43,
-        67.43
+        65.95,
+        66,
+        64.92,
+        71.28,
+        65.89
+      ],
+      "tempo_servidor_ms": 44.973,
+      "tempo_servidor_ms_amostras": [
+        44.973,
+        44.503,
+        45.246,
+        46.239,
+        43.992
       ],
       "tempo_embedding_ms": 0,
       "top5": [
@@ -5080,13 +5775,21 @@
       "corretos_top5": 5,
       "total_resultados": 10,
       "relaxado": false,
-      "tempo_banco_ms": 24.99,
+      "tempo_banco_ms": 21.25,
       "tempo_banco_ms_amostras": [
-        31.73,
-        23.03,
-        23.98,
-        29.21,
-        24.99
+        21.07,
+        25.11,
+        21.25,
+        21.7,
+        20.98
+      ],
+      "tempo_servidor_ms": 0.336,
+      "tempo_servidor_ms_amostras": [
+        0.355,
+        0.32,
+        0.336,
+        0.37,
+        0.316
       ],
       "tempo_embedding_ms": 0,
       "top5": [
@@ -5136,15 +5839,23 @@
       "corretos_top5": 0,
       "total_resultados": 10,
       "relaxado": false,
-      "tempo_banco_ms": 34.19,
+      "tempo_banco_ms": 27.83,
       "tempo_banco_ms_amostras": [
-        34.19,
-        27.6,
-        29.18,
-        41.02,
-        41.58
+        30.33,
+        27.34,
+        27.83,
+        27.72,
+        33.09
       ],
-      "tempo_embedding_ms": 14.21,
+      "tempo_servidor_ms": 1.447,
+      "tempo_servidor_ms_amostras": [
+        1.427,
+        1.436,
+        1.491,
+        1.5,
+        1.447
+      ],
+      "tempo_embedding_ms": 9.38,
       "top5": [
         {
           "produto": "AMBROL",
@@ -5192,15 +5903,23 @@
       "corretos_top5": 4,
       "total_resultados": 10,
       "relaxado": false,
-      "tempo_banco_ms": 34.67,
+      "tempo_banco_ms": 33.98,
       "tempo_banco_ms_amostras": [
-        28.96,
-        27.73,
-        80.03,
-        34.67,
-        44.76
+        33.98,
+        29.94,
+        75.88,
+        28.51,
+        41
       ],
-      "tempo_embedding_ms": 8.84,
+      "tempo_servidor_ms": 1.423,
+      "tempo_servidor_ms_amostras": [
+        1.437,
+        1.498,
+        1.42,
+        1.423,
+        1.386
+      ],
+      "tempo_embedding_ms": 11.65,
       "top5": [
         {
           "produto": "CLAVULIN",
@@ -5248,15 +5967,23 @@
       "corretos_top5": 4,
       "total_resultados": 10,
       "relaxado": false,
-      "tempo_banco_ms": 62.97,
+      "tempo_banco_ms": 29.69,
       "tempo_banco_ms_amostras": [
-        29.91,
-        78.16,
-        74.76,
-        62.97,
-        31.25
+        28.35,
+        28.61,
+        73.55,
+        29.69,
+        44.51
       ],
-      "tempo_embedding_ms": 11.3,
+      "tempo_servidor_ms": 2.447,
+      "tempo_servidor_ms_amostras": [
+        2.447,
+        2.358,
+        2.538,
+        2.412,
+        2.567
+      ],
+      "tempo_embedding_ms": 11.42,
       "top5": [
         {
           "produto": "AMOXICILINA + CLAVULANATO DE POTÁSSIO",
@@ -5304,13 +6031,21 @@
       "corretos_top5": 5,
       "total_resultados": 10,
       "relaxado": false,
-      "tempo_banco_ms": 73.61,
+      "tempo_banco_ms": 67.01,
       "tempo_banco_ms_amostras": [
-        75.18,
-        70.93,
-        73.3,
-        73.61,
-        88.21
+        65.8,
+        88.76,
+        65.79,
+        67.01,
+        69.07
+      ],
+      "tempo_servidor_ms": 45.089,
+      "tempo_servidor_ms_amostras": [
+        45.358,
+        45.089,
+        45.007,
+        46.36,
+        44.711
       ],
       "tempo_embedding_ms": 0,
       "top5": [
@@ -5360,13 +6095,21 @@
       "corretos_top5": 5,
       "total_resultados": 10,
       "relaxado": false,
-      "tempo_banco_ms": 26.46,
+      "tempo_banco_ms": 21.26,
       "tempo_banco_ms_amostras": [
-        26.46,
-        24.28,
-        143.48,
-        27.34,
-        26.46
+        44.7,
+        21.08,
+        21.26,
+        21.21,
+        24.4
+      ],
+      "tempo_servidor_ms": 0.372,
+      "tempo_servidor_ms_amostras": [
+        0.411,
+        0.348,
+        0.372,
+        0.393,
+        0.352
       ],
       "tempo_embedding_ms": 0,
       "top5": [
@@ -5416,15 +6159,23 @@
       "corretos_top5": 0,
       "total_resultados": 10,
       "relaxado": false,
-      "tempo_banco_ms": 30.38,
+      "tempo_banco_ms": 34.14,
       "tempo_banco_ms_amostras": [
-        49,
-        30.38,
-        31,
-        29.34,
-        27.48
+        39.73,
+        29.97,
+        27.26,
+        34.14,
+        44.19
       ],
-      "tempo_embedding_ms": 7.11,
+      "tempo_servidor_ms": 1.457,
+      "tempo_servidor_ms_amostras": [
+        2.18,
+        1.437,
+        1.413,
+        1.457,
+        1.478
+      ],
+      "tempo_embedding_ms": 9.02,
       "top5": [
         {
           "produto": "METILDOPA",
@@ -5472,15 +6223,23 @@
       "corretos_top5": 0,
       "total_resultados": 10,
       "relaxado": false,
-      "tempo_banco_ms": 30.52,
+      "tempo_banco_ms": 29.86,
       "tempo_banco_ms_amostras": [
-        28.11,
-        27.44,
-        30.52,
-        80.33,
-        84.95
+        37.99,
+        29.2,
+        32.26,
+        29.86,
+        27.81
       ],
-      "tempo_embedding_ms": 7.87,
+      "tempo_servidor_ms": 1.425,
+      "tempo_servidor_ms_amostras": [
+        1.466,
+        1.363,
+        1.425,
+        1.443,
+        1.34
+      ],
+      "tempo_embedding_ms": 9.81,
       "top5": [
         {
           "produto": "METILDOPA",
@@ -5523,28 +6282,29 @@
       "consulta_id": 15,
       "motor": "hibrido",
       "acerto_top5": true,
-      "posicao_primeiro_correto": 2,
-      "rr": 0.5,
+      "posicao_primeiro_correto": 1,
+      "rr": 1,
       "corretos_top5": 1,
       "total_resultados": 10,
       "relaxado": false,
-      "tempo_banco_ms": 79.97,
+      "tempo_banco_ms": 30.82,
       "tempo_banco_ms_amostras": [
-        76.6,
-        79.97,
-        90.03,
-        88.44,
-        31.26
+        30.82,
+        30.48,
+        29.85,
+        77.46,
+        68.95
       ],
-      "tempo_embedding_ms": 6.68,
+      "tempo_servidor_ms": 2.815,
+      "tempo_servidor_ms_amostras": [
+        2.825,
+        2.789,
+        2.882,
+        2.815,
+        2.741
+      ],
+      "tempo_embedding_ms": 9.31,
       "top5": [
-        {
-          "produto": "METILDOPA",
-          "substancia": "METILDOPA",
-          "selo": "Genérico",
-          "pmc": 61.37,
-          "correto": false
-        },
         {
           "produto": "CLORIDRATO DE METFORMINA",
           "substancia": "CLORIDRATO DE METFORMINA",
@@ -5553,10 +6313,10 @@
           "correto": true
         },
         {
-          "produto": "REVLIMID",
-          "substancia": "LENALIDOMIDA",
-          "selo": "Referência",
-          "pmc": 41290.26,
+          "produto": "METILDOPA",
+          "substancia": "METILDOPA",
+          "selo": "Genérico",
+          "pmc": 61.37,
           "correto": false
         },
         {
@@ -5570,7 +6330,14 @@
           "produto": "REVLIMID",
           "substancia": "LENALIDOMIDA",
           "selo": "Referência",
-          "pmc": 32308.54,
+          "pmc": 41290.26,
+          "correto": false
+        },
+        {
+          "produto": "CLORIDRATO DE METFORMINA",
+          "substancia": "CLORIDRATO DE METFORMINA",
+          "selo": "Genérico",
+          "pmc": 36.58,
           "correto": false
         }
       ]
@@ -5584,13 +6351,21 @@
       "corretos_top5": 5,
       "total_resultados": 10,
       "relaxado": false,
-      "tempo_banco_ms": 67.42,
+      "tempo_banco_ms": 67.1,
       "tempo_banco_ms_amostras": [
-        99.37,
-        66.82,
-        67.07,
-        67.42,
-        74.73
+        69.29,
+        78.81,
+        65.22,
+        67.1,
+        65.26
+      ],
+      "tempo_servidor_ms": 44.481,
+      "tempo_servidor_ms_amostras": [
+        44.059,
+        44.481,
+        44.629,
+        48.591,
+        43.975
       ],
       "tempo_embedding_ms": 0,
       "top5": [
@@ -5640,13 +6415,21 @@
       "corretos_top5": 5,
       "total_resultados": 10,
       "relaxado": false,
-      "tempo_banco_ms": 24.13,
+      "tempo_banco_ms": 21.3,
       "tempo_banco_ms_amostras": [
-        24.1,
-        24.13,
-        22.99,
-        25.26,
-        24.38
+        23.67,
+        21.14,
+        21.3,
+        29.26,
+        20.51
+      ],
+      "tempo_servidor_ms": 0.28,
+      "tempo_servidor_ms_amostras": [
+        0.29,
+        0.278,
+        0.28,
+        0.288,
+        0.261
       ],
       "tempo_embedding_ms": 0,
       "top5": [
@@ -5696,15 +6479,23 @@
       "corretos_top5": 0,
       "total_resultados": 10,
       "relaxado": false,
-      "tempo_banco_ms": 28.43,
+      "tempo_banco_ms": 29.37,
       "tempo_banco_ms_amostras": [
-        27.6,
-        32.09,
-        28.43,
-        28.3,
-        29.19
+        30.69,
+        31.21,
+        27.39,
+        28.23,
+        29.37
       ],
-      "tempo_embedding_ms": 6.27,
+      "tempo_servidor_ms": 1.482,
+      "tempo_servidor_ms_amostras": [
+        1.501,
+        1.68,
+        1.42,
+        1.482,
+        1.469
+      ],
+      "tempo_embedding_ms": 5.97,
       "top5": [
         {
           "produto": "ALERFIN",
@@ -5752,15 +6543,23 @@
       "corretos_top5": 0,
       "total_resultados": 10,
       "relaxado": false,
-      "tempo_banco_ms": 79.26,
+      "tempo_banco_ms": 74.03,
       "tempo_banco_ms_amostras": [
-        79.26,
-        29.46,
-        84.13,
-        70.08,
-        82.63
+        27.93,
+        77.44,
+        67.52,
+        74.03,
+        88.05
       ],
-      "tempo_embedding_ms": 8.25,
+      "tempo_servidor_ms": 1.437,
+      "tempo_servidor_ms_amostras": [
+        1.602,
+        1.461,
+        1.369,
+        1.423,
+        1.437
+      ],
+      "tempo_embedding_ms": 9.52,
       "top5": [
         {
           "produto": "ALERFIN",
@@ -5805,18 +6604,26 @@
       "acerto_top5": true,
       "posicao_primeiro_correto": 1,
       "rr": 1,
-      "corretos_top5": 3,
+      "corretos_top5": 2,
       "total_resultados": 10,
       "relaxado": false,
-      "tempo_banco_ms": 32.74,
+      "tempo_banco_ms": 33.46,
       "tempo_banco_ms_amostras": [
-        34.39,
-        31.76,
-        34.52,
-        30.81,
-        32.74
+        33.31,
+        29.89,
+        81.06,
+        33.46,
+        78.17
       ],
-      "tempo_embedding_ms": 18.1,
+      "tempo_servidor_ms": 2.945,
+      "tempo_servidor_ms_amostras": [
+        2.945,
+        2.924,
+        3.047,
+        3.063,
+        2.944
+      ],
+      "tempo_embedding_ms": 10.74,
       "top5": [
         {
           "produto": "BILASTINA",
@@ -5833,13 +6640,6 @@
           "correto": false
         },
         {
-          "produto": "ALERGOMINE",
-          "substancia": "MALEATO DE DEXCLORFENIRAMINA",
-          "selo": "Similar",
-          "pmc": 20.82,
-          "correto": false
-        },
-        {
           "produto": "BILASTINA",
           "substancia": "BILASTINA",
           "selo": "Genérico",
@@ -5847,11 +6647,18 @@
           "correto": true
         },
         {
-          "produto": "BILASTINA",
-          "substancia": "BILASTINA",
-          "selo": "Genérico",
-          "pmc": 99.11,
-          "correto": true
+          "produto": "ALERGOMINE",
+          "substancia": "MALEATO DE DEXCLORFENIRAMINA",
+          "selo": "Similar",
+          "pmc": 20.82,
+          "correto": false
+        },
+        {
+          "produto": "ALERGIDEX",
+          "substancia": "BETAMETASONA + MALEATO DE DEXCLORFENIRAMINA",
+          "selo": "Similar",
+          "pmc": 38.54,
+          "correto": false
         }
       ]
     },
@@ -5864,13 +6671,21 @@
       "corretos_top5": 0,
       "total_resultados": 0,
       "relaxado": false,
-      "tempo_banco_ms": 69.37,
+      "tempo_banco_ms": 68.67,
       "tempo_banco_ms_amostras": [
-        72.13,
-        69.37,
-        70.73,
-        67.6,
-        67.68
+        68.67,
+        70.54,
+        65.09,
+        67.04,
+        70.3
+      ],
+      "tempo_servidor_ms": 44.806,
+      "tempo_servidor_ms_amostras": [
+        44.699,
+        44.806,
+        44.476,
+        45.92,
+        45.215
       ],
       "tempo_embedding_ms": 0,
       "top5": []
@@ -5884,13 +6699,21 @@
       "corretos_top5": 4,
       "total_resultados": 10,
       "relaxado": false,
-      "tempo_banco_ms": 24.14,
+      "tempo_banco_ms": 21.27,
       "tempo_banco_ms_amostras": [
-        23.94,
-        29.26,
-        24.14,
-        23.93,
-        24.3
+        21.53,
+        21.27,
+        21.59,
+        20.89,
+        21.16
+      ],
+      "tempo_servidor_ms": 0.604,
+      "tempo_servidor_ms_amostras": [
+        0.582,
+        0.604,
+        0.629,
+        0.602,
+        0.627
       ],
       "tempo_embedding_ms": 0,
       "top5": [
@@ -5940,15 +6763,23 @@
       "corretos_top5": 0,
       "total_resultados": 10,
       "relaxado": false,
-      "tempo_banco_ms": 29.08,
+      "tempo_banco_ms": 27.41,
       "tempo_banco_ms_amostras": [
-        28.01,
-        38.75,
-        29.08,
-        29.25,
-        28.54
+        27.41,
+        42.23,
+        30.52,
+        27.34,
+        27.23
       ],
-      "tempo_embedding_ms": 5.91,
+      "tempo_servidor_ms": 1.468,
+      "tempo_servidor_ms_amostras": [
+        1.554,
+        1.47,
+        1.446,
+        1.468,
+        1.423
+      ],
+      "tempo_embedding_ms": 5.08,
       "top5": [
         {
           "produto": "DYSPORT",
@@ -5996,15 +6827,23 @@
       "corretos_top5": 0,
       "total_resultados": 10,
       "relaxado": false,
-      "tempo_banco_ms": 30.48,
+      "tempo_banco_ms": 28.27,
       "tempo_banco_ms_amostras": [
-        27.73,
-        32.99,
-        36.33,
-        30.48,
-        28.44
+        27.38,
+        28.27,
+        27.19,
+        71.04,
+        75.78
       ],
-      "tempo_embedding_ms": 8.11,
+      "tempo_servidor_ms": 1.477,
+      "tempo_servidor_ms_amostras": [
+        1.477,
+        1.417,
+        1.363,
+        1.488,
+        1.489
+      ],
+      "tempo_embedding_ms": 7.14,
       "top5": [
         {
           "produto": "BOTULIFT",
@@ -6052,15 +6891,23 @@
       "corretos_top5": 3,
       "total_resultados": 10,
       "relaxado": false,
-      "tempo_banco_ms": 31.96,
+      "tempo_banco_ms": 85.97,
       "tempo_banco_ms_amostras": [
-        78.46,
-        34.15,
-        31.14,
-        31.96,
-        29.26
+        90.31,
+        87.31,
+        85.97,
+        74.09,
+        69.83
       ],
-      "tempo_embedding_ms": 8.79,
+      "tempo_servidor_ms": 2.9,
+      "tempo_servidor_ms_amostras": [
+        2.942,
+        2.852,
+        2.919,
+        2.895,
+        2.9
+      ],
+      "tempo_embedding_ms": 7.04,
       "top5": [
         {
           "produto": "PARACETAMOL",
@@ -6077,18 +6924,18 @@
           "correto": false
         },
         {
-          "produto": "DYSPORT",
-          "substancia": "TOXINA BOTULÍNICA A",
-          "selo": "Biológico",
-          "pmc": 3691.85,
-          "correto": false
-        },
-        {
           "produto": "PARACETAMOL",
           "substancia": "PARACETAMOL",
           "selo": "Genérico",
           "pmc": 25.51,
           "correto": true
+        },
+        {
+          "produto": "DYSPORT",
+          "substancia": "TOXINA BOTULÍNICA A",
+          "selo": "Biológico",
+          "pmc": 3691.85,
+          "correto": false
         },
         {
           "produto": "DIPIRONA SODICA",
@@ -6108,13 +6955,21 @@
       "corretos_top5": 0,
       "total_resultados": 0,
       "relaxado": false,
-      "tempo_banco_ms": 68.21,
+      "tempo_banco_ms": 70.9,
       "tempo_banco_ms_amostras": [
-        67.34,
-        68.21,
-        67.37,
-        72.08,
-        69.51
+        72.88,
+        64.99,
+        65.26,
+        71.54,
+        70.9
+      ],
+      "tempo_servidor_ms": 46.178,
+      "tempo_servidor_ms_amostras": [
+        46.477,
+        44.767,
+        46.178,
+        47.31,
+        44.673
       ],
       "tempo_embedding_ms": 0,
       "top5": []
@@ -6128,13 +6983,21 @@
       "corretos_top5": 5,
       "total_resultados": 10,
       "relaxado": true,
-      "tempo_banco_ms": 47.02,
+      "tempo_banco_ms": 43.96,
       "tempo_banco_ms_amostras": [
-        47.02,
-        48.93,
-        46.16,
-        45.61,
-        48
+        43.12,
+        42.72,
+        43.96,
+        45.52,
+        45.32
+      ],
+      "tempo_servidor_ms": 1.558,
+      "tempo_servidor_ms_amostras": [
+        1.548,
+        1.529,
+        1.626,
+        1.62,
+        1.558
       ],
       "tempo_embedding_ms": 0,
       "top5": [
@@ -6184,23 +7047,24 @@
       "corretos_top5": 2,
       "total_resultados": 10,
       "relaxado": false,
-      "tempo_banco_ms": 28.57,
+      "tempo_banco_ms": 29.11,
       "tempo_banco_ms_amostras": [
-        28.43,
-        27.67,
-        31.08,
-        28.6,
-        28.57
+        34.88,
+        27.21,
+        30.24,
+        27.96,
+        29.11
       ],
-      "tempo_embedding_ms": 6.84,
+      "tempo_servidor_ms": 1.502,
+      "tempo_servidor_ms_amostras": [
+        1.681,
+        1.43,
+        1.502,
+        1.765,
+        1.493
+      ],
+      "tempo_embedding_ms": 9.34,
       "top5": [
-        {
-          "produto": "RUNNER EZE",
-          "substancia": "ROSUVASTATINA CÁLCICA + EZETIMIBA",
-          "selo": "Similar",
-          "pmc": 767.33,
-          "correto": false
-        },
         {
           "produto": "RUNNER EZE",
           "substancia": "ROSUVASTATINA CÁLCICA + EZETIMIBA",
@@ -6209,17 +7073,24 @@
           "correto": false
         },
         {
-          "produto": "MUSCULARE",
-          "substancia": "CLORIDRATO DE CICLOBENZAPRINA",
+          "produto": "RUNNER EZE",
+          "substancia": "ROSUVASTATINA CÁLCICA + EZETIMIBA",
           "selo": "Similar",
-          "pmc": 21.1,
-          "correto": true
+          "pmc": 767.33,
+          "correto": false
         },
         {
           "produto": "MUSCULARE",
           "substancia": "CLORIDRATO DE CICLOBENZAPRINA",
           "selo": "Similar",
           "pmc": 42.22,
+          "correto": true
+        },
+        {
+          "produto": "MUSCULARE",
+          "substancia": "CLORIDRATO DE CICLOBENZAPRINA",
+          "selo": "Similar",
+          "pmc": 21.1,
           "correto": true
         },
         {
@@ -6240,15 +7111,23 @@
       "corretos_top5": 1,
       "total_resultados": 10,
       "relaxado": false,
-      "tempo_banco_ms": 40.99,
+      "tempo_banco_ms": 28.99,
       "tempo_banco_ms_amostras": [
-        31.63,
-        40.99,
-        44.72,
-        28.37,
-        95.92
+        28.89,
+        66.91,
+        76.26,
+        28.99,
+        28.33
       ],
-      "tempo_embedding_ms": 8.38,
+      "tempo_servidor_ms": 1.464,
+      "tempo_servidor_ms_amostras": [
+        1.464,
+        1.45,
+        1.466,
+        1.47,
+        1.443
+      ],
+      "tempo_embedding_ms": 8.82,
       "top5": [
         {
           "produto": "ORLISTATE",
@@ -6296,15 +7175,23 @@
       "corretos_top5": 0,
       "total_resultados": 10,
       "relaxado": false,
-      "tempo_banco_ms": 30.09,
+      "tempo_banco_ms": 76.16,
       "tempo_banco_ms_amostras": [
-        30.09,
-        29.33,
-        29.06,
-        76.7,
-        39.93
+        29.01,
+        76.16,
+        68.41,
+        85.49,
+        78.96
       ],
-      "tempo_embedding_ms": 9.68,
+      "tempo_servidor_ms": 2.774,
+      "tempo_servidor_ms_amostras": [
+        3.094,
+        2.774,
+        2.849,
+        2.774,
+        2.647
+      ],
+      "tempo_embedding_ms": 8.65,
       "top5": [
         {
           "produto": "ORLISTATE",
@@ -6352,13 +7239,21 @@
       "corretos_top5": 0,
       "total_resultados": 0,
       "relaxado": false,
-      "tempo_banco_ms": 68.75,
+      "tempo_banco_ms": 67.28,
       "tempo_banco_ms_amostras": [
-        67,
-        69.33,
-        70.16,
-        68.75,
-        68.69
+        65.78,
+        67.28,
+        67.39,
+        65.32,
+        70.6
+      ],
+      "tempo_servidor_ms": 45.001,
+      "tempo_servidor_ms_amostras": [
+        44.531,
+        44.628,
+        45.001,
+        45.407,
+        45.24
       ],
       "tempo_embedding_ms": 0,
       "top5": []
@@ -6372,13 +7267,21 @@
       "corretos_top5": 5,
       "total_resultados": 10,
       "relaxado": true,
-      "tempo_banco_ms": 48.56,
+      "tempo_banco_ms": 43.9,
       "tempo_banco_ms_amostras": [
-        49.85,
-        48.55,
-        62.86,
-        48.56,
-        46.79
+        45.77,
+        43.9,
+        43.2,
+        46.23,
+        43.2
+      ],
+      "tempo_servidor_ms": 2.11,
+      "tempo_servidor_ms_amostras": [
+        2.109,
+        2.219,
+        2.11,
+        2.19,
+        2.093
       ],
       "tempo_embedding_ms": 0,
       "top5": [
@@ -6428,15 +7331,23 @@
       "corretos_top5": 0,
       "total_resultados": 10,
       "relaxado": false,
-      "tempo_banco_ms": 28.25,
+      "tempo_banco_ms": 27.47,
       "tempo_banco_ms_amostras": [
-        47.45,
-        27.91,
-        28.25,
-        36.5,
-        27.49
+        27.47,
+        28.78,
+        27.46,
+        33.27,
+        27.36
       ],
-      "tempo_embedding_ms": 7.96,
+      "tempo_servidor_ms": 1.441,
+      "tempo_servidor_ms_amostras": [
+        1.468,
+        1.441,
+        1.428,
+        1.458,
+        1.42
+      ],
+      "tempo_embedding_ms": 11.04,
       "top5": [
         {
           "produto": "REVESTIVE",
@@ -6456,14 +7367,14 @@
           "produto": "RESOLOR",
           "substancia": "PRUCALOPRIDA",
           "selo": "Referência",
-          "pmc": 391.02,
+          "pmc": 195.52,
           "correto": false
         },
         {
           "produto": "RESOLOR",
           "substancia": "PRUCALOPRIDA",
           "selo": "Referência",
-          "pmc": 195.52,
+          "pmc": 391.02,
           "correto": false
         },
         {
@@ -6484,15 +7395,23 @@
       "corretos_top5": 2,
       "total_resultados": 10,
       "relaxado": false,
-      "tempo_banco_ms": 30.66,
+      "tempo_banco_ms": 28.32,
       "tempo_banco_ms_amostras": [
-        31.54,
-        27.77,
-        30.2,
-        30.66,
-        31.49
+        28.32,
+        28,
+        56.52,
+        28.03,
+        66.9
       ],
-      "tempo_embedding_ms": 12.73,
+      "tempo_servidor_ms": 1.422,
+      "tempo_servidor_ms_amostras": [
+        1.422,
+        1.5,
+        1.43,
+        1.397,
+        1.421
+      ],
+      "tempo_embedding_ms": 11.86,
       "top5": [
         {
           "produto": "REVESTIVE",
@@ -6535,34 +7454,42 @@
       "consulta_id": 19,
       "motor": "hibrido",
       "acerto_top5": true,
-      "posicao_primeiro_correto": 2,
-      "rr": 0.5,
+      "posicao_primeiro_correto": 1,
+      "rr": 1,
       "corretos_top5": 4,
       "total_resultados": 10,
       "relaxado": false,
-      "tempo_banco_ms": 33.07,
+      "tempo_banco_ms": 36.87,
       "tempo_banco_ms_amostras": [
-        29.46,
-        37.66,
-        41.45,
-        32.99,
-        33.07
+        30.27,
+        85.01,
+        31.41,
+        36.87,
+        73.67
       ],
-      "tempo_embedding_ms": 21.56,
+      "tempo_servidor_ms": 2.835,
+      "tempo_servidor_ms_amostras": [
+        2.826,
+        2.956,
+        2.844,
+        2.835,
+        2.833
+      ],
+      "tempo_embedding_ms": 11.22,
       "top5": [
-        {
-          "produto": "REVESTIVE",
-          "substancia": "TEDUGLUTIDA",
-          "selo": "Biológico",
-          "pmc": 175804.93,
-          "correto": false
-        },
         {
           "produto": "STOMALIV",
           "substancia": "ION CITRATO",
           "selo": "Específico",
           "pmc": 78.14,
           "correto": true
+        },
+        {
+          "produto": "REVESTIVE",
+          "substancia": "TEDUGLUTIDA",
+          "selo": "Biológico",
+          "pmc": 175804.93,
+          "correto": false
         },
         {
           "produto": "GASTROL",
@@ -6596,13 +7523,21 @@
       "corretos_top5": 0,
       "total_resultados": 0,
       "relaxado": false,
-      "tempo_banco_ms": 74.33,
+      "tempo_banco_ms": 65.42,
       "tempo_banco_ms_amostras": [
-        76.84,
-        83.92,
-        65.97,
-        74.33,
-        67.35
+        83.07,
+        64.9,
+        65.42,
+        65.68,
+        65.13
+      ],
+      "tempo_servidor_ms": 44.077,
+      "tempo_servidor_ms_amostras": [
+        43.806,
+        45.307,
+        44.506,
+        44.077,
+        43.847
       ],
       "tempo_embedding_ms": 0,
       "top5": []
@@ -6616,13 +7551,21 @@
       "corretos_top5": 0,
       "total_resultados": 10,
       "relaxado": true,
-      "tempo_banco_ms": 46.32,
+      "tempo_banco_ms": 43.29,
       "tempo_banco_ms_amostras": [
-        45.01,
-        47.96,
-        46.07,
-        46.61,
-        46.32
+        43.1,
+        44.09,
+        68.18,
+        43.25,
+        43.29
+      ],
+      "tempo_servidor_ms": 1.067,
+      "tempo_servidor_ms_amostras": [
+        1.052,
+        1.061,
+        1.159,
+        1.067,
+        1.074
       ],
       "tempo_embedding_ms": 0,
       "top5": [
@@ -6672,15 +7615,23 @@
       "corretos_top5": 5,
       "total_resultados": 10,
       "relaxado": false,
-      "tempo_banco_ms": 31.23,
+      "tempo_banco_ms": 27.3,
       "tempo_banco_ms_amostras": [
-        27.78,
-        31.23,
-        32.55,
-        30.44,
-        39.53
+        30.03,
+        27.42,
+        27.17,
+        27.3,
+        27.19
       ],
-      "tempo_embedding_ms": 8.46,
+      "tempo_servidor_ms": 1.485,
+      "tempo_servidor_ms_amostras": [
+        1.448,
+        1.485,
+        1.494,
+        2.195,
+        1.456
+      ],
+      "tempo_embedding_ms": 11.13,
       "top5": [
         {
           "produto": "VENTUS",
@@ -6707,14 +7658,14 @@
           "produto": "MOMATE",
           "substancia": "FUROATO DE MOMETASONA MONOIDRATADO",
           "selo": "Similar",
-          "pmc": 73.58,
+          "pmc": 49.69,
           "correto": true
         },
         {
           "produto": "MOMATE",
           "substancia": "FUROATO DE MOMETASONA MONOIDRATADO",
           "selo": "Similar",
-          "pmc": 49.69,
+          "pmc": 73.58,
           "correto": true
         }
       ]
@@ -6728,15 +7679,23 @@
       "corretos_top5": 5,
       "total_resultados": 10,
       "relaxado": false,
-      "tempo_banco_ms": 29.69,
+      "tempo_banco_ms": 30.5,
       "tempo_banco_ms_amostras": [
-        124.54,
-        36.62,
-        29.69,
-        28.17,
-        28.65
+        27.1,
+        76.22,
+        30.5,
+        29.2,
+        77.11
       ],
-      "tempo_embedding_ms": 12.13,
+      "tempo_servidor_ms": 1.388,
+      "tempo_servidor_ms_amostras": [
+        1.376,
+        1.388,
+        1.406,
+        1.365,
+        2.488
+      ],
+      "tempo_embedding_ms": 12.44,
       "top5": [
         {
           "produto": "INALAJET",
@@ -6779,28 +7738,29 @@
       "consulta_id": 20,
       "motor": "hibrido",
       "acerto_top5": true,
-      "posicao_primeiro_correto": 2,
-      "rr": 0.5,
-      "corretos_top5": 2,
+      "posicao_primeiro_correto": 1,
+      "rr": 1,
+      "corretos_top5": 3,
       "total_resultados": 10,
       "relaxado": false,
-      "tempo_banco_ms": 33.58,
+      "tempo_banco_ms": 76.74,
       "tempo_banco_ms_amostras": [
-        30.3,
-        33.58,
-        32.26,
-        88.16,
-        34.05
+        76.74,
+        81.38,
+        29.38,
+        29.11,
+        80.6
       ],
-      "tempo_embedding_ms": 12.31,
+      "tempo_servidor_ms": 2.871,
+      "tempo_servidor_ms_amostras": [
+        2.949,
+        2.866,
+        2.871,
+        2.869,
+        2.871
+      ],
+      "tempo_embedding_ms": 9.73,
       "top5": [
-        {
-          "produto": "TÊMPORA",
-          "substancia": "TOPIRAMATO",
-          "selo": "Similar",
-          "pmc": 59.15,
-          "correto": false
-        },
         {
           "produto": "INALAJET",
           "substancia": "BUDESONIDA",
@@ -6812,7 +7772,7 @@
           "produto": "TÊMPORA",
           "substancia": "TOPIRAMATO",
           "selo": "Similar",
-          "pmc": 239.03,
+          "pmc": 59.15,
           "correto": false
         },
         {
@@ -6826,8 +7786,15 @@
           "produto": "TÊMPORA",
           "substancia": "TOPIRAMATO",
           "selo": "Similar",
-          "pmc": 118.32,
+          "pmc": 239.03,
           "correto": false
+        },
+        {
+          "produto": "ALERFIN",
+          "substancia": "DIPROPIONATO DE BECLOMETASONA",
+          "selo": "Similar",
+          "pmc": 113.75,
+          "correto": true
         }
       ]
     },
@@ -6840,13 +7807,21 @@
       "corretos_top5": 0,
       "total_resultados": 0,
       "relaxado": false,
-      "tempo_banco_ms": 72.18,
+      "tempo_banco_ms": 66.35,
       "tempo_banco_ms_amostras": [
-        109.38,
-        73.29,
-        69.21,
-        72.18,
-        69.22
+        67.99,
+        66.35,
+        65.16,
+        67.78,
+        65.57
+      ],
+      "tempo_servidor_ms": 45.959,
+      "tempo_servidor_ms_amostras": [
+        51.333,
+        43.67,
+        44.356,
+        46.187,
+        45.959
       ],
       "tempo_embedding_ms": 0,
       "top5": []
@@ -6860,13 +7835,21 @@
       "corretos_top5": 4,
       "total_resultados": 10,
       "relaxado": true,
-      "tempo_banco_ms": 50.04,
+      "tempo_banco_ms": 47.64,
       "tempo_banco_ms_amostras": [
-        70.63,
-        52.99,
-        48.93,
-        48.59,
-        50.04
+        53.31,
+        44.36,
+        47.77,
+        47.64,
+        46.4
+      ],
+      "tempo_servidor_ms": 2.982,
+      "tempo_servidor_ms_amostras": [
+        3.022,
+        2.943,
+        2.97,
+        2.982,
+        3.006
       ],
       "tempo_embedding_ms": 0,
       "top5": [
@@ -6916,15 +7899,23 @@
       "corretos_top5": 0,
       "total_resultados": 10,
       "relaxado": false,
-      "tempo_banco_ms": 28.45,
+      "tempo_banco_ms": 28.41,
       "tempo_banco_ms_amostras": [
-        29.47,
-        28.45,
-        27.53,
-        40.46,
-        28.04
+        28.41,
+        31,
+        28.82,
+        27.91,
+        27.3
       ],
-      "tempo_embedding_ms": 6.24,
+      "tempo_servidor_ms": 1.463,
+      "tempo_servidor_ms_amostras": [
+        1.458,
+        1.49,
+        1.455,
+        1.485,
+        1.463
+      ],
+      "tempo_embedding_ms": 9.21,
       "top5": [
         {
           "produto": "AVIDE",
@@ -6972,15 +7963,23 @@
       "corretos_top5": 0,
       "total_resultados": 10,
       "relaxado": false,
-      "tempo_banco_ms": 28.42,
+      "tempo_banco_ms": 67.27,
       "tempo_banco_ms_amostras": [
-        70.4,
-        28.17,
-        27.79,
-        36.66,
-        28.42
+        69.88,
+        30.11,
+        67.27,
+        27.41,
+        77.33
       ],
-      "tempo_embedding_ms": 10.89,
+      "tempo_servidor_ms": 1.444,
+      "tempo_servidor_ms_amostras": [
+        1.362,
+        2.019,
+        1.457,
+        1.363,
+        1.444
+      ],
+      "tempo_embedding_ms": 8.31,
       "top5": [
         {
           "produto": "AVIDE",
@@ -7023,20 +8022,28 @@
       "consulta_id": 21,
       "motor": "hibrido",
       "acerto_top5": true,
-      "posicao_primeiro_correto": 4,
-      "rr": 0.25,
+      "posicao_primeiro_correto": 3,
+      "rr": 0.3333,
       "corretos_top5": 2,
       "total_resultados": 10,
       "relaxado": false,
-      "tempo_banco_ms": 38.24,
+      "tempo_banco_ms": 73.34,
       "tempo_banco_ms_amostras": [
-        72.86,
-        36.85,
-        38.24,
-        39.82,
-        32.87
+        80.05,
+        28.27,
+        73.34,
+        30.1,
+        73.81
       ],
-      "tempo_embedding_ms": 8.75,
+      "tempo_servidor_ms": 2.763,
+      "tempo_servidor_ms_amostras": [
+        2.763,
+        2.763,
+        6.953,
+        2.724,
+        2.806
+      ],
+      "tempo_embedding_ms": 8.62,
       "top5": [
         {
           "produto": "INTESTIN",
@@ -7053,18 +8060,18 @@
           "correto": false
         },
         {
-          "produto": "DIGESIGMA",
-          "substancia": "BROMOPRIDA",
-          "selo": "Similar",
-          "pmc": 39.91,
-          "correto": false
-        },
-        {
           "produto": "BISALAX",
           "substancia": "BISACODIL",
           "selo": "Similar",
           "pmc": 74.2,
           "correto": true
+        },
+        {
+          "produto": "DIGESIGMA",
+          "substancia": "BROMOPRIDA",
+          "selo": "Similar",
+          "pmc": 39.91,
+          "correto": false
         },
         {
           "produto": "BISALAX",
@@ -7084,13 +8091,21 @@
       "corretos_top5": 0,
       "total_resultados": 0,
       "relaxado": false,
-      "tempo_banco_ms": 68.7,
+      "tempo_banco_ms": 65.85,
       "tempo_banco_ms_amostras": [
-        72.65,
-        68.6,
-        67.94,
-        68.7,
-        71.67
+        65.82,
+        71.88,
+        67.26,
+        65.85,
+        65.17
+      ],
+      "tempo_servidor_ms": 45.847,
+      "tempo_servidor_ms_amostras": [
+        46.175,
+        45.905,
+        45.847,
+        44.531,
+        44.891
       ],
       "tempo_embedding_ms": 0,
       "top5": []
@@ -7104,13 +8119,21 @@
       "corretos_top5": 4,
       "total_resultados": 10,
       "relaxado": true,
-      "tempo_banco_ms": 45.83,
+      "tempo_banco_ms": 43.26,
       "tempo_banco_ms_amostras": [
-        45.34,
-        47.95,
-        45.24,
-        46.55,
-        45.83
+        42.45,
+        42.84,
+        44.04,
+        43.26,
+        46.06
+      ],
+      "tempo_servidor_ms": 0.659,
+      "tempo_servidor_ms_amostras": [
+        0.659,
+        0.667,
+        4.383,
+        0.619,
+        0.63
       ],
       "tempo_embedding_ms": 0,
       "top5": [
@@ -7160,15 +8183,23 @@
       "corretos_top5": 0,
       "total_resultados": 10,
       "relaxado": false,
-      "tempo_banco_ms": 29.03,
+      "tempo_banco_ms": 27.84,
       "tempo_banco_ms_amostras": [
-        28.35,
-        33.31,
-        29.03,
-        28.25,
-        38.82
+        28.43,
+        28.66,
+        27.61,
+        27.55,
+        27.84
       ],
-      "tempo_embedding_ms": 5.88,
+      "tempo_servidor_ms": 1.479,
+      "tempo_servidor_ms_amostras": [
+        1.479,
+        2.165,
+        1.462,
+        1.504,
+        1.439
+      ],
+      "tempo_embedding_ms": 6.06,
       "top5": [
         {
           "produto": "ADEMPAS®",
@@ -7216,15 +8247,23 @@
       "corretos_top5": 5,
       "total_resultados": 10,
       "relaxado": false,
-      "tempo_banco_ms": 30.74,
+      "tempo_banco_ms": 42.06,
       "tempo_banco_ms_amostras": [
-        79.96,
-        27.93,
-        34.29,
-        29.34,
-        30.74
+        42.06,
+        29.93,
+        79.52,
+        26.51,
+        68.02
       ],
-      "tempo_embedding_ms": 8.36,
+      "tempo_servidor_ms": 1.413,
+      "tempo_servidor_ms_amostras": [
+        1.412,
+        3.434,
+        1.413,
+        1.422,
+        1.379
+      ],
+      "tempo_embedding_ms": 7.48,
       "top5": [
         {
           "produto": "FLUX SR",
@@ -7272,15 +8311,23 @@
       "corretos_top5": 2,
       "total_resultados": 10,
       "relaxado": false,
-      "tempo_banco_ms": 36.83,
+      "tempo_banco_ms": 74.62,
       "tempo_banco_ms_amostras": [
-        73.38,
-        34.32,
-        80.35,
-        36.83,
-        34.56
+        39.98,
+        78.23,
+        74.62,
+        79.39,
+        72.4
       ],
-      "tempo_embedding_ms": 9.94,
+      "tempo_servidor_ms": 2.897,
+      "tempo_servidor_ms_amostras": [
+        2.953,
+        3.996,
+        2.897,
+        2.746,
+        2.856
+      ],
+      "tempo_embedding_ms": 8.42,
       "top5": [
         {
           "produto": "FLUX SR",
@@ -7297,18 +8344,18 @@
           "correto": false
         },
         {
-          "produto": "OZEMPIC",
-          "substancia": "SEMAGLUTIDA",
-          "selo": "Biológico",
-          "pmc": 1330.6,
-          "correto": false
-        },
-        {
           "produto": "FLUX SR",
           "substancia": "INDAPAMIDA",
           "selo": "Similar",
           "pmc": 119.25,
           "correto": true
+        },
+        {
+          "produto": "OZEMPIC",
+          "substancia": "SEMAGLUTIDA",
+          "selo": "Biológico",
+          "pmc": 1330.6,
+          "correto": false
         },
         {
           "produto": "PROCIMAX",
@@ -7328,13 +8375,21 @@
       "corretos_top5": 0,
       "total_resultados": 0,
       "relaxado": false,
-      "tempo_banco_ms": 68.95,
+      "tempo_banco_ms": 67.77,
       "tempo_banco_ms_amostras": [
-        67.79,
-        78.68,
-        68.95,
-        75.12,
-        67.66
+        66.25,
+        65.4,
+        67.77,
+        69.24,
+        68.02
+      ],
+      "tempo_servidor_ms": 45.229,
+      "tempo_servidor_ms_amostras": [
+        44.798,
+        44.539,
+        45.49,
+        45.229,
+        45.534
       ],
       "tempo_embedding_ms": 0,
       "top5": []
@@ -7348,13 +8403,21 @@
       "corretos_top5": 5,
       "total_resultados": 10,
       "relaxado": true,
-      "tempo_banco_ms": 46.77,
+      "tempo_banco_ms": 42.42,
       "tempo_banco_ms_amostras": [
-        46.77,
-        58.71,
-        44.42,
-        44.98,
-        49.57
+        42.42,
+        43.85,
+        41.43,
+        41.76,
+        42.65
+      ],
+      "tempo_servidor_ms": 0.554,
+      "tempo_servidor_ms_amostras": [
+        0.563,
+        0.523,
+        0.566,
+        0.554,
+        0.546
       ],
       "tempo_embedding_ms": 0,
       "top5": [
@@ -7404,15 +8467,23 @@
       "corretos_top5": 1,
       "total_resultados": 10,
       "relaxado": false,
-      "tempo_banco_ms": 28.58,
+      "tempo_banco_ms": 27.95,
       "tempo_banco_ms_amostras": [
-        28.17,
-        28.37,
-        28.58,
-        31.38,
-        31.95
+        28.23,
+        28.14,
+        27.84,
+        27.16,
+        27.95
       ],
-      "tempo_embedding_ms": 9.84,
+      "tempo_servidor_ms": 1.454,
+      "tempo_servidor_ms_amostras": [
+        1.454,
+        1.444,
+        1.44,
+        1.456,
+        1.645
+      ],
+      "tempo_embedding_ms": 8.53,
       "top5": [
         {
           "produto": "TODOC",
@@ -7460,15 +8531,23 @@
       "corretos_top5": 1,
       "total_resultados": 10,
       "relaxado": false,
-      "tempo_banco_ms": 32.85,
+      "tempo_banco_ms": 28.03,
       "tempo_banco_ms_amostras": [
-        60.64,
-        27.68,
-        68.95,
-        32.85,
-        28.98
+        26.64,
+        78.21,
+        86.21,
+        27.96,
+        28.03
       ],
-      "tempo_embedding_ms": 10.67,
+      "tempo_servidor_ms": 1.516,
+      "tempo_servidor_ms_amostras": [
+        1.421,
+        1.516,
+        2.213,
+        1.455,
+        2.008
+      ],
+      "tempo_embedding_ms": 9.44,
       "top5": [
         {
           "produto": "TEFLAN",
@@ -7513,18 +8592,26 @@
       "acerto_top5": true,
       "posicao_primeiro_correto": 1,
       "rr": 1,
-      "corretos_top5": 3,
+      "corretos_top5": 2,
       "total_resultados": 10,
       "relaxado": false,
-      "tempo_banco_ms": 32.15,
+      "tempo_banco_ms": 78.55,
       "tempo_banco_ms_amostras": [
-        30.85,
-        39.99,
-        86.47,
-        30.59,
-        32.15
+        86.94,
+        70.18,
+        75.53,
+        78.75,
+        78.55
       ],
-      "tempo_embedding_ms": 11.42,
+      "tempo_servidor_ms": 2.981,
+      "tempo_servidor_ms_amostras": [
+        3.406,
+        2.988,
+        2.905,
+        2.907,
+        2.981
+      ],
+      "tempo_embedding_ms": 8.19,
       "top5": [
         {
           "produto": "ETORICOXIBE",
@@ -7555,11 +8642,11 @@
           "correto": true
         },
         {
-          "produto": "ETORICOXIBE",
-          "substancia": "ETORICOXIBE",
-          "selo": "Genérico",
-          "pmc": 116.68,
-          "correto": true
+          "produto": "SODIX",
+          "substancia": "DICLOFENACO SÓDICO",
+          "selo": "Similar",
+          "pmc": 412.42,
+          "correto": false
         }
       ]
     },
@@ -7572,13 +8659,21 @@
       "corretos_top5": 0,
       "total_resultados": 0,
       "relaxado": false,
-      "tempo_banco_ms": 68.79,
+      "tempo_banco_ms": 66.81,
       "tempo_banco_ms_amostras": [
-        69.29,
-        88.78,
-        67.93,
-        68.79,
-        67.95
+        66.53,
+        66.53,
+        66.81,
+        69.01,
+        68.96
+      ],
+      "tempo_servidor_ms": 45.792,
+      "tempo_servidor_ms_amostras": [
+        45.508,
+        46.011,
+        45.856,
+        45.792,
+        45.631
       ],
       "tempo_embedding_ms": 0,
       "top5": []
@@ -7592,13 +8687,21 @@
       "corretos_top5": 0,
       "total_resultados": 10,
       "relaxado": true,
-      "tempo_banco_ms": 51.04,
+      "tempo_banco_ms": 47.39,
       "tempo_banco_ms_amostras": [
-        49,
-        50.7,
-        52.34,
-        51.04,
-        54.03
+        47.35,
+        49.42,
+        46.69,
+        47.39,
+        48.99
+      ],
+      "tempo_servidor_ms": 5.26,
+      "tempo_servidor_ms_amostras": [
+        5.121,
+        5.286,
+        5.212,
+        5.26,
+        5.33
       ],
       "tempo_embedding_ms": 0,
       "top5": [
@@ -7648,15 +8751,23 @@
       "corretos_top5": 0,
       "total_resultados": 10,
       "relaxado": false,
-      "tempo_banco_ms": 31.95,
+      "tempo_banco_ms": 27.97,
       "tempo_banco_ms_amostras": [
-        33.22,
-        31.95,
-        33.71,
-        28.94,
-        31.73
+        26.55,
+        27.97,
+        28.51,
+        29.95,
+        27.37
       ],
-      "tempo_embedding_ms": 11.6,
+      "tempo_servidor_ms": 1.45,
+      "tempo_servidor_ms_amostras": [
+        1.441,
+        1.525,
+        1.427,
+        1.48,
+        1.45
+      ],
+      "tempo_embedding_ms": 6.52,
       "top5": [
         {
           "produto": "SERENUS",
@@ -7669,14 +8780,14 @@
           "produto": "PASALIX PI",
           "substancia": "PASSIFLORA INCARNATA",
           "selo": "Fitoterápico",
-          "pmc": 89.57,
+          "pmc": 77.19,
           "correto": false
         },
         {
           "produto": "PASALIX PI",
           "substancia": "PASSIFLORA INCARNATA",
           "selo": "Fitoterápico",
-          "pmc": 77.19,
+          "pmc": 89.57,
           "correto": false
         },
         {
@@ -7704,15 +8815,23 @@
       "corretos_top5": 0,
       "total_resultados": 10,
       "relaxado": false,
-      "tempo_banco_ms": 29.75,
+      "tempo_banco_ms": 75.41,
       "tempo_banco_ms_amostras": [
-        31.07,
-        29.75,
-        29.02,
-        29.22,
-        45.86
+        76.03,
+        74.5,
+        75.41,
+        31.58,
+        75.85
       ],
-      "tempo_embedding_ms": 16.1,
+      "tempo_servidor_ms": 1.443,
+      "tempo_servidor_ms_amostras": [
+        1.43,
+        1.469,
+        1.43,
+        1.467,
+        1.443
+      ],
+      "tempo_embedding_ms": 9.21,
       "top5": [
         {
           "produto": "SERENUS",
@@ -7746,7 +8865,7 @@
           "produto": "PASALIX PI",
           "substancia": "PASSIFLORA INCARNATA",
           "selo": "Fitoterápico",
-          "pmc": 89.57,
+          "pmc": 77.19,
           "correto": false
         }
       ]
@@ -7755,20 +8874,28 @@
       "consulta_id": 24,
       "motor": "hibrido",
       "acerto_top5": false,
-      "posicao_primeiro_correto": 7,
-      "rr": 0.1429,
+      "posicao_primeiro_correto": 8,
+      "rr": 0.125,
       "corretos_top5": 0,
       "total_resultados": 10,
       "relaxado": false,
-      "tempo_banco_ms": 30.83,
+      "tempo_banco_ms": 80.98,
       "tempo_banco_ms_amostras": [
-        29.46,
-        31.69,
-        69.38,
-        29.48,
-        30.83
+        81.19,
+        73.16,
+        80.98,
+        76.73,
+        81.6
       ],
-      "tempo_embedding_ms": 11.49,
+      "tempo_servidor_ms": 2.662,
+      "tempo_servidor_ms_amostras": [
+        2.662,
+        3.224,
+        2.647,
+        3.711,
+        2.645
+      ],
+      "tempo_embedding_ms": 6.88,
       "top5": [
         {
           "produto": "SERENUS",
@@ -7816,13 +8943,21 @@
       "corretos_top5": 0,
       "total_resultados": 0,
       "relaxado": false,
-      "tempo_banco_ms": 67.04,
+      "tempo_banco_ms": 67.06,
       "tempo_banco_ms_amostras": [
-        67.04,
-        66.74,
-        67.63,
-        66.52,
-        68.39
+        68.38,
+        67.06,
+        70.51,
+        65.1,
+        66.89
+      ],
+      "tempo_servidor_ms": 44.721,
+      "tempo_servidor_ms_amostras": [
+        45.875,
+        45.02,
+        44.121,
+        43.778,
+        44.721
       ],
       "tempo_embedding_ms": 0,
       "top5": []
@@ -7836,13 +8971,21 @@
       "corretos_top5": 5,
       "total_resultados": 10,
       "relaxado": true,
-      "tempo_banco_ms": 48.37,
+      "tempo_banco_ms": 43.73,
       "tempo_banco_ms_amostras": [
-        50.47,
-        45.78,
-        48.37,
-        45.27,
-        52.4
+        43.74,
+        43.73,
+        43.19,
+        43.76,
+        41.69
+      ],
+      "tempo_servidor_ms": 1.1,
+      "tempo_servidor_ms_amostras": [
+        1.1,
+        1.112,
+        1.066,
+        1.084,
+        1.105
       ],
       "tempo_embedding_ms": 0,
       "top5": [
@@ -7892,15 +9035,23 @@
       "corretos_top5": 0,
       "total_resultados": 10,
       "relaxado": false,
-      "tempo_banco_ms": 32.81,
+      "tempo_banco_ms": 28.07,
       "tempo_banco_ms_amostras": [
-        35.44,
-        32.81,
-        30.65,
-        32.91,
-        32.8
+        27.26,
+        27.84,
+        28.07,
+        28.1,
+        28.1
       ],
-      "tempo_embedding_ms": 13.5,
+      "tempo_servidor_ms": 1.408,
+      "tempo_servidor_ms_amostras": [
+        1.412,
+        1.502,
+        1.4,
+        1.402,
+        1.408
+      ],
+      "tempo_embedding_ms": 6.64,
       "top5": [
         {
           "produto": "APRAZ",
@@ -7913,13 +9064,6 @@
           "produto": "FLOGORAL",
           "substancia": "CLORIDRATO DE BENZIDAMINA",
           "selo": "Referência",
-          "pmc": 185.91,
-          "correto": false
-        },
-        {
-          "produto": "FLOGORAL",
-          "substancia": "CLORIDRATO DE BENZIDAMINA",
-          "selo": "Referência",
           "pmc": 21.1,
           "correto": false
         },
@@ -7934,7 +9078,14 @@
           "produto": "FLOGORAL",
           "substancia": "CLORIDRATO DE BENZIDAMINA",
           "selo": "Referência",
-          "pmc": 14.98,
+          "pmc": 20.9,
+          "correto": false
+        },
+        {
+          "produto": "FLOGORAL",
+          "substancia": "CLORIDRATO DE BENZIDAMINA",
+          "selo": "Referência",
+          "pmc": 21.1,
           "correto": false
         }
       ]
@@ -7948,15 +9099,23 @@
       "corretos_top5": 0,
       "total_resultados": 10,
       "relaxado": false,
-      "tempo_banco_ms": 31.76,
+      "tempo_banco_ms": 28.56,
       "tempo_banco_ms_amostras": [
-        27.7,
-        32.82,
-        31.76,
-        35.21,
-        30.35
+        27.94,
+        27.99,
+        85.08,
+        28.56,
+        37.54
       ],
-      "tempo_embedding_ms": 13.91,
+      "tempo_servidor_ms": 1.469,
+      "tempo_servidor_ms_amostras": [
+        1.375,
+        1.469,
+        1.431,
+        1.783,
+        1.512
+      ],
+      "tempo_embedding_ms": 11.15,
       "top5": [
         {
           "produto": "PIEMONTE",
@@ -7990,7 +9149,7 @@
           "produto": "FLOGORAL",
           "substancia": "CLORIDRATO DE BENZIDAMINA",
           "selo": "Referência",
-          "pmc": 185.91,
+          "pmc": 21.1,
           "correto": false
         }
       ]
@@ -8001,18 +9160,26 @@
       "acerto_top5": true,
       "posicao_primeiro_correto": 1,
       "rr": 1,
-      "corretos_top5": 2,
+      "corretos_top5": 3,
       "total_resultados": 10,
       "relaxado": false,
-      "tempo_banco_ms": 31.06,
+      "tempo_banco_ms": 29.35,
       "tempo_banco_ms_amostras": [
-        29.36,
-        29.57,
-        33.86,
-        40.75,
-        31.06
+        29.3,
+        29.35,
+        70.7,
+        28.64,
+        32.23
       ],
-      "tempo_embedding_ms": 11.21,
+      "tempo_servidor_ms": 2.86,
+      "tempo_servidor_ms_amostras": [
+        2.937,
+        2.868,
+        2.783,
+        2.86,
+        2.815
+      ],
+      "tempo_embedding_ms": 9.11,
       "top5": [
         {
           "produto": "XAROPE VICK",
@@ -8029,13 +9196,6 @@
           "correto": false
         },
         {
-          "produto": "PIEMONTE",
-          "substancia": "MONTELUCASTE DE SÓDIO",
-          "selo": "Similar",
-          "pmc": 118.35,
-          "correto": false
-        },
-        {
           "produto": "XAROPE VICK",
           "substancia": "GUAIFENESINA",
           "selo": "Referência",
@@ -8046,8 +9206,15 @@
           "produto": "PIEMONTE",
           "substancia": "MONTELUCASTE DE SÓDIO",
           "selo": "Similar",
-          "pmc": 102.95,
+          "pmc": 118.35,
           "correto": false
+        },
+        {
+          "produto": "XAROPE BENETOSSE",
+          "substancia": "HEDERA HELIX L.",
+          "selo": "Fitoterápico",
+          "pmc": 37.44,
+          "correto": true
         }
       ]
     },
@@ -8060,13 +9227,21 @@
       "corretos_top5": 0,
       "total_resultados": 0,
       "relaxado": false,
-      "tempo_banco_ms": 68.51,
+      "tempo_banco_ms": 65.22,
       "tempo_banco_ms_amostras": [
-        70.35,
-        66.16,
-        66.83,
-        68.51,
-        77.07
+        64.8,
+        67.56,
+        68.96,
+        65.22,
+        64.95
+      ],
+      "tempo_servidor_ms": 44.272,
+      "tempo_servidor_ms_amostras": [
+        43.856,
+        44.44,
+        45.277,
+        44.272,
+        44.113
       ],
       "tempo_embedding_ms": 0,
       "top5": []
@@ -8080,13 +9255,21 @@
       "corretos_top5": 5,
       "total_resultados": 10,
       "relaxado": true,
-      "tempo_banco_ms": 47.79,
+      "tempo_banco_ms": 43.06,
       "tempo_banco_ms_amostras": [
-        47.54,
-        47.79,
-        46.17,
-        58.35,
-        82.1
+        43.03,
+        46.06,
+        46.74,
+        43.06,
+        42.41
+      ],
+      "tempo_servidor_ms": 1.448,
+      "tempo_servidor_ms_amostras": [
+        1.405,
+        1.478,
+        1.544,
+        1.448,
+        1.339
       ],
       "tempo_embedding_ms": 0,
       "top5": [
@@ -8136,15 +9319,23 @@
       "corretos_top5": 1,
       "total_resultados": 10,
       "relaxado": false,
-      "tempo_banco_ms": 31.87,
+      "tempo_banco_ms": 29.68,
       "tempo_banco_ms_amostras": [
-        29.79,
-        29.57,
-        31.92,
-        32.48,
-        31.87
+        30.39,
+        27.55,
+        29.68,
+        27.33,
+        33.32
       ],
-      "tempo_embedding_ms": 6.83,
+      "tempo_servidor_ms": 1.427,
+      "tempo_servidor_ms_amostras": [
+        1.416,
+        1.624,
+        1.547,
+        1.427,
+        1.383
+      ],
+      "tempo_embedding_ms": 7.15,
       "top5": [
         {
           "produto": "VERTIGIUM",
@@ -8192,15 +9383,23 @@
       "corretos_top5": 5,
       "total_resultados": 10,
       "relaxado": false,
-      "tempo_banco_ms": 31.47,
+      "tempo_banco_ms": 28.54,
       "tempo_banco_ms_amostras": [
-        29.24,
-        96.58,
-        31.47,
-        34.86,
-        28.96
+        27.25,
+        28.45,
+        36.26,
+        28.54,
+        34.06
       ],
-      "tempo_embedding_ms": 13.94,
+      "tempo_servidor_ms": 1.455,
+      "tempo_servidor_ms_amostras": [
+        1.455,
+        1.515,
+        2.447,
+        1.393,
+        1.357
+      ],
+      "tempo_embedding_ms": 12.08,
       "top5": [
         {
           "produto": "MAXALGINA",
@@ -8220,14 +9419,14 @@
           "produto": "TYLENOL",
           "substancia": "PARACETAMOL",
           "selo": "Referência",
-          "pmc": 236.54,
+          "pmc": 23.8,
           "correto": true
         },
         {
           "produto": "TYLENOL",
           "substancia": "PARACETAMOL",
           "selo": "Referência",
-          "pmc": 23.8,
+          "pmc": 236.54,
           "correto": true
         },
         {
@@ -8248,15 +9447,23 @@
       "corretos_top5": 5,
       "total_resultados": 10,
       "relaxado": false,
-      "tempo_banco_ms": 41.35,
+      "tempo_banco_ms": 70.88,
       "tempo_banco_ms_amostras": [
-        89.84,
-        38.11,
-        37.16,
-        57.52,
-        41.35
+        70.88,
+        117.24,
+        31.64,
+        79.08,
+        35.87
       ],
-      "tempo_embedding_ms": 9.02,
+      "tempo_servidor_ms": 2.933,
+      "tempo_servidor_ms_amostras": [
+        2.933,
+        2.485,
+        4.197,
+        2.339,
+        9.227
+      ],
+      "tempo_embedding_ms": 10.23,
       "top5": [
         {
           "produto": "MAXALGINA",
@@ -8287,10 +9494,10 @@
           "correto": true
         },
         {
-          "produto": "TYLENOL",
-          "substancia": "PARACETAMOL",
-          "selo": "Referência",
-          "pmc": 23.8,
+          "produto": "DIPIRONA SODICA",
+          "substancia": "DIPIRONA",
+          "selo": "Genérico",
+          "pmc": 66.09,
           "correto": true
         }
       ]
@@ -8304,13 +9511,21 @@
       "corretos_top5": 0,
       "total_resultados": 0,
       "relaxado": false,
-      "tempo_banco_ms": 69.41,
+      "tempo_banco_ms": 67.06,
       "tempo_banco_ms_amostras": [
-        74.98,
-        66.95,
-        67.81,
-        71.22,
-        69.41
+        67.06,
+        81.35,
+        65.7,
+        65.92,
+        81.5
+      ],
+      "tempo_servidor_ms": 46.497,
+      "tempo_servidor_ms_amostras": [
+        46.497,
+        44.83,
+        47.009,
+        48.37,
+        44.172
       ],
       "tempo_embedding_ms": 0,
       "top5": []
@@ -8324,13 +9539,21 @@
       "corretos_top5": 5,
       "total_resultados": 10,
       "relaxado": true,
-      "tempo_banco_ms": 52.22,
+      "tempo_banco_ms": 45.61,
       "tempo_banco_ms_amostras": [
-        52.22,
-        141.04,
-        49.95,
-        56.88,
-        47.71
+        47.6,
+        44.52,
+        45.97,
+        45.61,
+        45.37
+      ],
+      "tempo_servidor_ms": 4.181,
+      "tempo_servidor_ms_amostras": [
+        4.126,
+        4.159,
+        4.181,
+        4.286,
+        4.221
       ],
       "tempo_embedding_ms": 0,
       "top5": [
@@ -8380,15 +9603,23 @@
       "corretos_top5": 0,
       "total_resultados": 10,
       "relaxado": false,
-      "tempo_banco_ms": 31.47,
+      "tempo_banco_ms": 26.99,
       "tempo_banco_ms_amostras": [
-        32.22,
-        31.38,
-        31.22,
-        33.59,
-        31.47
+        26.81,
+        26.99,
+        26.61,
+        28.14,
+        27.65
       ],
-      "tempo_embedding_ms": 10.9,
+      "tempo_servidor_ms": 1.439,
+      "tempo_servidor_ms_amostras": [
+        1.444,
+        1.441,
+        1.414,
+        1.404,
+        1.439
+      ],
+      "tempo_embedding_ms": 7.28,
       "top5": [
         {
           "produto": "DORMEC",
@@ -8401,14 +9632,14 @@
           "produto": "TOPERMA",
           "substancia": "LIDOCAÍNA",
           "selo": "Referência",
-          "pmc": 629.13,
+          "pmc": 209.71,
           "correto": false
         },
         {
           "produto": "TOPERMA",
           "substancia": "LIDOCAÍNA",
           "selo": "Referência",
-          "pmc": 209.71,
+          "pmc": 629.13,
           "correto": false
         },
         {
@@ -8436,15 +9667,23 @@
       "corretos_top5": 0,
       "total_resultados": 10,
       "relaxado": false,
-      "tempo_banco_ms": 30.47,
+      "tempo_banco_ms": 30.84,
       "tempo_banco_ms_amostras": [
-        32.99,
-        32.14,
-        30.47,
-        30.4,
-        27.96
+        87.26,
+        27.21,
+        76.5,
+        30.84,
+        27.27
       ],
-      "tempo_embedding_ms": 19.39,
+      "tempo_servidor_ms": 1.489,
+      "tempo_servidor_ms_amostras": [
+        1.526,
+        1.385,
+        1.489,
+        2.247,
+        1.415
+      ],
+      "tempo_embedding_ms": 12,
       "top5": [
         {
           "produto": "DORMONID",
@@ -8489,18 +9728,26 @@
       "acerto_top5": true,
       "posicao_primeiro_correto": 1,
       "rr": 1,
-      "corretos_top5": 2,
+      "corretos_top5": 3,
       "total_resultados": 10,
       "relaxado": false,
-      "tempo_banco_ms": 30.4,
+      "tempo_banco_ms": 31.18,
       "tempo_banco_ms_amostras": [
-        29.83,
-        30.4,
-        30.41,
-        30.2,
-        35.72
+        29.2,
+        29.23,
+        79.7,
+        75.78,
+        31.18
       ],
-      "tempo_embedding_ms": 12.07,
+      "tempo_servidor_ms": 2.872,
+      "tempo_servidor_ms_amostras": [
+        2.872,
+        2.77,
+        3.185,
+        2.841,
+        2.97
+      ],
+      "tempo_embedding_ms": 11.08,
       "top5": [
         {
           "produto": "NAIRE",
@@ -8531,11 +9778,11 @@
           "correto": false
         },
         {
-          "produto": "ZOLFEST D",
-          "substancia": "HEMITARTARATO DE ZOLPIDEM",
-          "selo": "Referência",
-          "pmc": 115.8,
-          "correto": false
+          "produto": "BILASTINA",
+          "substancia": "BILASTINA",
+          "selo": "Genérico",
+          "pmc": 49.55,
+          "correto": true
         }
       ]
     },
@@ -8548,13 +9795,21 @@
       "corretos_top5": 0,
       "total_resultados": 0,
       "relaxado": false,
-      "tempo_banco_ms": 72.97,
+      "tempo_banco_ms": 66.31,
       "tempo_banco_ms_amostras": [
-        72.97,
-        74.72,
-        71.86,
-        67.68,
-        75.73
+        68.83,
+        66.52,
+        66.31,
+        65.9,
+        65.49
+      ],
+      "tempo_servidor_ms": 44.835,
+      "tempo_servidor_ms_amostras": [
+        47.031,
+        44.835,
+        44.626,
+        45.25,
+        44.557
       ],
       "tempo_embedding_ms": 0,
       "top5": []
@@ -8568,13 +9823,21 @@
       "corretos_top5": 0,
       "total_resultados": 10,
       "relaxado": true,
-      "tempo_banco_ms": 48.92,
+      "tempo_banco_ms": 44.39,
       "tempo_banco_ms_amostras": [
-        47.85,
-        48.44,
-        48.92,
-        52.61,
-        50.34
+        44.39,
+        43.61,
+        46.01,
+        45.6,
+        43.64
+      ],
+      "tempo_servidor_ms": 2.638,
+      "tempo_servidor_ms_amostras": [
+        2.649,
+        2.638,
+        2.81,
+        2.597,
+        2.598
       ],
       "tempo_embedding_ms": 0,
       "top5": [

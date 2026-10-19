@@ -39,6 +39,30 @@ export function qdrant(): QdrantClient {
   return global_.__qdrant;
 }
 
+export interface PontoQdrant {
+  id: number | string;
+  score: number;
+  payload?: Record<string, unknown> | null;
+}
+
+/**
+ * Query API chamada direto por REST, porque o cliente oficial descarta o campo "time" da resposta,
+ * que é o tempo gasto no servidor. O benchmark registra esse tempo além do tempo ponta a ponta.
+ */
+export async function consultarQdrant(corpo: object): Promise<{ points: PontoQdrant[]; tempoServidorMs: number }> {
+  const url = process.env.QDRANT_URL;
+  if (!url) throw new Error("QDRANT_URL não definida (veja .env.local.example)");
+  const r = await fetch(`${url}/collections/${COLLECTION}/points/query`, {
+    method: "POST",
+    headers: { "content-type": "application/json", "api-key": process.env.QDRANT_API_KEY ?? "" },
+    body: JSON.stringify(corpo),
+    cache: "no-store",
+  });
+  const json = (await r.json()) as { result?: { points: PontoQdrant[] }; time?: number; status?: unknown };
+  if (!r.ok || !json.result) throw new Error(`Qdrant respondeu ${r.status}: ${JSON.stringify(json.status)}`);
+  return { points: json.result.points, tempoServidorMs: (json.time ?? 0) * 1000 };
+}
+
 export async function criarCollection(recriar = false): Promise<void> {
   const cliente = qdrant();
   const { exists } = await cliente.collectionExists(COLLECTION);
