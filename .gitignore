@@ -1,5 +1,7 @@
-# dados brutos e derivados (arquivo da CMED tem 12 MB e é público)
-/data/
+# dados brutos e derivados (arquivo da CMED tem 12 MB e é público);
+# o dicionário de indicações é curado pelo grupo e fica versionado
+/data/*
+!/data/dicionario-indicacoes.json
 
 # dependências e build
 node_modules/

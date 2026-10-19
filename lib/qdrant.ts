@@ -5,6 +5,12 @@ import { DIMENSAO } from "./embeddings";
 
 export const COLLECTION = process.env.QDRANT_COLLECTION ?? "medicamentos";
 
+// Vetores nomeados de cada ponto:
+//  denso_base  texto só com dados da CMED (linha de base do experimento)
+//  denso       texto enriquecido com o dicionário de indicações
+//  lexical     esparso, trigramas de produto + substância, com IDF calculado pelo Qdrant
+export const VETOR = { base: "denso_base", denso: "denso", lexical: "lexical" } as const;
+
 // Parâmetros do HNSW: m = arestas por nó; ef_construct = tamanho da fila na construção.
 // Para ~11 mil pontos, m=16 e ef_construct=128 dão recall alto sem pesar no cluster free.
 export const HNSW = { m: 16, ef_construct: 128 };
@@ -39,7 +45,11 @@ export async function criarCollection(recriar = false): Promise<void> {
   if (exists && recriar) await cliente.deleteCollection(COLLECTION);
   if (!exists || recriar) {
     await cliente.createCollection(COLLECTION, {
-      vectors: { size: DIMENSAO, distance: "Cosine" },
+      vectors: {
+        [VETOR.base]: { size: DIMENSAO, distance: "Cosine" },
+        [VETOR.denso]: { size: DIMENSAO, distance: "Cosine" },
+      },
+      sparse_vectors: { [VETOR.lexical]: { modifier: "idf" } },
       hnsw_config: HNSW,
     });
   }

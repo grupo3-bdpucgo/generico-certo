@@ -27,7 +27,42 @@ export interface Medicamento {
   preco_por_unidade: number | null;
   chave_equivalencia: string;
   chave_equivalencia_ampla: string;
+  /** Termos leigos vindos de data/dicionario-indicacoes.json (conhecimento externo à CMED). */
+  termos_populares: string[];
+  /** Texto da linha de base, só com dados da CMED. */
   texto_embedding: string;
+  /** texto_embedding + termos populares; usado no vetor denso e no PostgreSQL. */
+  texto_enriquecido: string;
+}
+
+export interface DicionarioIndicacoes {
+  classes: Record<string, string[]>;
+  substancias: Record<string, string[]>;
+}
+
+/** Código da classe terapêutica: "N2B2 - ANALGÉSICOS..." -> "N2B2". */
+export function codigoClasse(classe: string | null): string | null {
+  const m = (classe ?? "").match(/^([A-Z0-9]+)\s*-/);
+  return m ? m[1] : null;
+}
+
+export function termosPopulares(
+  dic: DicionarioIndicacoes,
+  classe: string | null,
+  substanciasCanonicas: string[],
+): string[] {
+  const termos: string[] = [];
+  const codigo = codigoClasse(classe);
+  if (codigo && dic.classes[codigo]) termos.push(...dic.classes[codigo]);
+  for (const [trecho, lista] of Object.entries(dic.substancias)) {
+    const re = new RegExp(`(^|[^A-Z])${trecho}([^A-Z]|$)`);
+    if (substanciasCanonicas.some((s) => re.test(s))) termos.push(...lista);
+  }
+  return [...new Set(termos)];
+}
+
+export function montarTextoEnriquecido(textoBase: string, termos: string[]): string {
+  return termos.length ? `${textoBase}. termos populares: ${termos.join(", ")}` : textoBase;
 }
 
 /** Campos vazios da planilha chegam como "    -     ". */

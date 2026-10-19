@@ -8,16 +8,20 @@ import {
   colunaPreco,
   limparCampo,
   montarTextoEmbedding,
+  montarTextoEnriquecido,
   normalizarTarja,
   numeroBR,
   seloDoTipo,
   separarSubstancias,
   substanciaCanonica,
+  termosPopulares,
   unidadeDoPreco,
+  type DicionarioIndicacoes,
   type Medicamento,
 } from "../lib/normalizacao";
 
 const ARQUIVO = "data/cmed.xlsx";
+const DICIONARIO = "data/dicionario-indicacoes.json";
 const SAIDA = "data/dados.json";
 const ABA = "Lista PMC";
 const ALIQUOTA = process.env.ALIQUOTA_ICMS ?? "19";
@@ -25,6 +29,7 @@ const ALIQUOTA = process.env.ALIQUOTA_ICMS ?? "19";
 const COL_PMC = colunaPreco("PMC", ALIQUOTA);
 const COL_PF = colunaPreco("PF", ALIQUOTA);
 
+const dicionario: DicionarioIndicacoes = JSON.parse(readFileSync(DICIONARIO, "utf-8"));
 console.log(`Lendo ${ARQUIVO} (aba "${ABA}"), alíquota ${ALIQUOTA}%: ${COL_PMC} / ${COL_PF}`);
 const wb = XLSX.read(readFileSync(ARQUIVO), { dense: true });
 const aba = wb.Sheets[ABA];
@@ -60,8 +65,10 @@ for (const l of linhas) {
   const classe = limparCampo(l["CLASSE TERAPÊUTICA"]);
   const tipo = limparCampo(l["TIPO DE PRODUTO (STATUS DO PRODUTO)"]);
   const partes = analisarApresentacao(apresentacao);
+  const textoBase = montarTextoEmbedding({ produto, substancia, classe, dosagem: partes.dosagem, forma: partes.forma });
 
   const substanciasChave = [...new Set(substancia.map(substanciaCanonica))].sort();
+  const termos = termosPopulares(dicionario, classe, substanciasChave);
   // estrita: mesma caixa; ampla: qualquer caixa (comparada por preço por unidade)
   const chaveAmpla = [substanciasChave.join(" + "), partes.dosagem, partes.formaBase].join(" | ");
   const chave = [chaveAmpla, partes.quantidade].join(" | ");
@@ -94,7 +101,9 @@ for (const l of linhas) {
     preco_por_unidade: precoPorUnidade,
     chave_equivalencia: chave,
     chave_equivalencia_ampla: chaveAmpla,
-    texto_embedding: montarTextoEmbedding({ produto, substancia, classe, dosagem: partes.dosagem, forma: partes.forma }),
+    termos_populares: termos,
+    texto_embedding: textoBase,
+    texto_enriquecido: montarTextoEnriquecido(textoBase, termos),
   });
 }
 
@@ -120,6 +129,7 @@ console.log(`Descartados (GGREM dup.):   ${descarte.ggremDuplicado}`);
 console.log(`Registros finais:           ${saida.length}`);
 console.log(`Chaves de equivalência:     ${Object.keys(grupos).length} (${gruposMultiplos.length} com 2+ itens, ${gruposComGenerico.size} com genérico)`);
 console.log(`Chaves amplas (sem caixa):  ${Object.keys(gruposAmplos).length} (${Object.values(gruposAmplos).filter((n) => n > 1).length} com 2+ itens, ${amplosComGenerico.size} com genérico)`);
+console.log(`Com termos populares:       ${saida.filter((m) => m.termos_populares.length).length} (${((100 * saida.filter((m) => m.termos_populares.length).length) / saida.length).toFixed(1)}%)`);
 console.log(`Sem dosagem extraída:       ${saida.filter((m) => !m.dosagem).length}`);
 console.log(`Sem quantidade extraída:    ${saida.filter((m) => !m.quantidade).length}`);
 console.log("Por unidade:", contar((m) => m.unidade));
