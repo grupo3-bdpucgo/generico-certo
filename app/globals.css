@@ -1,0 +1,54 @@
+@import "tailwindcss";
+
+/*
+ * Paleta puxada da logo: vermelho só como destaque (botões, links ativos, foco), cabeçalho escuro
+ * para o brilho da logo, conteúdo claro para leitura. Os selos usam amarelo, azul, violeta e cinza,
+ * para não competir com o vermelho da marca.
+ */
+@theme {
+  --color-marca: #d61f26;
+  --color-marca-escura: #a8151b;
+  --color-noite: #0d0d10;
+  --color-noite-2: #1b1b20;
+  --color-tinta: #16161a;
+  --color-tinta-2: #52514e;
+  --color-tinta-3: #77766f;
+  --color-papel: #ffffff;
+  --color-fundo: #f6f6f4;
+  --color-linha: #e4e3df;
+  --color-economia: #15803d;
+  --color-economia-fundo: #ecfdf3;
+
+  --color-selo-generico: #f2b705;
+  --color-selo-generico-tinta: #3d2e00;
+  --color-selo-similar: #1d4ed8;
+  --color-selo-referencia: #6d28d9;
+  --color-selo-outro: #5f6368;
+
+  /* Motores, na mesma ordem e cores das figuras do relatório */
+  --color-motor-denso-base: #2a78d6;
+  --color-motor-denso: #eb6834;
+  --color-motor-hibrido: #1baf7a;
+  --color-motor-ilike: #eda100;
+  --color-motor-fulltext: #e87ba4;
+}
+
+html {
+  background: var(--color-fundo);
+  color: var(--color-tinta);
+}
+
+body {
+  background: var(--color-fundo);
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-marca);
+  outline-offset: 2px;
+}
+
+.numeros {
+  font-variant-numeric: tabular-nums;
+}
