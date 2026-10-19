@@ -186,8 +186,9 @@ export default async function PaginaMedicamento({
       <aside className="mt-6 space-y-1 rounded-xl border border-linha bg-papel p-4 text-xs leading-relaxed text-tinta-2">
         <p>
           A equivalência é calculada a partir dos dados da CMED (princípio ativo, dosagem e forma farmacêutica). Pela Lei nº
-          9.787/1999, o genérico é intercambiável com o medicamento de referência e, pelas regras da CMED, deve custar no
-          mínimo 35% menos que ele. Confirme a troca com o farmacêutico, principalmente entre similares.
+          9.787/1999, o genérico é intercambiável com o medicamento de referência. Pela Resolução CM-CMED nº 3/2025 (art.
+          24), o preço fábrica do genérico não pode passar de 65% do preço do referência, ou seja, ele entra no mercado
+          custando pelo menos 35% menos. Confirme a troca com o farmacêutico, principalmente entre similares.
         </p>
         <p>As ilustrações são geradas a partir dos dados do registro: a lista oficial não fornece imagens das embalagens.</p>
       </aside>
