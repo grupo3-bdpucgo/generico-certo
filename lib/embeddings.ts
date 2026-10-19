@@ -23,6 +23,14 @@ class ProvedorTransformers implements ProvedorEmbeddings {
     if (!this.extrator) {
       this.extrator = (async () => {
         const { pipeline, env } = await import("@huggingface/transformers");
+        const { existsSync } = await import("node:fs");
+        const { join } = await import("node:path");
+        // Modelo empacotado em ./models pelo scripts/baixar-modelo.mjs (vai dentro da função na Vercel).
+        // Se a pasta existir, nada é baixado da internet em tempo de execução.
+        const pastaModelos = join(process.cwd(), "models");
+        env.localModelPath = pastaModelos;
+        env.allowLocalModels = true;
+        env.allowRemoteModels = !existsSync(join(pastaModelos, this.modelo));
         // Na Vercel só /tmp é gravável.
         env.cacheDir = process.env.VERCEL ? "/tmp/transformers-cache" : "./.cache/transformers";
         const p = await pipeline("feature-extraction", this.modelo, { dtype: "q8" });

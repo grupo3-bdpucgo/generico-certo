@@ -5,12 +5,14 @@
   "type": "module",
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "node scripts/baixar-modelo.mjs && next build",
     "start": "next start",
     "limpar": "tsx --env-file-if-exists=.env.local scripts/01-limpar.ts",
     "ingerir": "tsx --env-file-if-exists=.env.local scripts/02-ingerir.ts",
     "postgres": "tsx --env-file-if-exists=.env.local scripts/03-postgres.ts",
-    "benchmark": "tsx --env-file-if-exists=.env.local scripts/04-benchmark.ts"
+    "benchmark": "tsx --env-file-if-exists=.env.local scripts/04-benchmark.ts",
+    "baixar-modelo": "node scripts/baixar-modelo.mjs",
+    "tamanho-funcoes": "node scripts/tamanho-funcoes.mjs"
   },
   "dependencies": {
     "@huggingface/transformers": "^4.3.1",

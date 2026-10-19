@@ -1,0 +1,12 @@
+# Não sobe para a Vercel: dados brutos (grandes, só usados pelos scripts de carga),
+# modelo (baixado no build por scripts/baixar-modelo.mjs), caches e artefatos locais.
+/data
+/models
+/.cache
+/.next
+/node_modules
+/docs/*.aux
+/docs/*.log
+/docs/*.out
+/docs/*.toc
+.env*
