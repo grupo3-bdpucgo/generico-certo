@@ -3,144 +3,642 @@
     "descricao": "Termos populares associados a classes terapêuticas e substâncias da Lista CMED, usados para enriquecer o texto indexado no Qdrant e no PostgreSQL.",
     "origem": "Curadoria manual do grupo Genérico Certo (PUC Goiás, 2026). Conhecimento externo à base da CMED/ANVISA.",
     "limitacoes": "Mapeamento curado manualmente, cobre apenas as classes mais comuns no varejo e algumas substâncias. Não tem valor clínico, não indica uso, dose ou contraindicação e não substitui orientação médica ou farmacêutica.",
-    "versao": "1.0",
+    "versao": "1.1",
     "data": "2026-10-19",
-    "regras": "classes: chave é o código da CLASSE TERAPÊUTICA (antes do hífen). substancias: chave é um trecho do nome canônico da substância (maiúsculas, sem acento), comparado por palavra inteira."
+    "regras": "classes: chave é o código da CLASSE TERAPÊUTICA (antes do hífen). substancias: chave é um trecho do nome canônico da substância (maiúsculas, sem acento), comparado por palavra inteira.",
+    "revisao": "1.1 (2026-10-19): revisão completa pelo critério de que cada termo deve ser defensável a partir da classe terapêutica ou da substância, independente de qualquer consulta. Removidas as frases 'antialérgico que não dá sono', 'antialérgico que pode dar pouco sono' e 'antialérgico que dá sono' (substituídas pela geração do anti-histamínico e pelo efeito de sonolência descrito de forma neutra); removidos 'dor de cabeça' e 'enxaqueca' da classe A3D (mantidos só na substância isometepteno) e 'remédio para dormir' da classe N5B1."
   },
   "classes": {
-    "N2B1": ["dor", "febre", "analgésico", "dor de cabeça"],
-    "N2B2": ["dor", "febre", "analgésico", "antitérmico", "dor de cabeça", "dor no corpo", "cólica"],
-    "N2A": ["dor forte", "analgésico opioide"],
-    "N2C": ["enxaqueca", "dor de cabeça"],
-    "N2D": ["dor nos nervos", "dor neuropática"],
-    "A3D": ["cólica", "dor de barriga", "dor de cabeça", "enxaqueca", "analgésico"],
-    "A3B": ["cólica", "dor de barriga", "espasmo"],
-    "M1A1": ["anti-inflamatório", "dor", "inflamação", "inchaço", "dor nas costas", "dor muscular", "dor de dente"],
-    "M1A3": ["anti-inflamatório", "dor", "inflamação", "dor nas articulações"],
-    "M2A": ["anti-inflamatório de passar na pele", "dor muscular", "pancada", "torção"],
-    "M3B": ["relaxante muscular", "torcicolo", "dor muscular", "contratura", "dor nas costas"],
-    "M5B3": ["osteoporose", "ossos fracos"],
-    "R6A": ["antialérgico", "alergia", "rinite", "coceira", "urticária", "espirro"],
-    "R1A1": ["rinite", "alergia", "nariz entupido", "spray nasal"],
-    "R1B": ["nariz entupido", "descongestionante"],
-    "R5A": ["gripe", "resfriado", "nariz entupido", "coriza", "febre", "dor no corpo"],
-    "R5C": ["tosse com catarro", "expectorante", "catarro"],
-    "R5D": ["tosse seca", "xarope para tosse"],
-    "R2A": ["dor de garganta", "garganta inflamada"],
-    "R3J2": ["asma", "falta de ar", "rinite alérgica"],
-    "R3D1": ["asma", "bronquite", "bombinha"],
-    "R3F1": ["asma", "bronquite", "bombinha", "falta de ar"],
-    "A2A1": ["azia", "queimação", "má digestão", "estômago"],
-    "A2B2": ["azia", "gastrite", "refluxo", "úlcera", "protetor de estômago", "queimação"],
-    "A3F": ["enjoo", "estômago cheio", "má digestão", "náusea"],
-    "A4A1": ["enjoo", "vômito", "náusea"],
-    "A6A2": ["prisão de ventre", "intestino preso", "laxante"],
-    "A7F": ["diarreia", "flora intestinal", "probiótico"],
-    "A8A": ["emagrecer", "obesidade", "perder peso"],
-    "A10H": ["diabetes", "açúcar no sangue"],
-    "A10J1": ["diabetes", "açúcar no sangue"],
-    "A11C2": ["vitamina d", "suplemento", "ossos"],
-    "B3A1": ["anemia", "falta de ferro", "suplemento de ferro"],
-    "B1C1": ["afinar o sangue", "prevenir infarto", "antiagregante"],
-    "B1C2": ["afinar o sangue", "prevenir infarto", "antiagregante"],
-    "B1F": ["afinar o sangue", "anticoagulante", "trombose"],
-    "C2A2": ["pressão alta", "hipertensão"],
-    "C3A3": ["pressão alta", "diurético", "inchaço", "retenção de líquido"],
-    "C5C": ["varizes", "pernas cansadas", "hemorroida", "circulação"],
-    "C7A0": ["pressão alta", "coração acelerado", "arritmia"],
-    "C7B1": ["pressão alta", "hipertensão"],
-    "C8A": ["pressão alta", "hipertensão", "angina"],
-    "C9A": ["pressão alta", "hipertensão", "coração"],
-    "C9C": ["pressão alta", "hipertensão"],
-    "C9D1": ["pressão alta", "hipertensão"],
-    "C9D3": ["pressão alta", "hipertensão"],
-    "C10A1": ["colesterol alto", "triglicerídeos", "gordura no sangue"],
-    "C10A2": ["triglicerídeos altos", "colesterol", "gordura no sangue"],
-    "C10C": ["colesterol alto", "gordura no sangue"],
-    "D1A1": ["micose", "frieira", "pano branco", "coceira na pele", "pomada para fungo"],
-    "D6A": ["ferida infeccionada", "pomada antibiótica", "machucado"],
-    "D7A": ["coceira", "alergia na pele", "dermatite", "pomada de corticoide"],
-    "D7B1": ["coceira", "alergia na pele", "ferida infeccionada"],
-    "D7B2": ["micose com coceira", "assadura", "coceira na pele"],
-    "D7B3": ["micose com coceira", "assadura", "coceira na pele", "ferida infeccionada"],
-    "G1A1": ["corrimento", "infecção íntima"],
-    "G1A2": ["corrimento", "infecção íntima", "creme vaginal"],
-    "G1B": ["candidíase", "corrimento", "creme vaginal"],
-    "G3A1": ["anticoncepcional", "pílula", "evitar gravidez"],
-    "G3A5": ["anticoncepcional", "pílula", "evitar gravidez"],
-    "G3A9": ["anticoncepcional", "evitar gravidez"],
-    "G4E1": ["disfunção erétil", "impotência"],
-    "H2A2": ["corticoide", "inflamação", "alergia forte"],
-    "H3A": ["tireoide", "hipotireoidismo"],
-    "J1C1": ["antibiótico", "infecção", "infecção de garganta", "sinusite"],
-    "J1D1": ["antibiótico", "infecção"],
-    "J1F": ["antibiótico", "infecção", "infecção respiratória"],
-    "J1G1": ["antibiótico", "infecção urinária", "infecção"],
-    "J2A": ["micose", "fungo", "candidíase", "micose de unha"],
-    "J5B3": ["herpes", "cobreiro", "herpes labial"],
-    "N3A": ["epilepsia", "convulsão", "crise convulsiva"],
-    "N4A": ["parkinson", "tremor"],
-    "N5A1": ["esquizofrenia", "transtorno bipolar", "antipsicótico"],
-    "N5B1": ["insônia", "dificuldade para dormir", "remédio para dormir"],
-    "N5C": ["ansiedade", "calmante", "nervosismo"],
-    "N6A4": ["depressão", "ansiedade", "antidepressivo"],
-    "N6A5": ["depressão", "ansiedade", "antidepressivo"],
-    "N6A9": ["depressão", "antidepressivo"],
-    "N6B": ["déficit de atenção", "tdah", "falta de foco"],
-    "N7C": ["tontura", "labirintite", "vertigem"],
-    "N7D1": ["alzheimer", "perda de memória"],
-    "N7D9": ["alzheimer", "perda de memória"],
-    "P1B": ["verme", "lombriga", "vermífugo"],
-    "S1E2": ["glaucoma", "pressão no olho", "colírio"]
+    "N2B1": [
+      "dor",
+      "febre",
+      "analgésico",
+      "dor de cabeça"
+    ],
+    "N2B2": [
+      "dor",
+      "febre",
+      "analgésico",
+      "antitérmico",
+      "dor de cabeça",
+      "dor no corpo",
+      "cólica"
+    ],
+    "N2A": [
+      "dor forte",
+      "analgésico opioide"
+    ],
+    "N2C": [
+      "enxaqueca",
+      "dor de cabeça"
+    ],
+    "N2D": [
+      "dor nos nervos",
+      "dor neuropática"
+    ],
+    "A3D": [
+      "cólica",
+      "dor de barriga",
+      "analgésico"
+    ],
+    "A3B": [
+      "cólica",
+      "dor de barriga",
+      "espasmo"
+    ],
+    "M1A1": [
+      "anti-inflamatório",
+      "dor",
+      "inflamação",
+      "inchaço",
+      "dor nas costas",
+      "dor muscular",
+      "dor de dente"
+    ],
+    "M1A3": [
+      "anti-inflamatório",
+      "dor",
+      "inflamação",
+      "dor nas articulações"
+    ],
+    "M2A": [
+      "anti-inflamatório de passar na pele",
+      "dor muscular",
+      "pancada",
+      "torção"
+    ],
+    "M3B": [
+      "relaxante muscular",
+      "torcicolo",
+      "dor muscular",
+      "contratura",
+      "dor nas costas"
+    ],
+    "M5B3": [
+      "osteoporose",
+      "ossos fracos"
+    ],
+    "R6A": [
+      "antialérgico",
+      "alergia",
+      "rinite",
+      "coceira",
+      "urticária",
+      "espirro"
+    ],
+    "R1A1": [
+      "rinite",
+      "alergia",
+      "nariz entupido",
+      "spray nasal"
+    ],
+    "R1B": [
+      "nariz entupido",
+      "descongestionante"
+    ],
+    "R5A": [
+      "gripe",
+      "resfriado",
+      "nariz entupido",
+      "coriza",
+      "febre",
+      "dor no corpo"
+    ],
+    "R5C": [
+      "tosse com catarro",
+      "expectorante",
+      "catarro"
+    ],
+    "R5D": [
+      "tosse seca",
+      "xarope para tosse"
+    ],
+    "R2A": [
+      "dor de garganta",
+      "garganta inflamada"
+    ],
+    "R3J2": [
+      "asma",
+      "falta de ar",
+      "rinite alérgica"
+    ],
+    "R3D1": [
+      "asma",
+      "bronquite",
+      "bombinha"
+    ],
+    "R3F1": [
+      "asma",
+      "bronquite",
+      "bombinha",
+      "falta de ar"
+    ],
+    "A2A1": [
+      "azia",
+      "queimação",
+      "má digestão",
+      "estômago"
+    ],
+    "A2B2": [
+      "azia",
+      "gastrite",
+      "refluxo",
+      "úlcera",
+      "protetor de estômago",
+      "queimação"
+    ],
+    "A3F": [
+      "enjoo",
+      "estômago cheio",
+      "má digestão",
+      "náusea"
+    ],
+    "A4A1": [
+      "enjoo",
+      "vômito",
+      "náusea"
+    ],
+    "A6A2": [
+      "prisão de ventre",
+      "intestino preso",
+      "laxante"
+    ],
+    "A7F": [
+      "diarreia",
+      "flora intestinal",
+      "probiótico"
+    ],
+    "A8A": [
+      "emagrecer",
+      "obesidade",
+      "perder peso"
+    ],
+    "A10H": [
+      "diabetes",
+      "açúcar no sangue"
+    ],
+    "A10J1": [
+      "diabetes",
+      "açúcar no sangue"
+    ],
+    "A11C2": [
+      "vitamina d",
+      "suplemento",
+      "ossos"
+    ],
+    "B3A1": [
+      "anemia",
+      "falta de ferro",
+      "suplemento de ferro"
+    ],
+    "B1C1": [
+      "afinar o sangue",
+      "prevenir infarto",
+      "antiagregante"
+    ],
+    "B1C2": [
+      "afinar o sangue",
+      "prevenir infarto",
+      "antiagregante"
+    ],
+    "B1F": [
+      "afinar o sangue",
+      "anticoagulante",
+      "trombose"
+    ],
+    "C2A2": [
+      "pressão alta",
+      "hipertensão"
+    ],
+    "C3A3": [
+      "pressão alta",
+      "diurético",
+      "inchaço",
+      "retenção de líquido"
+    ],
+    "C5C": [
+      "varizes",
+      "pernas cansadas",
+      "hemorroida",
+      "circulação"
+    ],
+    "C7A0": [
+      "pressão alta",
+      "coração acelerado",
+      "arritmia"
+    ],
+    "C7B1": [
+      "pressão alta",
+      "hipertensão"
+    ],
+    "C8A": [
+      "pressão alta",
+      "hipertensão",
+      "angina"
+    ],
+    "C9A": [
+      "pressão alta",
+      "hipertensão",
+      "coração"
+    ],
+    "C9C": [
+      "pressão alta",
+      "hipertensão"
+    ],
+    "C9D1": [
+      "pressão alta",
+      "hipertensão"
+    ],
+    "C9D3": [
+      "pressão alta",
+      "hipertensão"
+    ],
+    "C10A1": [
+      "colesterol alto",
+      "triglicerídeos",
+      "gordura no sangue"
+    ],
+    "C10A2": [
+      "triglicerídeos altos",
+      "colesterol",
+      "gordura no sangue"
+    ],
+    "C10C": [
+      "colesterol alto",
+      "gordura no sangue"
+    ],
+    "D1A1": [
+      "micose",
+      "frieira",
+      "pano branco",
+      "coceira na pele",
+      "pomada para fungo"
+    ],
+    "D6A": [
+      "ferida infeccionada",
+      "pomada antibiótica",
+      "machucado"
+    ],
+    "D7A": [
+      "coceira",
+      "alergia na pele",
+      "dermatite",
+      "pomada de corticoide"
+    ],
+    "D7B1": [
+      "coceira",
+      "alergia na pele",
+      "ferida infeccionada"
+    ],
+    "D7B2": [
+      "micose com coceira",
+      "assadura",
+      "coceira na pele"
+    ],
+    "D7B3": [
+      "micose com coceira",
+      "assadura",
+      "coceira na pele",
+      "ferida infeccionada"
+    ],
+    "G1A1": [
+      "corrimento",
+      "infecção íntima"
+    ],
+    "G1A2": [
+      "corrimento",
+      "infecção íntima",
+      "creme vaginal"
+    ],
+    "G1B": [
+      "candidíase",
+      "corrimento",
+      "creme vaginal"
+    ],
+    "G3A1": [
+      "anticoncepcional",
+      "pílula",
+      "evitar gravidez"
+    ],
+    "G3A5": [
+      "anticoncepcional",
+      "pílula",
+      "evitar gravidez"
+    ],
+    "G3A9": [
+      "anticoncepcional",
+      "evitar gravidez"
+    ],
+    "G4E1": [
+      "disfunção erétil",
+      "impotência"
+    ],
+    "H2A2": [
+      "corticoide",
+      "inflamação",
+      "alergia forte"
+    ],
+    "H3A": [
+      "tireoide",
+      "hipotireoidismo"
+    ],
+    "J1C1": [
+      "antibiótico",
+      "infecção",
+      "infecção de garganta",
+      "sinusite"
+    ],
+    "J1D1": [
+      "antibiótico",
+      "infecção"
+    ],
+    "J1F": [
+      "antibiótico",
+      "infecção",
+      "infecção respiratória"
+    ],
+    "J1G1": [
+      "antibiótico",
+      "infecção urinária",
+      "infecção"
+    ],
+    "J2A": [
+      "micose",
+      "fungo",
+      "candidíase",
+      "micose de unha"
+    ],
+    "J5B3": [
+      "herpes",
+      "cobreiro",
+      "herpes labial"
+    ],
+    "N3A": [
+      "epilepsia",
+      "convulsão",
+      "crise convulsiva"
+    ],
+    "N4A": [
+      "parkinson",
+      "tremor"
+    ],
+    "N5A1": [
+      "esquizofrenia",
+      "transtorno bipolar",
+      "antipsicótico"
+    ],
+    "N5B1": [
+      "insônia",
+      "dificuldade para dormir"
+    ],
+    "N5C": [
+      "ansiedade",
+      "calmante",
+      "nervosismo"
+    ],
+    "N6A4": [
+      "depressão",
+      "ansiedade",
+      "antidepressivo"
+    ],
+    "N6A5": [
+      "depressão",
+      "ansiedade",
+      "antidepressivo"
+    ],
+    "N6A9": [
+      "depressão",
+      "antidepressivo"
+    ],
+    "N6B": [
+      "déficit de atenção",
+      "tdah",
+      "falta de foco"
+    ],
+    "N7C": [
+      "tontura",
+      "labirintite",
+      "vertigem"
+    ],
+    "N7D1": [
+      "alzheimer",
+      "perda de memória"
+    ],
+    "N7D9": [
+      "alzheimer",
+      "perda de memória"
+    ],
+    "P1B": [
+      "verme",
+      "lombriga",
+      "vermífugo"
+    ],
+    "S1E2": [
+      "glaucoma",
+      "pressão no olho",
+      "colírio"
+    ]
   },
   "substancias": {
-    "FEXOFENADINA": ["antialérgico que não dá sono", "anti-histamínico de segunda geração"],
-    "DESLORATADINA": ["antialérgico que não dá sono", "anti-histamínico de segunda geração"],
-    "LORATADINA": ["antialérgico que não dá sono", "anti-histamínico de segunda geração"],
-    "BILASTINA": ["antialérgico que não dá sono", "anti-histamínico de segunda geração"],
-    "LEVOCETIRIZINA": ["antialérgico que não dá sono", "anti-histamínico de segunda geração"],
-    "CETIRIZINA": ["antialérgico que pode dar pouco sono", "anti-histamínico de segunda geração"],
-    "EBASTINA": ["antialérgico que não dá sono", "anti-histamínico de segunda geração"],
-    "RUPATADINA": ["antialérgico que não dá sono", "anti-histamínico de segunda geração"],
-    "EPINASTINA": ["antialérgico que não dá sono", "anti-histamínico de segunda geração"],
-    "DEXCLORFENIRAMINA": ["antialérgico que dá sono", "anti-histamínico de primeira geração"],
-    "CLORFENIRAMINA": ["antialérgico que dá sono", "anti-histamínico de primeira geração"],
-    "CLORFENAMINA": ["antialérgico que dá sono", "anti-histamínico de primeira geração"],
-    "CARBINOXAMINA": ["antialérgico que dá sono", "anti-histamínico de primeira geração"],
-    "HIDROXIZINA": ["antialérgico que dá sono", "coceira", "anti-histamínico de primeira geração"],
-    "PROMETAZINA": ["antialérgico que dá sono", "anti-histamínico de primeira geração"],
-    "DIFENIDRAMINA": ["antialérgico que dá sono", "anti-histamínico de primeira geração"],
-    "CLEMASTINA": ["antialérgico que dá sono", "anti-histamínico de primeira geração"],
-    "DIPIRONA": ["dor", "febre", "dor de cabeça"],
-    "PARACETAMOL": ["dor", "febre", "dor de cabeça"],
-    "ACIDO ACETILSALICILICO": ["dor", "febre", "dor de cabeça", "aspirina"],
-    "IBUPROFENO": ["dor", "febre", "anti-inflamatório", "dor de cabeça", "cólica menstrual"],
-    "NIMESULIDA": ["anti-inflamatório", "dor", "dor de garganta", "dor de dente"],
-    "DICLOFENACO": ["anti-inflamatório", "dor", "dor nas costas"],
-    "CETOPROFENO": ["anti-inflamatório", "dor"],
-    "NAPROXENO": ["anti-inflamatório", "dor", "cólica menstrual"],
-    "ORFENADRINA": ["relaxante muscular", "dor muscular", "torcicolo"],
-    "CICLOBENZAPRINA": ["relaxante muscular", "dor muscular", "dor nas costas"],
-    "CARISOPRODOL": ["relaxante muscular", "dor muscular"],
-    "ISOMETEPTENO": ["dor de cabeça", "enxaqueca"],
-    "ESCOPOLAMINA": ["cólica", "dor de barriga"],
-    "SIMETICONA": ["gases", "barriga inchada"],
-    "OMEPRAZOL": ["azia", "gastrite", "refluxo"],
-    "PANTOPRAZOL": ["azia", "gastrite", "refluxo"],
-    "LOPERAMIDA": ["diarreia"],
-    "SILDENAFILA": ["disfunção erétil"],
-    "TADALAFILA": ["disfunção erétil"],
-    "ALBENDAZOL": ["verme", "vermífugo"],
-    "MEBENDAZOL": ["verme", "vermífugo"],
-    "FLUCONAZOL": ["candidíase", "micose"],
-    "AMOXICILINA": ["antibiótico", "infecção de garganta", "infecção de ouvido"],
-    "AZITROMICINA": ["antibiótico", "infecção respiratória"],
-    "LOSARTANA": ["pressão alta"],
-    "ENALAPRIL": ["pressão alta"],
-    "SINVASTATINA": ["colesterol alto"],
-    "ROSUVASTATINA": ["colesterol alto"],
-    "ATORVASTATINA": ["colesterol alto"],
-    "METFORMINA": ["diabetes"],
-    "LEVOTIROXINA": ["tireoide", "hipotireoidismo"]
+    "FEXOFENADINA": [
+      "anti-histamínico de segunda geração",
+      "causa menos sonolência"
+    ],
+    "DESLORATADINA": [
+      "anti-histamínico de segunda geração",
+      "causa menos sonolência"
+    ],
+    "LORATADINA": [
+      "anti-histamínico de segunda geração",
+      "causa menos sonolência"
+    ],
+    "BILASTINA": [
+      "anti-histamínico de segunda geração",
+      "causa menos sonolência"
+    ],
+    "LEVOCETIRIZINA": [
+      "anti-histamínico de segunda geração",
+      "causa menos sonolência"
+    ],
+    "CETIRIZINA": [
+      "anti-histamínico de segunda geração",
+      "causa menos sonolência"
+    ],
+    "EBASTINA": [
+      "anti-histamínico de segunda geração",
+      "causa menos sonolência"
+    ],
+    "RUPATADINA": [
+      "anti-histamínico de segunda geração",
+      "causa menos sonolência"
+    ],
+    "EPINASTINA": [
+      "anti-histamínico de segunda geração",
+      "causa menos sonolência"
+    ],
+    "DEXCLORFENIRAMINA": [
+      "anti-histamínico de primeira geração",
+      "pode causar sonolência"
+    ],
+    "CLORFENIRAMINA": [
+      "anti-histamínico de primeira geração",
+      "pode causar sonolência"
+    ],
+    "CLORFENAMINA": [
+      "anti-histamínico de primeira geração",
+      "pode causar sonolência"
+    ],
+    "CARBINOXAMINA": [
+      "anti-histamínico de primeira geração",
+      "pode causar sonolência"
+    ],
+    "HIDROXIZINA": [
+      "anti-histamínico de primeira geração",
+      "pode causar sonolência",
+      "coceira"
+    ],
+    "PROMETAZINA": [
+      "anti-histamínico de primeira geração",
+      "pode causar sonolência"
+    ],
+    "DIFENIDRAMINA": [
+      "anti-histamínico de primeira geração",
+      "pode causar sonolência"
+    ],
+    "CLEMASTINA": [
+      "anti-histamínico de primeira geração",
+      "pode causar sonolência"
+    ],
+    "DIPIRONA": [
+      "dor",
+      "febre",
+      "dor de cabeça"
+    ],
+    "PARACETAMOL": [
+      "dor",
+      "febre",
+      "dor de cabeça"
+    ],
+    "ACIDO ACETILSALICILICO": [
+      "dor",
+      "febre",
+      "dor de cabeça",
+      "aspirina"
+    ],
+    "IBUPROFENO": [
+      "dor",
+      "febre",
+      "anti-inflamatório",
+      "dor de cabeça",
+      "cólica menstrual"
+    ],
+    "NIMESULIDA": [
+      "anti-inflamatório",
+      "dor",
+      "dor de garganta",
+      "dor de dente"
+    ],
+    "DICLOFENACO": [
+      "anti-inflamatório",
+      "dor",
+      "dor nas costas"
+    ],
+    "CETOPROFENO": [
+      "anti-inflamatório",
+      "dor"
+    ],
+    "NAPROXENO": [
+      "anti-inflamatório",
+      "dor",
+      "cólica menstrual"
+    ],
+    "ORFENADRINA": [
+      "relaxante muscular",
+      "dor muscular",
+      "torcicolo"
+    ],
+    "CICLOBENZAPRINA": [
+      "relaxante muscular",
+      "dor muscular",
+      "dor nas costas"
+    ],
+    "CARISOPRODOL": [
+      "relaxante muscular",
+      "dor muscular"
+    ],
+    "ISOMETEPTENO": [
+      "dor de cabeça",
+      "enxaqueca"
+    ],
+    "ESCOPOLAMINA": [
+      "cólica",
+      "dor de barriga"
+    ],
+    "SIMETICONA": [
+      "gases",
+      "barriga inchada"
+    ],
+    "OMEPRAZOL": [
+      "azia",
+      "gastrite",
+      "refluxo"
+    ],
+    "PANTOPRAZOL": [
+      "azia",
+      "gastrite",
+      "refluxo"
+    ],
+    "LOPERAMIDA": [
+      "diarreia"
+    ],
+    "SILDENAFILA": [
+      "disfunção erétil"
+    ],
+    "TADALAFILA": [
+      "disfunção erétil"
+    ],
+    "ALBENDAZOL": [
+      "verme",
+      "vermífugo"
+    ],
+    "MEBENDAZOL": [
+      "verme",
+      "vermífugo"
+    ],
+    "FLUCONAZOL": [
+      "candidíase",
+      "micose"
+    ],
+    "AMOXICILINA": [
+      "antibiótico",
+      "infecção de garganta",
+      "infecção de ouvido"
+    ],
+    "AZITROMICINA": [
+      "antibiótico",
+      "infecção respiratória"
+    ],
+    "LOSARTANA": [
+      "pressão alta"
+    ],
+    "ENALAPRIL": [
+      "pressão alta"
+    ],
+    "SINVASTATINA": [
+      "colesterol alto"
+    ],
+    "ROSUVASTATINA": [
+      "colesterol alto"
+    ],
+    "ATORVASTATINA": [
+      "colesterol alto"
+    ],
+    "METFORMINA": [
+      "diabetes"
+    ],
+    "LEVOTIROXINA": [
+      "tireoide",
+      "hipotireoidismo"
+    ]
   }
 }
