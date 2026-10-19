@@ -12,7 +12,7 @@ export interface VetorEsparso {
   values: number[];
 }
 
-const PALAVRAS_VAZIAS = new Set(
+export const PALAVRAS_VAZIAS = new Set(
   "a o e de da do das dos que pra para pro com sem em no na um uma me meu minha por remedio remedios medicamento".split(" "),
 );
 

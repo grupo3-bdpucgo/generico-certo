@@ -16,7 +16,7 @@ export interface Gabarito {
 
 export interface ConsultaTeste {
   id: number;
-  categoria: "nome_comercial" | "erro_digitacao" | "principio_ativo" | "coloquial" | "mista";
+  categoria: "nome_comercial" | "erro_digitacao" | "variacao_nomenclatura" | "principio_ativo" | "coloquial" | "mista";
   consulta: string;
   desenvolvimento: boolean;
   gabarito: Gabarito;

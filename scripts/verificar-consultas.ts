@@ -1,9 +1,12 @@
 // Confere o conjunto de consultas antes do benchmark, sem rodar nenhum motor:
 //  1. viabilidade: quantos registros da base satisfazem cada gabarito
 //  2. vazamento: a consulta aparece literalmente no dicionário, ou contém um termo de várias palavras dele
+//  3. sobreposição: palavras de conteúdo da consulta que coincidem com palavras do dicionário
+//  4. acaso: probabilidade de acerto no top 5 sorteando entre os registros elegíveis (sem uso hospitalar)
 // Uso: npx tsx scripts/verificar-consultas.ts
 
 import { readFileSync } from "node:fs";
+import { palavrasNoDicionario, probabilidadeAcaso } from "../lib/dificuldade";
 import { correto, type ConsultaTeste } from "../lib/gabarito";
 import { semAcento, type DicionarioIndicacoes, type Medicamento } from "../lib/normalizacao";
 
@@ -16,18 +19,25 @@ const norm = (s: string) => semAcento(s.toLowerCase()).replace(/-/g, "").replace
 const termos = [...Object.values(dic.classes), ...Object.values(dic.substancias)].flat().map(norm);
 const termosCompostos = [...new Set(termos.filter((t) => t.includes(" ")))];
 
+// Mesmo universo que os motores enxergam com o filtro padrão do site.
+const elegiveis = dados.filter((m) => !m.restricao_hospitalar);
+
 let problemas = 0;
-console.log("id | categoria       | dev | registros válidos | vazamento | consulta");
+console.log(`Registros elegíveis (sem uso hospitalar): ${elegiveis.length}
+`);
+console.log("id | categoria             | dev | válidos | acaso@5 | coincid. | vazamento | consulta");
 for (const c of consultas) {
   const q = norm(c.consulta);
-  const validos = dados.filter((m) => correto(m, c.gabarito)).length;
+  const validos = elegiveis.filter((m) => correto(m, c.gabarito)).length;
+  const acaso = probabilidadeAcaso(elegiveis.length, validos);
+  const coincidentes = palavrasNoDicionario(c.consulta, dic);
   const consultaNoDicionario = termos.some((t) => t.includes(q));
   const termoNaConsulta = termosCompostos.filter((t) => ` ${q} `.includes(` ${t} `));
   const vazou = consultaNoDicionario || termoNaConsulta.length > 0;
   if (!validos || (vazou && !c.desenvolvimento)) problemas++;
   const detalhe = consultaNoDicionario ? "consulta no dicionário" : termoNaConsulta.length ? `contém "${termoNaConsulta.join('", "')}"` : "não";
   console.log(
-    `${String(c.id).padStart(2)} | ${c.categoria.padEnd(15)} | ${c.desenvolvimento ? "sim" : "   "} | ${String(validos).padStart(17)} | ${detalhe.padEnd(9)} | ${c.consulta}`,
+    `${String(c.id).padStart(2)} | ${c.categoria.padEnd(21)} | ${c.desenvolvimento ? "sim" : "   "} | ${String(validos).padStart(7)} | ${(acaso * 100).toFixed(1).padStart(6)}% | ${String(coincidentes.length).padStart(2)} ${coincidentes.join(",").padEnd(5)} | ${detalhe.padEnd(9)} | ${c.consulta}`,
   );
 }
 console.log(`\n${consultas.length} consultas, ${consultas.filter((c) => !c.desenvolvimento).length} novas; problemas: ${problemas}`);

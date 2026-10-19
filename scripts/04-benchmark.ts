@@ -9,11 +9,17 @@
 //  - cada consulta roda REPETICOES vezes por motor, alternando os motores; o tempo reportado é a mediana
 //  - a acurácia vem da primeira repetição (os cinco motores são determinísticos)
 //  - tempo de banco e tempo de embedding são medidos separadamente
+//
+// Dificuldade: para cada consulta, a probabilidade de acerto no top 5 de um motor que sorteasse
+// resultados ao acaso (p_acaso). A média ponderada usa peso 1 - p_acaso, para que consultas com
+// gabarito amplo, em que qualquer motor acerta, valham menos que as difíceis.
 
 import { readFileSync, writeFileSync } from "node:fs";
 import { buscarVetorial, type ResultadoBusca } from "../lib/busca";
+import { palavrasNoDicionario, probabilidadeAcaso } from "../lib/dificuldade";
 import { embedConsulta } from "../lib/embeddings";
 import { correto, type ConsultaTeste } from "../lib/gabarito";
+import type { DicionarioIndicacoes, Medicamento } from "../lib/normalizacao";
 import { buscarFullText, buscarIlike, pool } from "../lib/postgres";
 
 const MOTORES = ["denso_base", "denso", "hibrido", "ilike", "fulltext"] as const;
@@ -30,6 +36,18 @@ const REPETICOES = 5;
 const RODADAS_AQUECIMENTO = 5;
 
 const { consultas }: { consultas: ConsultaTeste[] } = JSON.parse(readFileSync("benchmark/consultas.json", "utf-8"));
+const dados: Medicamento[] = JSON.parse(readFileSync("data/dados.json", "utf-8"));
+const dic: DicionarioIndicacoes = JSON.parse(readFileSync("data/dicionario-indicacoes.json", "utf-8"));
+
+// Mesmo universo que os motores enxergam com o filtro padrão do site.
+const elegiveis = dados.filter((m) => !m.restricao_hospitalar);
+const dificuldade = Object.fromEntries(
+  consultas.map((c) => {
+    const validos = elegiveis.filter((m) => correto(m, c.gabarito)).length;
+    const coincidentes = palavrasNoDicionario(c.consulta, dic);
+    return [c.id, { registros_validos: validos, p_acaso_top5: probabilidadeAcaso(elegiveis.length, validos), palavras_no_dicionario: coincidentes }];
+  }),
+);
 
 async function executar(motor: Motor, consulta: string) {
   if (motor === "ilike" || motor === "fulltext") {
@@ -124,11 +142,15 @@ function agregar(filtro: (c: ConsultaTeste) => boolean) {
       const ms = medicoes.filter((m) => m.motor === motor && ids.has(m.consulta_id));
       const achados = ms.filter((m) => m.posicao_primeiro_correto !== null);
       const bancos = ms.map((m) => m.tempo_banco_ms);
+      const peso = (m: Medicao) => 1 - dificuldade[m.consulta_id].p_acaso_top5;
+      const somaPesos = ms.reduce((s, m) => s + peso(m), 0);
       return [
         motor,
         {
           consultas: ms.length,
           acerto_top5: arred(ms.filter((m) => m.acerto_top5).length / ms.length, 4),
+          acerto_top5_ponderado: arred(ms.reduce((s, m) => s + (m.acerto_top5 ? peso(m) : 0), 0) / somaPesos, 4),
+          acaso_top5_medio: arred(ms.reduce((s, m) => s + dificuldade[m.consulta_id].p_acaso_top5, 0) / ms.length, 4),
           mrr_top10: arred(ms.reduce((s, m) => s + m.rr, 0) / ms.length, 4),
           posicao_media: achados.length ? arred(achados.reduce((s, m) => s + m.posicao_primeiro_correto!, 0) / achados.length) : null,
           nao_encontrados_top10: ms.length - achados.length,
@@ -152,9 +174,11 @@ const resultado = {
     rodadas_aquecimento: RODADAS_AQUECIMENTO,
     filtros: "padrão do site: oculta apresentações de uso restrito hospitalar",
     tempo: "mediana das repetições; tempo de banco medido no cliente, inclui ida e volta pela rede",
+    registros_elegiveis: elegiveis.length,
+    ponderacao: "acerto_top5_ponderado usa peso 1 - p_acaso_top5 por consulta",
   },
   motores: ROTULOS,
-  consultas,
+  consultas: consultas.map((c) => ({ ...c, ...dificuldade[c.id] })),
   agregados: {
     todas: agregar(() => true),
     sem_desenvolvimento: agregar((c) => !c.desenvolvimento),
@@ -173,7 +197,7 @@ for (const [rotulo, ag] of [["todas", resultado.agregados.todas], ["sem desenvol
   for (const motor of MOTORES) {
     const a = ag[motor];
     console.log(
-      `${ROTULOS[motor].padEnd(34)} | ${(a.acerto_top5 * 100).toFixed(0).padStart(7)}% | ${a.mrr_top10.toFixed(3)} | ${String(a.posicao_media ?? "-").padStart(10)} | ${String(a.nao_encontrados_top10).padStart(9)} | ${a.tempo_banco_mediana_ms} ms`,
+      `${ROTULOS[motor].padEnd(34)} | ${(a.acerto_top5 * 100).toFixed(0).padStart(7)}% | ${(a.acerto_top5_ponderado * 100).toFixed(1).padStart(8)}% | ${a.mrr_top10.toFixed(3)} | ${String(a.posicao_media ?? "-").padStart(10)} | ${String(a.nao_encontrados_top10).padStart(9)} | ${a.tempo_banco_mediana_ms} ms`,
     );
   }
 }
