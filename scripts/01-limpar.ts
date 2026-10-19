@@ -13,6 +13,7 @@ import {
   seloDoTipo,
   separarSubstancias,
   substanciaCanonica,
+  unidadeDoPreco,
   type Medicamento,
 } from "../lib/normalizacao";
 
@@ -61,7 +62,11 @@ for (const l of linhas) {
   const partes = analisarApresentacao(apresentacao);
 
   const substanciasChave = [...new Set(substancia.map(substanciaCanonica))].sort();
-  const chave = [substanciasChave.join(" + "), partes.dosagem, partes.formaBase, partes.quantidade].join(" | ");
+  // estrita: mesma caixa; ampla: qualquer caixa (comparada por preço por unidade)
+  const chaveAmpla = [substanciasChave.join(" + "), partes.dosagem, partes.formaBase].join(" | ");
+  const chave = [chaveAmpla, partes.quantidade].join(" | ");
+  const precoPorUnidade =
+    partes.quantidadeNum && partes.quantidadeNum > 0 ? Number((pmc / partes.quantidadeNum).toFixed(4)) : null;
 
   saida.push({
     id: saida.length + 1,
@@ -85,7 +90,10 @@ for (const l of linhas) {
     forma: partes.forma,
     quantidade: partes.quantidade,
     quantidade_num: partes.quantidadeNum,
+    unidade: unidadeDoPreco(partes.forma, partes.quantidade),
+    preco_por_unidade: precoPorUnidade,
     chave_equivalencia: chave,
+    chave_equivalencia_ampla: chaveAmpla,
     texto_embedding: montarTextoEmbedding({ produto, substancia, classe, dosagem: partes.dosagem, forma: partes.forma }),
   });
 }
@@ -102,6 +110,8 @@ const contar = (f: (m: Medicamento) => string) =>
 const grupos = contar((m) => m.chave_equivalencia);
 const gruposComGenerico = new Set(saida.filter((m) => m.generico).map((m) => m.chave_equivalencia));
 const gruposMultiplos = Object.entries(grupos).filter(([, n]) => n > 1);
+const gruposAmplos = contar((m) => m.chave_equivalencia_ampla);
+const amplosComGenerico = new Set(saida.filter((m) => m.generico).map((m) => m.chave_equivalencia_ampla));
 
 console.log(`\nRegistros lidos:            ${linhas.length}`);
 console.log(`Descartados (não comerc.):  ${descarte.naoComercializado}`);
@@ -109,8 +119,10 @@ console.log(`Descartados (sem PMC):      ${descarte.semPmc}`);
 console.log(`Descartados (GGREM dup.):   ${descarte.ggremDuplicado}`);
 console.log(`Registros finais:           ${saida.length}`);
 console.log(`Chaves de equivalência:     ${Object.keys(grupos).length} (${gruposMultiplos.length} com 2+ itens, ${gruposComGenerico.size} com genérico)`);
+console.log(`Chaves amplas (sem caixa):  ${Object.keys(gruposAmplos).length} (${Object.values(gruposAmplos).filter((n) => n > 1).length} com 2+ itens, ${amplosComGenerico.size} com genérico)`);
 console.log(`Sem dosagem extraída:       ${saida.filter((m) => !m.dosagem).length}`);
 console.log(`Sem quantidade extraída:    ${saida.filter((m) => !m.quantidade).length}`);
+console.log("Por unidade:", contar((m) => m.unidade));
 console.log("Por selo:", contar((m) => m.selo));
 console.log("Por tarja:", contar((m) => m.tarja));
 console.log(`\nGerado ${SAIDA}`);

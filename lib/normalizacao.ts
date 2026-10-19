@@ -23,7 +23,10 @@ export interface Medicamento {
   forma: string;
   quantidade: string;
   quantidade_num: number | null;
+  unidade: string;
+  preco_por_unidade: number | null;
   chave_equivalencia: string;
+  chave_equivalencia_ampla: string;
   texto_embedding: string;
 }
 
@@ -193,6 +196,27 @@ export function expandirForma(forma: string): string {
     .split(" ")
     .map((t) => EXPANSAO_FORMA[t] ?? t.toLowerCase())
     .join(" ");
+}
+
+const UNIDADE_POR_FORMA: Record<string, [string, string]> = {
+  COM: ["comprimido", "comprimidos"], DRG: ["drágea", "drágeas"], CAP: ["cápsula", "cápsulas"],
+  PAS: ["pastilha", "pastilhas"], SUP: ["supositório", "supositórios"], GOMA: ["goma", "gomas"],
+  FA: ["frasco-ampola", "frascos-ampola"], AMP: ["ampola", "ampolas"], ENV: ["envelope", "envelopes"],
+  SER: ["seringa", "seringas"], BOLS: ["bolsa", "bolsas"], FR: ["frasco", "frascos"],
+  CARP: ["carpule", "carpules"], STR: ["strip", "strips"],
+};
+const UNIDADE_MEDIDA: Record<string, string> = { ML: "mL", L: "L", G: "g", MG: "mg", DOSE: "dose", DOSES: "dose", UN: "unidade" };
+
+/**
+ * Rótulo da unidade usada no preço por unidade ("comprimido", "mL", "g").
+ * Quando a quantidade tem unidade explícita ("X 20 ML"), ela prevalece sobre a forma.
+ */
+export function unidadeDoPreco(forma: string, quantidade: string): string {
+  const [, unidade] = quantidade.split(" ");
+  if (unidade && UNIDADE_MEDIDA[unidade]) return UNIDADE_MEDIDA[unidade];
+  if (unidade && UNIDADE_POR_FORMA[unidade]) return UNIDADE_POR_FORMA[unidade][0];
+  const primeira = forma.split(" ")[0];
+  return UNIDADE_POR_FORMA[primeira]?.[0] ?? "unidade";
 }
 
 export function seloDoTipo(tipo: string | null): string {
