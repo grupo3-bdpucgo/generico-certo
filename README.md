@@ -17,7 +17,7 @@ Os dados são a Lista de Preços de Medicamentos da CMED/ANVISA (arquivo PMC, ed
                         │
                         └─────────────03-postgres──► PostgreSQL (Neon): mesma base, ILIKE e full text
 
- Next.js (Vercel) ── /            busca híbrida (denso + trigramas, fusão RRF)
+ Next.js (Vercel) ── /buscar      busca híbrida (denso + trigramas, fusão RRF)
                   ── /medicamento comparação de preços entre equivalentes
                   ── /comparativo os 5 motores lado a lado + resultado do benchmark
 ```
@@ -85,7 +85,7 @@ Na primeira ingestão os vetores da linha de base (`denso_base`) são guardados 
 ## Rodar o site
 
 ```bash
-npm run dev           # http://localhost:3000
+npm run dev           # http://localhost:3000 (resultados em /buscar?q=...)
 npm run build         # baixa o modelo para ./models e gera o build de produção
 npm run tamanho-funcoes   # tamanho rastreado de cada função serverless (limite da Vercel: 250 MB)
 ```
@@ -98,14 +98,16 @@ APIs:
 
 ## Deploy (Vercel)
 
-O projeto fica no time **Grupo3BDPUCGO**. Cadastre em *Settings > Environment Variables* as variáveis `QDRANT_URL`, `QDRANT_API_KEY`, `DATABASE_URL` e `ALIQUOTA_ICMS`, e publique:
+O projeto fica no time **Grupo3BDPUCGO** (identificador `grupo3-bdpucgo`), com as funções na região de São Paulo (`gru1`, em `vercel.json`), a mesma do Qdrant e do Neon. Cadastre em *Settings > Environment Variables* as variáveis `QDRANT_URL`, `QDRANT_API_KEY`, `DATABASE_URL` e `ALIQUOTA_ICMS`, e publique:
 
 ```bash
-npx vercel link --scope grupo3bdpucgo
-npx vercel --prod
+npx vercel link --scope grupo3-bdpucgo
+npx vercel --prod --scope grupo3-bdpucgo
 ```
 
-O build baixa o modelo de embeddings para `./models` (`scripts/baixar-modelo.mjs`) e o empacota na função com o binário Linux x64 do `onnxruntime-node`, sem chave nem custo de API. A maior função fica em cerca de 193 MB.
+O build baixa o modelo de embeddings para `./models` (`scripts/baixar-modelo.mjs`) e o empacota na função com o binário Linux x64 do `onnxruntime-node`, sem chave nem custo de API. A maior função fica em cerca de 193 MB. Só `/buscar`, `/comparativo` e `/api/busca` levam o modelo: o Next compara as chaves de `outputFileTracingIncludes` com `contains: true`, e uma chave `"/"` levaria o modelo para todas as rotas, passando do limite de 12 funções do plano Hobby.
+
+Em produção, a primeira requisição de uma instância nova leva cerca de 3,7 s (2,3 s para carregar o modelo); com a instância ativa, o processamento dentro da função fica entre 25 e 120 ms. O cabeçalho `Server-Timing` de `/api/busca` mostra esses tempos.
 
 ## Estrutura
 
@@ -135,4 +137,10 @@ Os commits seguem o prefixo do papel (`feat(dba): ...`, `feat(data-engineer): ..
 
 ## Integrantes
 
-Arthur de Oliveira Machado, Bruna Gouveia de Morais, Brunno Pedrosa Mesquita, Gabriel Alves Gomes, Gabriel Magela, Guilherme Gabriel e Pedro Eduardo Peixoto.
+- Arthur de Oliveira Machado
+- Bruna Gouveia de Morais
+- Brunno Pedrosa Mesquita
+- Gabriel Alves Gomes
+- Gabriel Magela
+- Guilherme Gabriel
+- Pedro Eduardo Peixoto
