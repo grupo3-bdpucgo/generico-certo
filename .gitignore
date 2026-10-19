@@ -36,3 +36,5 @@ docs/*.synctex.gz
 .DS_Store
 Thumbs.db
 npm-debug.log*
+.env*
+!.env.local.example

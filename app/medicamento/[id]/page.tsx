@@ -89,7 +89,7 @@ export default async function PaginaMedicamento({
 
   const sp = new URLSearchParams();
   for (const [k, v] of Object.entries(await searchParams)) for (const x of [v].flat()) if (x) sp.append(k, x);
-  const voltar = sp.toString() ? `/?${sp}` : "/";
+  const voltar = sp.get("q") ? `/buscar?${sp}` : "/";
   const b = c.base;
   const unidade = b.unidade;
 

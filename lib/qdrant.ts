@@ -1,7 +1,7 @@
 // Acesso ao Qdrant Cloud e definição da collection "medicamentos" (papel: DBA).
 
 import { QdrantClient } from "@qdrant/js-client-rest";
-import { DIMENSAO } from "./embeddings";
+import { DIMENSAO } from "./modelo";
 
 export const COLLECTION = process.env.QDRANT_COLLECTION ?? "medicamentos";
 

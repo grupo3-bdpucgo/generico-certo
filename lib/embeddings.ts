@@ -8,8 +8,9 @@ export interface ProvedorEmbeddings {
   gerar(textos: string[]): Promise<number[][]>;
 }
 
-export const MODELO_PADRAO = "Xenova/paraphrase-multilingual-MiniLM-L12-v2";
-export const DIMENSAO = 384;
+import { DIMENSAO, MODELO_PADRAO } from "./modelo";
+
+export { DIMENSAO, MODELO_PADRAO };
 
 // Transformers.js rodando localmente (Node), com o modelo quantizado em 8 bits.
 // O mesmo dtype precisa ser usado na ingestão e na consulta.

@@ -11,6 +11,7 @@ export const dynamic = "force-dynamic";
 const MOTORES: MotorVetorial[] = ["hibrido", "denso", "denso_base"];
 
 export async function GET(req: Request) {
+  const inicio = performance.now();
   const url = new URL(req.url);
   const busca = lerParametros(lerDeUrl(url));
   if (!busca.q) return NextResponse.json({ erro: "Informe o parâmetro q." }, { status: 400 });
@@ -33,6 +34,11 @@ export async function GET(req: Request) {
       temMais: r.resultados.length > POR_PAGINA,
       tempos: { embeddingMs: r.tempoEmbeddingMs, bancoMs: r.tempoBancoMs, servidorMs: r.tempoServidorMs },
       resultados: r.resultados.slice(0, POR_PAGINA),
+    }, {
+      // Tempo total do handler, para separar o custo da aplicação do custo da plataforma e da rede.
+      headers: {
+        "Server-Timing": `embedding;dur=${r.tempoEmbeddingMs.toFixed(1)}, qdrant;dur=${r.tempoBancoMs.toFixed(1)}, handler;dur=${(performance.now() - inicio).toFixed(1)}`,
+      },
     });
   } catch (e) {
     console.error(e);

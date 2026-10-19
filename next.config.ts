@@ -1,7 +1,10 @@
 import type { NextConfig } from "next";
 
-// Rotas que geram embeddings da consulta (Transformers.js + onnxruntime-node).
-const ROTAS_COM_MODELO = ["/", "/comparativo", "/api/busca", "/api/comparativo"];
+// Rotas que geram embeddings da consulta (Transformers.js + onnxruntime-node). Só elas levam o
+// modelo; as demais ficam pequenas e a Vercel pode agrupá-las (o plano Hobby aceita 12 funções).
+// O Next compara estas chaves com picomatch e contains: true, então "/" casaria com todas as rotas.
+// Por isso a busca fica em /buscar e a home não gera embeddings.
+const ROTAS_COM_MODELO = ["/buscar", "/comparativo", "/api/busca"];
 
 const config: NextConfig = {
   // Transformers.js usa o binário nativo do onnxruntime-node; não deve ser empacotado pelo bundler.

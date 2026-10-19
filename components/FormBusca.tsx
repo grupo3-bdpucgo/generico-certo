@@ -7,7 +7,7 @@ export default function FormBusca({ busca, grande = false }: { busca: Parametros
   const f = busca.filtros;
   const temFiltro = Boolean(f.apenasGenericos || f.precoMaximo !== undefined || f.tarjas?.length);
   return (
-    <form action="/" method="get" role="search" className="w-full">
+    <form action="/buscar" method="get" role="search" className="w-full">
       <label htmlFor="q" className="sr-only">
         Nome do remédio, princípio ativo ou sintoma
       </label>
