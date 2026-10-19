@@ -2,6 +2,7 @@ import Link from "next/link";
 import CardMedicamento from "@/components/CardMedicamento";
 import FormBusca from "@/components/FormBusca";
 import { buscarVetorial, type RespostaBusca } from "@/lib/busca";
+import { duracao } from "@/lib/formatacao";
 import { POR_PAGINA, lerParametros, paraQueryString, type Parametros } from "@/lib/parametros";
 
 export const dynamic = "force-dynamic";
@@ -20,7 +21,6 @@ export default async function Buscar({ searchParams }: { searchParams: Promise<P
         filtros: busca.filtros,
         limite: POR_PAGINA + 1,
         deslocamento: (busca.pagina - 1) * POR_PAGINA,
-        comSimilaridade: true,
       });
     } catch (e) {
       console.error(e);
@@ -68,7 +68,8 @@ export default async function Buscar({ searchParams }: { searchParams: Promise<P
                   {resultados.length ? `Resultados para “${busca.q}”` : `Nada encontrado para “${busca.q}”`}
                 </h2>
                 <p className="numeros text-xs text-tinta-3">
-                  busca híbrida em {(resposta.tempoEmbeddingMs + resposta.tempoBancoMs).toFixed(0)} ms · página {busca.pagina}
+                  {resultados.length} {resultados.length === 1 ? "resultado" : "resultados"} nesta página · página {busca.pagina} ·
+                  tempo da busca: {duracao(resposta.tempoEmbeddingMs + resposta.tempoBancoMs)}
                 </p>
               </div>
               {!resultados.length && (

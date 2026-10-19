@@ -10,11 +10,16 @@ export const pct = (fracao: number, casas = 0) =>
   `${(fracao * 100).toLocaleString("pt-BR", { maximumFractionDigits: casas, minimumFractionDigits: casas })}%`;
 export const numero = (n: number) => NUMERO.format(n);
 
-/** Preço por unidade com mais casas quando é pequeno: "R$ 0,6040". */
+const REAIS_3 = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL", minimumFractionDigits: 3, maximumFractionDigits: 3 });
+
+/** Preço por unidade: 2 casas ("R$ 0,80"), ou 3 abaixo de R$ 0,10 ("R$ 0,045"). */
 export function brlUnidade(n: number): string {
-  return n < 1
-    ? new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL", minimumFractionDigits: 2, maximumFractionDigits: 4 }).format(n)
-    : brl(n);
+  return Math.abs(n) < 0.1 ? REAIS_3.format(n) : brl(n);
+}
+
+/** Duração legível: "180 ms", "2,6 s". */
+export function duracao(ms: number): string {
+  return ms < 1000 ? `${Math.round(ms)} ms` : `${(ms / 1000).toLocaleString("pt-BR", { maximumFractionDigits: 1 })} s`;
 }
 
 const PLURAL: Record<string, string> = {

@@ -1,12 +1,11 @@
 import Link from "next/link";
 import Embalagem from "./Embalagem";
 import Selo from "./Selo";
-import { brl, brlUnidade, pct, porUnidade } from "@/lib/formatacao";
+import { brl, brlUnidade, porUnidade } from "@/lib/formatacao";
 import type { ResultadoBusca } from "@/lib/busca";
 
 export default function CardMedicamento({ r, voltar }: { r: ResultadoBusca; voltar: string }) {
   const m = r.medicamento;
-  const sim = r.similaridade ?? null;
   return (
     <Link
       href={`/medicamento/${r.id}${voltar ? `?${voltar}` : ""}`}
@@ -24,23 +23,14 @@ export default function CardMedicamento({ r, voltar }: { r: ResultadoBusca; volt
         <p className="line-clamp-2 text-xs text-tinta-3" title={m.apresentacao}>
           {m.apresentacao}
         </p>
-        <div className="mt-auto flex items-end justify-between gap-2 pt-2">
-          <div>
-            <p className="numeros text-xl font-extrabold text-tinta">{brl(m.pmc)}</p>
-            {m.preco_por_unidade !== null && (
-              <p className="numeros text-[11px] text-tinta-3">
-                {brlUnidade(m.preco_por_unidade)} {porUnidade(m.unidade)}
-              </p>
-            )}
-          </div>
-          {sim !== null && (
-            <div className="text-right" title="Similaridade de cosseno entre a sua busca e o texto do medicamento">
-              <p className="numeros text-xs font-semibold text-tinta-2">{pct(sim)}</p>
-              <p className="text-[10px] text-tinta-3">similaridade</p>
-              <div className="mt-0.5 h-1 w-16 overflow-hidden rounded bg-linha" aria-hidden>
-                <div className="h-full rounded bg-tinta-2" style={{ width: `${Math.max(0, Math.min(1, sim)) * 100}%` }} />
-              </div>
-            </div>
+        {/* Sem percentual de similaridade aqui: ao lado do preço ele seria lido como desconto.
+            A similaridade aparece só em /comparativo. */}
+        <div className="mt-auto pt-2">
+          <p className="numeros text-xl font-extrabold text-tinta">{brl(m.pmc)}</p>
+          {m.preco_por_unidade !== null && (
+            <p className="numeros text-[11px] text-tinta-3">
+              {brlUnidade(m.preco_por_unidade)} {porUnidade(m.unidade)}
+            </p>
           )}
         </div>
       </div>

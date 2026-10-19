@@ -85,6 +85,11 @@ function Coluna({ r }: { r: ResultadoMotor }) {
                   <Selo selo={x.medicamento.selo} className="!text-[9px]" />
                   <span className="numeros text-xs">{brl(x.medicamento.pmc)}</span>
                 </div>
+                {x.similaridade != null && (
+                  <p className="numeros mt-0.5 text-[11px] text-tinta-3" title="Similaridade de cosseno entre a consulta e o vetor denso do item">
+                    {pct(x.similaridade)} de similaridade
+                  </p>
+                )}
               </div>
               {x.correto !== null && (
                 <span

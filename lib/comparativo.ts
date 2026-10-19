@@ -76,7 +76,7 @@ export async function compararMotores(q: string, limite = 10): Promise<{ teste: 
           ? { ...(await buscarIlike(q, { limite, medirServidor: true })), tempoEmbeddingMs: 0 }
           : motor === "fulltext"
             ? { ...(await buscarFullText(q, { limite, medirServidor: true })), tempoEmbeddingMs: 0 }
-            : await buscarVetorial(q, motor, { limite });
+            : await buscarVetorial(q, motor, { limite, comSimilaridade: true });
       motores.push({
         motor,
         tempoEmbeddingMs: r.tempoEmbeddingMs,
