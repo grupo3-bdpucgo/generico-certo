@@ -1,0 +1,23 @@
+{
+  "name": "generico-certo",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "limpar": "tsx scripts/01-limpar.ts",
+    "ingerir": "tsx scripts/02-ingerir.ts",
+    "postgres": "tsx scripts/03-postgres.ts",
+    "benchmark": "tsx scripts/04-benchmark.ts"
+  },
+  "dependencies": {
+    "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.5",
+    "tsx": "^4.23.15",
+    "typescript": "^5.9.3"
+  }
+}

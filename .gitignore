@@ -1,0 +1,36 @@
+# dados brutos e derivados (arquivo da CMED tem 12 MB e é público)
+/data/
+
+# dependências e build
+node_modules/
+.next/
+out/
+build/
+*.tsbuildinfo
+next-env.d.ts
+
+# ambiente
+.env
+.env.local
+.env*.local
+.vercel
+
+# cache de modelos do Transformers.js
+.cache/
+models/
+
+# LaTeX
+docs/*.aux
+docs/*.log
+docs/*.out
+docs/*.toc
+docs/*.lof
+docs/*.lot
+docs/*.fls
+docs/*.fdb_latexmk
+docs/*.synctex.gz
+
+# sistema
+.DS_Store
+Thumbs.db
+npm-debug.log*
