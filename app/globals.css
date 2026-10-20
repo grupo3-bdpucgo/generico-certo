@@ -13,9 +13,10 @@
   --color-tinta: #16161a;
   --color-tinta-2: #52514e;
   --color-tinta-3: #77766f;
-  --color-papel: #ffffff;
-  --color-fundo: #f6f6f4;
-  --color-linha: #e4e3df;
+  --color-papel: #fffdf8;
+  --color-fundo: #f1ede4;
+  --color-prateleira: #e6e0d3;
+  --color-linha: #d9d2c3;
   --color-economia: #15803d;
   --color-economia-fundo: #ecfdf3;
 
@@ -40,7 +41,7 @@ html {
 
 body {
   background: var(--color-fundo);
-  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-family: var(--font-caixa), Arial, Helvetica, sans-serif;
   -webkit-font-smoothing: antialiased;
 }
 

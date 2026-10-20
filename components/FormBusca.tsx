@@ -12,7 +12,7 @@ export default function FormBusca({ busca, grande = false }: { busca: Parametros
       <label htmlFor="q" className="sr-only">
         Nome do remédio, princípio ativo ou sintoma
       </label>
-      <div className="flex overflow-hidden rounded-xl bg-papel shadow-lg ring-1 ring-black/10 focus-within:ring-2 focus-within:ring-marca">
+      <div className="flex overflow-hidden rounded-md bg-papel ring-1 ring-black/10 focus-within:ring-2 focus-within:ring-marca">
         <input
           id="q"
           name="q"
@@ -80,7 +80,7 @@ export default function FormBusca({ busca, grande = false }: { busca: Parametros
           </span>
           Mais filtros{temFiltro ? " (ativos)" : ""}
         </summary>
-        <div className="mt-2 grid gap-4 rounded-xl bg-noite-2 p-4 sm:grid-cols-[auto_auto_1fr]">
+        <div className="mt-2 grid gap-4 rounded-md bg-noite-2 p-4 sm:grid-cols-[auto_auto_1fr]">
           <label className="flex items-center gap-2">
             <input type="checkbox" name="generico" value="1" defaultChecked={f.apenasGenericos} className="size-4 accent-marca" />
             Só genéricos

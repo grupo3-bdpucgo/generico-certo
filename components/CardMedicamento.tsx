@@ -9,14 +9,14 @@ export default function CardMedicamento({ r, voltar }: { r: ResultadoBusca; volt
   return (
     <Link
       href={`/medicamento/${r.id}${voltar ? `?${voltar}` : ""}`}
-      className="group flex flex-col overflow-hidden rounded-xl border border-linha bg-papel shadow-sm transition hover:-translate-y-0.5 hover:border-tinta-3 hover:shadow-md"
+      className="group flex flex-col overflow-hidden rounded-md border border-linha bg-papel transition-colors hover:border-tinta"
     >
-      <div className="bg-fundo px-4 pt-4 pb-3">
+      <div className="border-b border-linha bg-prateleira px-5 pt-5 pb-3">
         <Embalagem m={m} uid={`card-${r.id}`} className="w-full" titulo={false} />
       </div>
       <div className="flex flex-1 flex-col gap-1.5 px-4 pt-3 pb-4">
         <div className="flex items-start justify-between gap-2">
-          <h3 className="text-base leading-tight font-bold text-tinta group-hover:underline">{m.produto}</h3>
+          <h3 className="text-base leading-tight font-bold text-tinta">{m.produto}</h3>
           <Selo selo={m.selo} className="shrink-0" />
         </div>
         <p className="text-xs text-tinta-2">{m.laboratorio}</p>
@@ -27,7 +27,7 @@ export default function CardMedicamento({ r, voltar }: { r: ResultadoBusca; volt
             (a similaridade aparece só em /comparativo). O preço da CMED é um teto, não o preço de
             balcão, então fica pequeno e rotulado; o destaque é o convite para comparar. */}
         <div className="mt-auto flex flex-col gap-1 pt-2">
-          <p className="text-sm font-bold text-tinta group-hover:underline">Ver equivalentes e economia →</p>
+          <p className="text-sm font-semibold text-marca-escura underline decoration-1 underline-offset-2">Ver equivalentes e economia</p>
           <p className="numeros text-[11px] leading-snug text-marca-escura">
             Preço máximo: até {brl(m.pmc)}
             {m.preco_por_unidade !== null && (

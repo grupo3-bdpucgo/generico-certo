@@ -45,7 +45,7 @@ function Coluna({ r }: { r: ResultadoMotor }) {
   const acertos = r.resultados.slice(0, 5).filter((x) => x.correto).length;
   const temGabarito = r.resultados.some((x) => x.correto !== null);
   return (
-    <section className="flex w-72 shrink-0 flex-col overflow-hidden rounded-xl border border-linha bg-papel xl:w-auto">
+    <section className="flex w-72 shrink-0 flex-col overflow-hidden rounded-md border border-linha bg-papel xl:w-auto">
       <header className="border-b border-linha p-3" style={{ borderTop: `4px solid ${info.cor}` }}>
         <p className="text-[11px] font-semibold tracking-wide text-tinta-3 uppercase">{info.banco}</p>
         <h3 className="font-bold">{info.nome}</h3>
@@ -136,7 +136,7 @@ export default async function Comparativo({ searchParams }: { searchParams: Prom
             A mesma consulta nos cinco motores, com os mesmos 11.001 medicamentos da CMED: três no Qdrant (banco vetorial) e dois
             no PostgreSQL. Quando a consulta é uma das 28 do benchmark, cada resultado é marcado pelo gabarito.
           </p>
-          <form action="/comparativo" method="get" className="mt-4 flex max-w-2xl overflow-hidden rounded-xl bg-papel ring-1 ring-black/10 focus-within:ring-2 focus-within:ring-marca">
+          <form action="/comparativo" method="get" className="mt-4 flex max-w-2xl overflow-hidden rounded-md bg-papel ring-1 ring-black/10 focus-within:ring-2 focus-within:ring-marca">
             <label htmlFor="qc" className="sr-only">Consulta</label>
             <input id="qc" name="q" type="search" required defaultValue={q} placeholder="Digite uma consulta ou escolha uma abaixo" className="min-w-0 flex-1 bg-transparent px-4 py-3 text-tinta focus:outline-none" />
             <button className="bg-marca px-6 font-semibold text-white hover:bg-marca-escura">Comparar</button>
@@ -152,7 +152,7 @@ export default async function Comparativo({ searchParams }: { searchParams: Prom
                     <Link
                       key={c.id}
                       href={`/comparativo?q=${encodeURIComponent(c.consulta)}`}
-                      className={`rounded-full px-2.5 py-0.5 hover:bg-white/20 ${q === c.consulta ? "bg-marca text-white" : "bg-noite-2 text-white/90"}`}
+                      className={`rounded-sm px-2 py-0.5 hover:bg-white/20 ${q === c.consulta ? "bg-marca text-white" : "bg-noite-2 text-white/90"}`}
                       title={c.desenvolvimento ? "Usada durante o desenvolvimento" : `Consulta #${c.id} do benchmark`}
                     >
                       {c.consulta}
@@ -201,7 +201,7 @@ export default async function Comparativo({ searchParams }: { searchParams: Prom
           chance de um sorteio ao acaso acertar no top 5 (em média {pct(ag.hibrido.acaso_top5_medio, 1)}).
         </p>
 
-        <div className="mt-4 overflow-x-auto rounded-xl border border-linha bg-papel">
+        <div className="mt-4 overflow-x-auto rounded-md border border-linha bg-papel">
           <table className="numeros w-full min-w-[760px] text-sm">
             <thead className="bg-fundo text-left text-xs text-tinta-2">
               <tr>
@@ -245,7 +245,7 @@ export default async function Comparativo({ searchParams }: { searchParams: Prom
         </p>
 
         <h3 className="mt-8 font-bold">Acerto no top 5 por categoria</h3>
-        <div className="mt-2 overflow-x-auto rounded-xl border border-linha bg-papel">
+        <div className="mt-2 overflow-x-auto rounded-md border border-linha bg-papel">
           <table className="numeros w-full min-w-[640px] text-sm">
             <thead className="bg-fundo text-xs text-tinta-2">
               <tr>
@@ -285,7 +285,7 @@ export default async function Comparativo({ searchParams }: { searchParams: Prom
         </div>
 
         <div className="mt-8 grid gap-4 text-sm leading-relaxed text-tinta-2 md:grid-cols-2">
-          <div className="rounded-xl border border-linha bg-papel p-4">
+          <div className="rounded-md border border-linha bg-papel p-4">
             <h3 className="mb-1 font-bold text-tinta">Por que o site usa o híbrido</h3>
             <p>
               O híbrido acerta mais no top 5 ({pct(ag.hibrido.acerto_top5)} contra {pct(ag.fulltext.acerto_top5)} do full text),
@@ -295,7 +295,7 @@ export default async function Comparativo({ searchParams }: { searchParams: Prom
               tanto em nome comercial quanto em erro de digitação e linguagem coloquial.
             </p>
           </div>
-          <div className="rounded-xl border border-linha bg-papel p-4">
+          <div className="rounded-md border border-linha bg-papel p-4">
             <h3 className="mb-1 font-bold text-tinta">Como ler os tempos</h3>
             <p>
               No servidor, os motores vetoriais levam de 1 a 3 ms e o full text menos de 1 ms; o ILIKE custa cerca de 45 ms por

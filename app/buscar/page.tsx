@@ -46,12 +46,15 @@ export default async function Buscar({ searchParams }: { searchParams: Promise<P
           )}
           <FormBusca busca={busca} grande={!busca.q} />
           {!busca.q && (
-            <p className="mt-5 flex flex-wrap justify-center gap-2 text-sm text-white/70">
+            <p className="mt-5 flex flex-wrap justify-center gap-x-2 gap-y-1 text-sm text-white/70">
               <span>Experimente:</span>
-              {EXEMPLOS.map((e) => (
-                <Link key={e} href={`/buscar?q=${encodeURIComponent(e)}`} className="rounded-full bg-noite-2 px-3 py-0.5 text-white/90 hover:bg-white/15">
-                  {e}
-                </Link>
+              {EXEMPLOS.map((e, i) => (
+                <span key={e}>
+                  <Link href={`/buscar?q=${encodeURIComponent(e)}`} className="text-white underline decoration-white/40 underline-offset-4 hover:decoration-white">
+                    {e}
+                  </Link>
+                  {i < EXEMPLOS.length - 1 && ","}
+                </span>
               ))}
             </p>
           )}
@@ -94,13 +97,13 @@ export default async function Buscar({ searchParams }: { searchParams: Promise<P
                 <nav className="mt-6 flex flex-col items-center gap-2" aria-label="Paginação">
                   <div className="flex flex-wrap justify-center gap-1.5 text-sm font-semibold">
                     {pagina > 1 && (
-                      <Link href={`/buscar?${paraQueryString(busca, pagina - 1)}`} className="rounded-lg border border-linha bg-papel px-3 py-2 hover:border-tinta-3">
+                      <Link href={`/buscar?${paraQueryString(busca, pagina - 1)}`} className="rounded-md border border-linha bg-papel px-3 py-2 hover:border-tinta">
                         ← Anterior
                       </Link>
                     )}
                     {Array.from({ length: totalPaginas }, (_, i) => i + 1).map((n) =>
                       n === pagina ? (
-                        <span key={n} aria-current="page" className="numeros min-w-10 rounded-lg bg-tinta px-3 py-2 text-center text-white">
+                        <span key={n} aria-current="page" className="numeros min-w-10 rounded-md bg-tinta px-3 py-2 text-center text-white">
                           {n}
                         </span>
                       ) : (
@@ -108,14 +111,14 @@ export default async function Buscar({ searchParams }: { searchParams: Promise<P
                           key={n}
                           href={`/buscar?${paraQueryString(busca, n)}`}
                           aria-label={`Página ${n}`}
-                          className="numeros min-w-10 rounded-lg border border-linha bg-papel px-3 py-2 text-center hover:border-tinta-3"
+                          className="numeros min-w-10 rounded-md border border-linha bg-papel px-3 py-2 text-center hover:border-tinta"
                         >
                           {n}
                         </Link>
                       ),
                     )}
                     {pagina < totalPaginas && (
-                      <Link href={`/buscar?${paraQueryString(busca, pagina + 1)}`} className="rounded-lg border border-linha bg-papel px-3 py-2 hover:border-tinta-3">
+                      <Link href={`/buscar?${paraQueryString(busca, pagina + 1)}`} className="rounded-md border border-linha bg-papel px-3 py-2 hover:border-tinta">
                         Próxima →
                       </Link>
                     )}

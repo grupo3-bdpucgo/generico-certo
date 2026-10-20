@@ -25,6 +25,7 @@ function Diferenca({ item, base, porUnidadeDe }: { item: ItemComparacao; base: n
       <p className="text-economia">
         <span className="numeros text-2xl leading-tight font-extrabold">{pct(e.fracao)}</span>
         <span className="block text-xs font-semibold">mais barato{sufixo}</span>
+        <span className="block text-[10px] text-tinta-3">no preço máximo</span>
       </p>
     );
   }
@@ -33,6 +34,7 @@ function Diferenca({ item, base, porUnidadeDe }: { item: ItemComparacao; base: n
       <p className="text-tinta-2">
         <span className="numeros text-2xl leading-tight font-extrabold">{pct(-e.fracao)}</span>
         <span className="block text-xs font-semibold">mais caro{sufixo}</span>
+        <span className="block text-[10px] text-tinta-3">no preço máximo</span>
       </p>
     );
   }
@@ -61,7 +63,7 @@ function Caixa({ item, base, modo, consulta }: { item: ItemComparacao; base: num
     <li className="w-48 shrink-0 snap-start">
       <Link
         href={`/medicamento/${m.id}${consulta}`}
-        className={`flex h-full flex-col gap-2 rounded-xl border bg-papel p-3 transition hover:border-tinta-3 ${escolhido ? "border-tinta ring-2 ring-tinta" : "border-linha"}`}
+        className={`flex h-full flex-col gap-2 rounded-md border bg-papel p-3 transition-colors hover:border-tinta ${escolhido ? "border-tinta ring-2 ring-tinta" : "border-linha"}`}
       >
         <Embalagem m={m} uid={`${modo}-${m.id}`} className="w-full" titulo={false} />
         <div className="flex items-center justify-between gap-1">
@@ -115,7 +117,7 @@ export default async function PaginaMedicamento({
         {temBusca ? `← Voltar aos resultados de “${sp.get("q")}”` : "← Nova busca"}
       </Link>
 
-      <section className="mt-4 grid gap-6 rounded-2xl border border-linha bg-papel p-5 md:grid-cols-[minmax(0,340px)_1fr]">
+      <section className="mt-4 grid gap-6 rounded-md border border-linha bg-papel p-5 md:grid-cols-[minmax(0,340px)_1fr]">
         <Embalagem m={b} uid="base" className="w-full" />
         <div className="flex flex-col gap-2">
           <div className="flex flex-wrap items-center gap-2">
@@ -134,8 +136,9 @@ export default async function PaginaMedicamento({
             <dd>{rotuloTarja(b.tarja)}</dd>
           </dl>
           {c.melhorMesmaCaixa ? (
-            <p className="mt-2 rounded-xl bg-economia-fundo p-3 text-economia">
-              <strong className="text-2xl">{pct(c.melhorMesmaCaixa.economia!.fracao)} mais barato</strong>
+            <p className="mt-2 rounded-md border-l-4 border-economia bg-economia-fundo p-3 text-economia">
+              <strong className="text-2xl">{pct(c.melhorMesmaCaixa.economia!.fracao)} mais barato</strong>{" "}
+              <span className="text-sm font-semibold">no preço máximo</span>
               <br />
               <span className="text-sm">
                 levando {c.melhorMesmaCaixa.medicamento.produto} ({c.melhorMesmaCaixa.medicamento.selo.toLowerCase()},{" "}
@@ -143,7 +146,7 @@ export default async function PaginaMedicamento({
               </span>
             </p>
           ) : (
-            <p className="mt-2 rounded-xl bg-fundo p-3 text-sm text-tinta-2">
+            <p className="mt-2 rounded-md bg-fundo p-3 text-sm text-tinta-2">
               {c.mesmaCaixa.length > 1
                 ? "Este já é o mais barato entre os equivalentes da mesma caixa."
                 : "Não há outro medicamento equivalente nesta mesma caixa na lista da CMED."}
@@ -153,7 +156,7 @@ export default async function PaginaMedicamento({
             <p className="text-sm text-tinta-2">
               Em outra caixa sai{" "}
               <strong className="text-tinta">
-                {pct(c.melhorPorUnidade.economia!.fracao)} mais barato {porUnidade(c.melhorPorUnidade.medicamento.unidade)}
+                {pct(c.melhorPorUnidade.economia!.fracao)} mais barato {porUnidade(c.melhorPorUnidade.medicamento.unidade)} no preço máximo
               </strong>
               : {c.melhorPorUnidade.medicamento.produto} ({c.melhorPorUnidade.medicamento.selo.toLowerCase()},{" "}
               {quantidadePorExtenso(c.melhorPorUnidade.medicamento)}).
@@ -164,7 +167,7 @@ export default async function PaginaMedicamento({
             <PrecoMaximo valor={b.pmc} unidade={unidade} porUnidadeValor={b.preco_por_unidade} />
             <p className="mt-0.5 text-[11px] leading-snug text-tinta-3">
               É o teto definido pela CMED: a farmácia não pode cobrar mais que isso. Na prática o preço costuma ser bem menor,
-              principalmente nos genéricos, por isso a comparação entre equivalentes é feita em porcentagem.
+              e o desconto muda de um laboratório para outro.
             </p>
           </div>
         </div>
@@ -174,6 +177,10 @@ export default async function PaginaMedicamento({
         <h2 className="text-lg font-bold">Equivalentes na mesma caixa ({c.mesmaCaixa.length})</h2>
         <p className="mb-3 text-sm text-tinta-2">
           Mesmo princípio ativo, dosagem, forma e quantidade ({quantidadePorExtenso(b)}), do mais barato para o mais caro.
+        </p>
+        <p className="mb-3 max-w-3xl border-l-4 border-selo-generico bg-papel px-3 py-2 text-xs leading-relaxed text-tinta-2">
+          A comparação usa o preço máximo permitido pela CMED. Nas farmácias, os descontos variam por laboratório e podem
+          mudar a ordem: confira o preço na hora da compra.
         </p>
         <ul className="flex snap-x gap-3 overflow-x-auto pb-3">
           {c.mesmaCaixa.map((item) => (
@@ -198,7 +205,7 @@ export default async function PaginaMedicamento({
         )}
       </section>
 
-      <aside className="mt-6 space-y-1 rounded-xl border border-linha bg-papel p-4 text-xs leading-relaxed text-tinta-2">
+      <aside className="mt-6 space-y-1 rounded-md border border-linha bg-papel p-4 text-xs leading-relaxed text-tinta-2">
         <p>
           A equivalência é calculada a partir dos dados da CMED (princípio ativo, dosagem e forma farmacêutica). Pela Lei nº
           9.787/1999, o genérico é intercambiável com o medicamento de referência. Pela Resolução CM-CMED nº 3/2025 (art.

@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
+import { Archivo } from "next/font/google";
 import Link from "next/link";
 import "./globals.css";
+
+// Archivo, com eixo de largura: o nome nas ilustrações de caixa usa a versão condensada.
+const archivo = Archivo({ subsets: ["latin"], axes: ["wdth"], variable: "--font-caixa" });
 
 export const metadata: Metadata = {
   title: "Genérico Certo",
@@ -9,7 +13,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="pt-BR">
+    <html lang="pt-BR" className={archivo.variable}>
       <body className="min-h-screen pb-20">
         <header className="bg-noite text-white">
           <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-2">

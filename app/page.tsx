@@ -28,12 +28,15 @@ export default async function Home({ searchParams }: { searchParams: Promise<Par
             Descubra o genérico equivalente e quanto você economiza
           </h1>
           <FormBusca busca={busca} grande />
-          <p className="mt-5 flex flex-wrap justify-center gap-2 text-sm text-white/70">
+          <p className="mt-5 flex flex-wrap justify-center gap-x-2 gap-y-1 text-sm text-white/70">
             <span>Experimente:</span>
-            {EXEMPLOS.map((e) => (
-              <Link key={e} href={`/buscar?q=${encodeURIComponent(e)}`} className="rounded-full bg-noite-2 px-3 py-0.5 text-white/90 hover:bg-white/15">
-                {e}
-              </Link>
+            {EXEMPLOS.map((e, i) => (
+              <span key={e}>
+                <Link href={`/buscar?q=${encodeURIComponent(e)}`} className="text-white underline decoration-white/40 underline-offset-4 hover:decoration-white">
+                  {e}
+                </Link>
+                {i < EXEMPLOS.length - 1 && ","}
+              </span>
             ))}
           </p>
         </div>

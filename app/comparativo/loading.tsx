@@ -7,7 +7,7 @@ export default function Carregando() {
       </p>
       <div className="mt-4 grid gap-3 xl:grid-cols-5" aria-hidden>
         {Array.from({ length: 5 }, (_, i) => (
-          <div key={i} className="h-96 animate-pulse rounded-xl border border-linha bg-papel" />
+          <div key={i} className="h-96 animate-pulse rounded-md border border-linha bg-papel" />
         ))}
       </div>
     </main>

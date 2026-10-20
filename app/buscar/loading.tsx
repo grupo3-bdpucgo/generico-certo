@@ -6,7 +6,7 @@ export default function Carregando() {
     <main aria-busy="true">
       <section className="bg-noite pt-4 pb-8 text-white">
         <div className="mx-auto max-w-3xl px-4">
-          <div className="h-12 animate-pulse rounded-xl bg-noite-2" />
+          <div className="h-12 animate-pulse rounded-md bg-noite-2" />
         </div>
       </section>
       <section className="mx-auto max-w-6xl px-4 py-6">
@@ -16,7 +16,7 @@ export default function Carregando() {
         </p>
         <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" aria-hidden>
           {Array.from({ length: 8 }, (_, i) => (
-            <li key={i} className="h-80 animate-pulse rounded-xl border border-linha bg-papel" />
+            <li key={i} className="h-80 animate-pulse rounded-md border border-linha bg-papel" />
           ))}
         </ul>
       </section>
