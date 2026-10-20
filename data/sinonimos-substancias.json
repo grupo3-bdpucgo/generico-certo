@@ -1,0 +1,21 @@
+{
+  "_meta": {
+    "descricao": "Sinônimos de substâncias usados só na chave de equivalência (a exibição mantém o nome como a CMED registra). Curado manualmente; cada entrada traz a evidência.",
+    "versao": "1.0",
+    "data": "2026-10-20",
+    "regra": "de = nome canônico (maiúsculas, sem acento, sem descritor de hidratação); quando = condições opcionais: unica_substancia (o registro tem só esta substância) e classe (prefixo do código da classe terapêutica)."
+  },
+  "sinonimos": [
+    {
+      "de": "SACCHAROMYCES BOULARDII - 17",
+      "para": "SACCHAROMYCES BOULARDII",
+      "evidencia": "O FLORALON aparece na Lista CMED com os dois nomes; '17' é a cepa citada nas bulas de Floratil, Florent e Flomicin (Saccharomyces boulardii-17)."
+    },
+    {
+      "de": "LEVEDURA",
+      "para": "SACCHAROMYCES BOULARDII",
+      "quando": { "unica_substancia": true, "classe": "A7F" },
+      "evidencia": "FLORENT e REPOFLOR aparecem na Lista CMED ora como LEVEDURA, ora como SACCHAROMYCES BOULARDII; as bulas de Florent e Flomicin informam Saccharomyces boulardii-17 liofilizado. A condição exclui associações como o PANTOGAR, em que a levedura é outro insumo."
+    }
+  ]
+}

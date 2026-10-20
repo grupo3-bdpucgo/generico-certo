@@ -81,13 +81,17 @@ function quebrarLinhas(texto: string, porLinha: number, maxLinhas: number): stri
 }
 
 /** Via de uso, como aparece nas caixas ("USO ORAL"), deduzida da forma farmacêutica. */
-export function viaDeUso(forma: string): string | null {
+export function viaDeUso(forma: string, apresentacao = ""): string | null {
   const t = ` ${forma} `;
+  const a = ` ${apresentacao.toUpperCase()} `;
   if (/ OFT /.test(t)) return "USO OFTÁLMICO";
   if (/ NAS /.test(t)) return "USO NASAL";
   if (/ VAG /.test(t)) return "USO VAGINAL";
   if (/ INAL | AER /.test(t)) return "USO INALATÓRIO";
-  if (/ INJ |LIOF/.test(t)) return "USO INJETÁVEL";
+  // Liofilizado só é injetável com indicação de injeção, infusão, frasco-ampola ou ampola.
+  if (/ (INJ|INFUS) /.test(t) || / (INJ|INFUS) /.test(a) || (/ LIOF /.test(t) && / (FA|AMP) /.test(a))) return "USO INJETÁVEL";
+  // Pó em envelope ou sachê é para dissolver e beber.
+  if (/ PO /.test(t) && / (ENV|ENVL|SACH|SACHE) /.test(a)) return "USO ORAL";
   if (/ SUP /.test(t)) return "USO RETAL";
   // Antes do tópico: "CAP GEL DURA" é cápsula gelatinosa, não gel de uso na pele.
   if (/ (COM|CAP|CAPS|DRG|PAS|GOMA|OR|ORAL) /.test(t)) return "USO ORAL";
@@ -215,7 +219,7 @@ export default function Embalagem({
   const cores = coresDaSubstancia(m.chave_equivalencia_ampla);
   const faixa = FAIXA[m.selo] ?? FAIXA_OUTRO;
   const tarja = fraseTarja(m.tarja);
-  const via = viaDeUso(m.forma);
+  const via = viaDeUso(m.forma, m.apresentacao);
   const clip = `emb-${uid}`;
 
   // Áreas verticais da caixa (viewBox 240 x 168).

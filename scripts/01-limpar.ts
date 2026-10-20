@@ -4,6 +4,7 @@
 import { readFileSync, writeFileSync } from "node:fs";
 import * as XLSX from "xlsx";
 import {
+  aplicarSinonimos,
   analisarApresentacao,
   colunaPreco,
   grupoForma,
@@ -18,11 +19,13 @@ import {
   termosPopulares,
   unidadeDoPreco,
   type DicionarioIndicacoes,
+  type SinonimoSubstancia,
   type Medicamento,
 } from "../lib/normalizacao";
 
 const ARQUIVO = "data/cmed.xlsx";
 const DICIONARIO = "data/dicionario-indicacoes.json";
+const SINONIMOS = "data/sinonimos-substancias.json";
 const SAIDA = "data/dados.json";
 const ABA = "Lista PMC";
 const ALIQUOTA = process.env.ALIQUOTA_ICMS ?? "19";
@@ -31,6 +34,7 @@ const COL_PMC = colunaPreco("PMC", ALIQUOTA);
 const COL_PF = colunaPreco("PF", ALIQUOTA);
 
 const dicionario: DicionarioIndicacoes = JSON.parse(readFileSync(DICIONARIO, "utf-8"));
+const sinonimos: SinonimoSubstancia[] = JSON.parse(readFileSync(SINONIMOS, "utf-8")).sinonimos;
 console.log(`Lendo ${ARQUIVO} (aba "${ABA}"), alíquota ${ALIQUOTA}%: ${COL_PMC} / ${COL_PF}`);
 const wb = XLSX.read(readFileSync(ARQUIVO), { dense: true });
 const aba = wb.Sheets[ABA];
@@ -68,7 +72,7 @@ for (const l of linhas) {
   const partes = analisarApresentacao(apresentacao);
   const textoBase = montarTextoEmbedding({ produto, substancia, classe, dosagem: partes.dosagem, forma: partes.forma });
 
-  const substanciasChave = [...new Set(substancia.map(substanciaCanonica))].sort();
+  const substanciasChave = [...new Set(aplicarSinonimos(substancia.map(substanciaCanonica), classe, sinonimos))].sort();
   const termos = termosPopulares(dicionario, classe, substanciasChave);
   // estrita: mesma caixa; ampla: qualquer caixa (comparada por preço por unidade)
   const chaveAmpla = [substanciasChave.join(" + "), partes.dosagem, partes.formaBase].join(" | ");

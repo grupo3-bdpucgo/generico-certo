@@ -2,6 +2,7 @@
 # o dicionário de indicações é curado pelo grupo e fica versionado
 /data/*
 !/data/dicionario-indicacoes.json
+!/data/sinonimos-substancias.json
 
 # dependências e build
 node_modules/

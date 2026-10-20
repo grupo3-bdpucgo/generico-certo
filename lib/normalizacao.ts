@@ -76,7 +76,9 @@ export const GRUPOS_FORMA: [string, string][] = [
 export function grupoForma(forma: string, apresentacao: string): string {
   const f = ` ${forma} `;
   const a = ` ${semAcento(apresentacao.toUpperCase())} `;
-  if (/ (INJ|LIOF) /.test(f) || / INJ /.test(a)) return "injetavel";
+  // Liofilizado só é injetável quando a apresentação indica injeção, infusão, frasco-ampola ou ampola
+  // ("PO LIOF ... ENV" é pó oral em envelope).
+  if (/ (INJ|INFUS) /.test(f) || / (INJ|INFUS) /.test(a) || (/ LIOF /.test(f) && / (FA|AMP) /.test(a))) return "injetavel";
   if (/ OFT /.test(f)) return "colirio";
   if (/ (SPR|AER|INAL) /.test(f)) return "spray";
   if (/ SUP /.test(f)) return "supositorio";
@@ -103,6 +105,29 @@ export interface DicionarioIndicacoes {
 export function codigoClasse(classe: string | null): string | null {
   const m = (classe ?? "").match(/^([A-Z0-9]+)\s*-/);
   return m ? m[1] : null;
+}
+
+export interface SinonimoSubstancia {
+  de: string;
+  para: string;
+  quando?: { unica_substancia?: boolean; classe?: string };
+}
+
+/**
+ * Troca nomes que a CMED registra de formas diferentes para a mesma substância
+ * (data/sinonimos-substancias.json). Vale só para a chave de equivalência.
+ */
+export function aplicarSinonimos(substancias: string[], classe: string | null, lista: SinonimoSubstancia[]): string[] {
+  const codigo = codigoClasse(classe) ?? "";
+  return substancias.map((s) => {
+    const regra = lista.find(
+      (x) =>
+        x.de === s &&
+        (!x.quando?.unica_substancia || substancias.length === 1) &&
+        (!x.quando?.classe || codigo.startsWith(x.quando.classe)),
+    );
+    return regra ? regra.para : s;
+  });
 }
 
 export function termosPopulares(
@@ -187,6 +212,9 @@ const PARADA_FORMA = new Set([
   "BL+", "CJ", "FRAS", "SIST", "CAN", "APLIC", "EMB",
 ]);
 
+// Recipientes equivalentes na chave de quantidade.
+const CODIGO_RECIPIENTE: Record<string, string> = { SACH: "ENV", SACHE: "ENV", SACHES: "ENV", ENVL: "ENV", ENVE: "ENV" };
+
 function tokenizar(apresentacao: string): string[] {
   return semAcento(apresentacao.toUpperCase())
     // "250 MG / 1.25 G" e "250 MG/1,25 G": dose por envelope de pó; o peso do envelope sai da dose
@@ -249,7 +277,7 @@ export function analisarApresentacao(apresentacao: string): PartesApresentacao {
   const forma = formaTokens.join(" ");
   // Forma simplificada para a equivalência: drágea conta como comprimido; revestido, duro e mole
   // são qualificadores; em "CAP GEL DURA", GEL é cápsula gelatinosa, não a forma gel.
-  const formaBase = formaTokens
+  let formaBase = formaTokens
     .map((t) => (t === "DRG" ? "COM" : t === "CAPS" ? "CAP" : t))
     .filter((t, i, ts) => !["REV", "DURA", "DUR", "MOLE"].includes(t) && !(t === "GEL" && ts[i - 1] === "CAP"))
     .join(" ");
@@ -270,7 +298,8 @@ export function analisarApresentacao(apresentacao: string): PartesApresentacao {
     quantidade = String(quantidadeNum);
   } else if (recipientes) {
     quantidadeNum = Number(recipientes[1]);
-    quantidade = `${recipientes[1]} ${recipientes[2]}`;
+    // "04 ENV" -> "4 ENV"; sachê e envelope são o mesmo recipiente
+    quantidade = `${quantidadeNum} ${CODIGO_RECIPIENTE[recipientes[2]] ?? recipientes[2]}`;
   } else if (porX.length) {
     const m = porX[porX.length - 1];
     quantidadeNum = numeroBR(m[1]);
@@ -282,6 +311,25 @@ export function analisarApresentacao(apresentacao: string): PartesApresentacao {
     if (m) {
       quantidadeNum = Number(m[1]);
       quantidade = `${m[1]} ${m[2]}`;
+    }
+  }
+
+  // Pó oral em envelope ou sachê: "PO OR", "PO LIOF" e "PO PREP EXTEMP" são o mesmo produto para quem
+  // usa (dissolver em água e beber), desde que nada indique uso injetável.
+  // Só quando a forma não tem outro qualificador (vaginal, efervescente, tópico...).
+  const emEnvelope = / ENV$/.test(quantidade);
+  const injetavel = /\b(INJ|INFUS)\b/.test(normal);
+  const soPoOral = formaTokens.every((t) => ["PO", "OR", "LIOF", "PREP", "EXTEMP", "SOL", "SUS", "SUSP"].includes(t));
+  if (emEnvelope && !injetavel && formaTokens[0] === "PO" && soPoOral) {
+    formaBase = "PO OR";
+    // Dose por grama em envelope de m g ("200 MG/G ... X 1G") vira dose por envelope ("200 MG").
+    const conteudo = porX.length ? porX[porX.length - 1] : null;
+    const gramas = conteudo && conteudo[2] === "G" ? numeroBR(conteudo[1]) : null;
+    if (gramas && itens.length && itens.every((i) => / MG\/G$/.test(i))) {
+      for (let k = 0; k < itens.length; k++) {
+        const n = Number(itens[k].split(" ")[0]);
+        itens[k] = `${formatarNumero(n * gramas)} MG`;
+      }
     }
   }
 
