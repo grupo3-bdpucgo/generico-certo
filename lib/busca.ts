@@ -3,11 +3,11 @@
 //  denso       vetor denso do texto enriquecido
 //  hibrido     denso enriquecido + esparso de trigramas, fundidos por RRF numa única chamada
 
-import { embedConsulta } from "./embeddings";
 import { vetorTrigramasConsulta } from "./lexical";
 import { CAMPOS_EXIBIDOS, type MedicamentoResumo } from "./normalizacao";
 import { EF_BUSCA, VETOR, consultarQdrant } from "./qdrant";
 import { reordenar } from "./reordenacao";
+import { vetorPelaRota, type GeradorVetor } from "./vetor-consulta";
 
 export type MotorVetorial = "denso_base" | "denso" | "hibrido";
 
@@ -100,6 +100,11 @@ export async function buscarVetorial(
      * ver lib/reordenacao.ts). Usado pelo site. O benchmark mede o híbrido sem reordenação.
      */
     reordenar?: boolean;
+    /**
+     * Como obter o vetor da consulta. Padrão: a rota /api/embedding, a única função do site que leva
+     * o modelo. Os scripts passam embedConsulta (lib/embeddings.ts) e rodam o modelo localmente.
+     */
+    gerarVetor?: GeradorVetor;
   } = {},
 ): Promise<RespostaBusca> {
   const limite = opcoes.limite ?? 10;
@@ -112,7 +117,7 @@ export async function buscarVetorial(
   const usingDenso = motor === "denso_base" ? VETOR.base : VETOR.denso;
 
   const t0 = performance.now();
-  const vetor = await embedConsulta(consulta);
+  const vetor = await (opcoes.gerarVetor ?? vetorPelaRota)(consulta);
   const tempoEmbeddingMs = performance.now() - t0;
 
   const corpo =

@@ -68,7 +68,7 @@ async function executar(motor: Motor, consulta: string) {
     const r = motor === "ilike" ? await buscarIlike(consulta, opcoes) : await buscarFullText(consulta, opcoes);
     return { resultados: r.resultados, tempoBancoMs: r.tempoBancoMs, tempoServidorMs: r.tempoServidorMs ?? 0, tempoEmbeddingMs: 0, relaxado: r.relaxado ?? false };
   }
-  const r = await buscarVetorial(consulta, motor, { limite: LIMITE });
+  const r = await buscarVetorial(consulta, motor, { limite: LIMITE, gerarVetor: embedConsulta });
   return { resultados: r.resultados, tempoBancoMs: r.tempoBancoMs, tempoServidorMs: r.tempoServidorMs, tempoEmbeddingMs: r.tempoEmbeddingMs, relaxado: false };
 }
 

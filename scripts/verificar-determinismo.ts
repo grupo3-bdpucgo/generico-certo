@@ -3,6 +3,7 @@
 
 import { readFileSync } from "node:fs";
 import { buscarVetorial } from "../lib/busca";
+import { embedConsulta } from "../lib/embeddings";
 import type { ConsultaTeste } from "../lib/gabarito";
 import { buscarFullText, buscarIlike, pool } from "../lib/postgres";
 
@@ -14,7 +15,7 @@ async function ids(motor: (typeof MOTORES)[number], q: string): Promise<string> 
   const r =
     motor === "ilike" ? await buscarIlike(q, { limite: 10 })
     : motor === "fulltext" ? await buscarFullText(q, { limite: 10 })
-    : await buscarVetorial(q, motor, { limite: 10 });
+    : await buscarVetorial(q, motor, { limite: 10, gerarVetor: embedConsulta });
   return r.resultados.map((x) => x.id).join(",");
 }
 

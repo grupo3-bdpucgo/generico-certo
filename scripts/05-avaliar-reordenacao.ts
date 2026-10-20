@@ -6,6 +6,7 @@
 
 import { readFileSync, writeFileSync } from "node:fs";
 import { buscarVetorial } from "../lib/busca";
+import { embedConsulta } from "../lib/embeddings";
 import { correto, type ConsultaTeste } from "../lib/gabarito";
 
 const { consultas }: { consultas: ConsultaTeste[] } = JSON.parse(readFileSync("benchmark/consultas.json", "utf-8"));
@@ -18,7 +19,7 @@ const linhas: Record<string, { id: number; pos: number | null; top5: number }[]>
 for (const [nome, reordenar] of VARIANTES) {
   linhas[nome] = [];
   for (const c of consultas) {
-    const r = await buscarVetorial(c.consulta, "hibrido", { limite: 10, reordenar });
+    const r = await buscarVetorial(c.consulta, "hibrido", { limite: 10, reordenar, gerarVetor: embedConsulta });
     const marcas = r.resultados.map((x) => correto(x.medicamento, c.gabarito));
     const pos = marcas.indexOf(true);
     linhas[nome].push({ id: c.id, pos: pos >= 0 ? pos + 1 : null, top5: marcas.slice(0, 5).filter(Boolean).length });

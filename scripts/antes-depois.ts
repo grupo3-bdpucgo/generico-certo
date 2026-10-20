@@ -3,6 +3,7 @@
 
 import { writeFileSync } from "node:fs";
 import { buscarVetorial, type MotorVetorial } from "../lib/busca";
+import { embedConsulta } from "../lib/embeddings";
 
 const CONSULTAS = ["dorflex", "remédio pra dor de cabeça", "antialérgico que não dá sono"];
 const MOTORES: [MotorVetorial, string][] = [
@@ -12,7 +13,7 @@ const MOTORES: [MotorVetorial, string][] = [
 ];
 
 // Aquecimento: carrega o modelo e abre a conexão antes de medir.
-await buscarVetorial("aquecimento", "denso", { limite: 1 });
+await buscarVetorial("aquecimento", "denso", { limite: 1, gerarVetor: embedConsulta });
 
 const brl = (n: number) => n.toFixed(2).replace(".", ",");
 let md =
@@ -25,7 +26,7 @@ for (const consulta of CONSULTAS) {
   md += `\n## "${consulta}"\n`;
   console.log(`\n=== "${consulta}"`);
   for (const [motor, rotulo] of MOTORES) {
-    const r = await buscarVetorial(consulta, motor, { limite: 5, filtros: { ocultarHospitalares: false } });
+    const r = await buscarVetorial(consulta, motor, { limite: 5, filtros: { ocultarHospitalares: false }, gerarVetor: embedConsulta });
     md += `\n**${rotulo}** (embedding ${r.tempoEmbeddingMs.toFixed(0)} ms, Qdrant ${r.tempoBancoMs.toFixed(0)} ms)\n\n`;
     md += "| Posição | Escore | Produto | Substância | Selo | PMC (R$) |\n|---|---|---|---|---|---|\n";
     console.log(`-- ${rotulo} (${r.tempoBancoMs.toFixed(0)} ms)`);
