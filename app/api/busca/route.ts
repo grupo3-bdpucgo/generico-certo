@@ -2,7 +2,7 @@
 // Busca semântica híbrida com filtros e paginação.
 
 import { NextResponse } from "next/server";
-import { buscarVetorial, type MotorVetorial } from "@/lib/busca";
+import { MAX_RESULTADOS_HIBRIDO, buscarVetorial, type MotorVetorial } from "@/lib/busca";
 import { POR_PAGINA, lerDeUrl, lerParametros } from "@/lib/parametros";
 
 export const runtime = "nodejs";
@@ -19,21 +19,27 @@ export async function GET(req: Request) {
   if (!MOTORES.includes(motor)) return NextResponse.json({ erro: `motor deve ser um de: ${MOTORES.join(", ")}` }, { status: 400 });
 
   try {
+    // Lista inteira (até 100 itens: o híbrido funde 50 + 50 candidatos, sem corte por similaridade)
+    // numa chamada só, para informar o total e o número de páginas.
     const r = await buscarVetorial(busca.q, motor, {
       filtros: busca.filtros,
-      limite: POR_PAGINA + 1,
-      deslocamento: (busca.pagina - 1) * POR_PAGINA,
+      limite: MAX_RESULTADOS_HIBRIDO,
       comSimilaridade: true,
     });
+    const total = r.resultados.length;
+    const totalPaginas = Math.max(1, Math.ceil(total / POR_PAGINA));
+    const pagina = Math.min(busca.pagina, totalPaginas);
     return NextResponse.json({
       consulta: busca.q,
       motor,
       filtros: busca.filtros,
-      pagina: busca.pagina,
+      pagina,
       porPagina: POR_PAGINA,
-      temMais: r.resultados.length > POR_PAGINA,
+      total,
+      totalPaginas,
+      temMais: pagina < totalPaginas,
       tempos: { embeddingMs: r.tempoEmbeddingMs, bancoMs: r.tempoBancoMs, servidorMs: r.tempoServidorMs },
-      resultados: r.resultados.slice(0, POR_PAGINA),
+      resultados: r.resultados.slice((pagina - 1) * POR_PAGINA, pagina * POR_PAGINA),
     }, {
       // Tempo total do handler, para separar o custo da aplicação do custo da plataforma e da rede.
       headers: {

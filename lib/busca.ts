@@ -37,7 +37,12 @@ export interface RespostaBusca {
 }
 
 // Quantos candidatos cada ramo entrega para a fusão RRF.
-const CANDIDATOS_FUSAO = 50;
+export const CANDIDATOS_FUSAO = 50;
+/**
+ * A fusão só ordena o que os dois ramos trouxeram: no máximo 50 + 50 itens (menos quando as listas
+ * coincidem). Não há corte por porcentagem de similaridade; esse é o total de resultados do híbrido.
+ */
+export const MAX_RESULTADOS_HIBRIDO = 2 * CANDIDATOS_FUSAO;
 // Folga além do corte, para que o desempate não dependa da ordem em que o Qdrant devolve empatados.
 const FOLGA_DESEMPATE = 10;
 
