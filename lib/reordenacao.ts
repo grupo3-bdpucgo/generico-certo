@@ -10,7 +10,13 @@
 //  2. apresentação: quantos itens explícitos batem (dosagem "75 mg", quantidade "30 cápsulas",
 //     forma "cápsula")
 // Quando a consulta não tem nome nem apresentação (linguagem coloquial), a ordem não muda.
+//
+// Exceção (consulta "febre"): vacinas trazem no nome a doença que previnem ("VACINA FEBRE AMARELA",
+// "DENGVAXIA" com vírus quimérico da febre amarela), e não um sintoma que tratam. Quando a consulta
+// usa uma palavra do dicionário de indicações e nada mais do nome da vacina, ela sai da lista.
+// "febre amarela" e "vacina gripe" continuam encontrando as vacinas pelo nome.
 
+import dicionario from "../data/dicionario-indicacoes.json";
 import { semAcento, type MedicamentoResumo } from "./normalizacao";
 
 // Vocabulário que não identifica um medicamento: sais, descritores de hidratação e de forma.
@@ -25,6 +31,16 @@ const NAO_IDENTIFICA = new Set(
     "injetavel infantil adulto pediatrico oral topico gel locao generico similar referencia remedio medicamento"
   ).split(" "),
 );
+
+// Palavras dos termos populares do dicionário ("febre", "dor de cabeça" -> "cabeca").
+const PALAVRAS_SINTOMA = new Set(
+  [...Object.values(dicionario.classes), ...Object.values(dicionario.substancias)]
+    .flat()
+    .flatMap((t) => palavras(t)),
+);
+
+// Classe terapêutica de vacinas na Lista CMED: J7 ("J7E9 - TODAS OUTRAS VACINAS VIRAIS") ou J07.
+const VACINA = /^J0?7/;
 
 const FORMAS: [RegExp, RegExp][] = [
   [/^(capsula|capsulas|caps|cap)$/, /\bCAP\b/],
@@ -70,6 +86,8 @@ function palavras(texto: string): string[] {
 
 export interface IntencaoConsulta {
   nomes: string[];
+  /** Nomes que também são palavras do dicionário de indicações (sintomas, problemas de saúde). */
+  sintomas: string[];
   doses: string[];
   quantidade: number | null;
   /** Números sem unidade ("paracetamol 750"): valem como dose em mg ou, se não bater, quantidade. */
@@ -93,8 +111,9 @@ export function lerIntencao(consulta: string): IntencaoConsulta {
   const ps = palavras(consulta);
   const formas = FORMAS.filter(([re]) => ps.some((p) => re.test(p))).map(([, f]) => f);
   const nomes = ps.filter((p) => p.length >= 4 && !/^\d/.test(p) && !NAO_IDENTIFICA.has(p));
+  const sintomas = nomes.filter((p) => PALAVRAS_SINTOMA.has(p));
   const generico = ps.some((p) => /^genericos?$/.test(p));
-  return { nomes, doses, quantidade, numerosSoltos, formas, generico };
+  return { nomes, sintomas, doses, quantidade, numerosSoltos, formas, generico };
 }
 
 function palavrasDoItem(m: Pick<MedicamentoResumo, "produto" | "substancia">): Set<string> {
@@ -106,13 +125,21 @@ interface Reordenavel {
   score: number;
   medicamento: Pick<
     MedicamentoResumo,
-    "produto" | "substancia" | "dosagem" | "forma" | "apresentacao" | "quantidade_num" | "generico"
+    "produto" | "substancia" | "classe" | "dosagem" | "forma" | "apresentacao" | "quantidade_num" | "generico"
   >;
 }
 
+/** Vacina que só entrou na lista porque a doença que ela previne tem nome de sintoma. */
+function vacinaPorSintoma(i: IntencaoConsulta, m: Reordenavel["medicamento"]): boolean {
+  if (!i.sintomas.length || !VACINA.test(m.classe ?? "")) return false;
+  const doItem = palavrasDoItem(m);
+  return !i.nomes.some((n) => !PALAVRAS_SINTOMA.has(n) && doItem.has(n));
+}
+
 /** Reordena mantendo a ordem do RRF dentro de cada nível de correspondência. */
-export function reordenar<T extends Reordenavel>(consulta: string, itens: T[]): T[] {
+export function reordenar<T extends Reordenavel>(consulta: string, todos: T[]): T[] {
   const i = lerIntencao(consulta);
+  const itens = todos.filter((x) => !vacinaPorSintoma(i, x.medicamento));
   const algoExplicito =
     i.nomes.length || i.doses.length || i.quantidade !== null || i.numerosSoltos.length || i.formas.length || i.generico;
   if (!algoExplicito) return itens;
