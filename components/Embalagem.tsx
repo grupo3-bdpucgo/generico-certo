@@ -89,6 +89,8 @@ export function viaDeUso(forma: string): string | null {
   if (/ INAL | AER /.test(t)) return "USO INALATÓRIO";
   if (/ INJ |LIOF/.test(t)) return "USO INJETÁVEL";
   if (/ SUP /.test(t)) return "USO RETAL";
+  // Antes do tópico: "CAP GEL DURA" é cápsula gelatinosa, não gel de uso na pele.
+  if (/ (COM|CAP|DRG|PAS|GOMA) /.test(t)) return "USO ORAL";
   if (/ (DERM|TOP|CREM|POM|GEL|LOC|SHAMP|XAMP) /.test(t)) return "USO TÓPICO";
   if (/ (COM|CAP|DRG|PAS|GOMA|XPE|OR|GOT|EFERV|MAST|GRAN) /.test(t)) return "USO ORAL";
   return null;
