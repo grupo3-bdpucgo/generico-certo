@@ -33,7 +33,7 @@ Se as citações aparecerem como `[?]` ou o sumário vier vazio, clique em **Rec
 
 ## Logo da PUC Goiás
 
-O arquivo `puc.png` versionado é só um **placeholder**: uma caixa cinza com o texto "LOGO PUC GOIÁS". Antes de entregar, substitua por um arquivo com a logo oficial, com o mesmo nome. Na capa ela aparece com 3,4 cm de largura; para mudar, edite `\includegraphics[width=3.4cm]{puc.png}` no começo do `.tex`.
+O arquivo `puc.png` é a logo oficial da PUC Goiás (brasão com "PUC GOIÁS"), a mesma de `public/puc-logo.png`. Na capa ela aparece com 3,4 cm de largura; para mudar, edite `\includegraphics[width=3.4cm]{puc.png}` no começo do `.tex`.
 
 ## Atualizar as figuras
 
