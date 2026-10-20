@@ -8,12 +8,33 @@ Muita gente deixa de comprar remédio por achar caro, sem saber que existe gené
 
 Os dados são a Lista de Preços de Medicamentos da CMED/ANVISA (arquivo PMC, edição de 09/10/2026), com 11.001 apresentações comercializadas em 2025 e com preço máximo ao consumidor válido. Os valores exibidos são o teto legal (PMC com ICMS de 19%, alíquota de Goiás); o preço na farmácia pode ser menor. A ferramenta é informativa e não substitui orientação médica ou farmacêutica.
 
+## Para o grupo: onde olhar cada coisa
+
+- Código do trabalho: <https://github.com/grupo3-bdpucgo/generico-certo>
+- Site no ar: <https://generico-certo.vercel.app>
+
+Dá para ler tudo direto pelo navegador, sem baixar nada e sem ter conta.
+
+| Arquivo | O que tem |
+|---|---|
+| [`docs/relatorio.pdf`](docs/relatorio.pdf) | o relatório pronto para ler (o GitHub abre o PDF no navegador) |
+| [`docs/relatorio.tex`](docs/relatorio.tex) | o código-fonte do relatório, em LaTeX |
+| `README.md` | esta página: visão geral do projeto e como rodar |
+| [`lib/busca.ts`](lib/busca.ts) | a busca híbrida (vetorial + trigramas) |
+| [`lib/qdrant.ts`](lib/qdrant.ts) | a configuração do banco vetorial |
+| [`lib/postgres.ts`](lib/postgres.ts) | a busca relacional, usada na comparação |
+| [`scripts/`](scripts/) `01` a `04` | limpeza, ingestão, base relacional e benchmark |
+| [`benchmark/resultados.json`](benchmark/resultados.json) | os números do experimento |
+| [`docs/figuras/`](docs/figuras/) | os gráficos |
+
+Quem quiser rodar na máquina precisa do arquivo de configuração com as chaves (`.env.local`), que não fica no repositório: peça ao Brunno.
+
 ## Como funciona
 
 ```
  data/cmed.xlsx ──01-limpar──► data/dados.json ──02-ingerir──► Qdrant Cloud (collection "medicamentos")
  (CMED/ANVISA)     normaliza,      11.001 registros,  embeddings      vetores: denso_base, denso, lexical
-                   filtra, chaves  texto enriquecido  (Transformers.js) payload + 9 índices
+                   filtra, chaves  texto enriquecido  (Transformers.js) payload + 12 índices
                         │
                         └─────────────03-postgres──► PostgreSQL (Neon): mesma base, ILIKE e full text
 

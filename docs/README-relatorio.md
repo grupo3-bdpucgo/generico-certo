@@ -1,5 +1,7 @@
 # Relatório técnico: como compilar no Overleaf
 
+O PDF já compilado está em `docs/relatorio.pdf`. Ele foi gerado com o [Tectonic](https://tectonic-typesetting.github.io) (`tectonic -X compile relatorio.tex`, dentro de `docs/`), que usa o motor XeTeX; no Overleaf, com pdfLaTeX, o resultado é o mesmo, a não ser por pequenas diferenças de fonte nas listagens de código. Se o `.tex` mudar, gere o PDF de novo por um dos dois caminhos.
+
 O relatório está em `docs/relatorio.tex`, na classe **abnTeX2**, e foi escrito para compilar com **pdfLaTeX + BibTeX**. Não é preciso instalar LaTeX no computador: o Overleaf já tem todos os pacotes usados.
 
 ## Arquivos que vão para o Overleaf

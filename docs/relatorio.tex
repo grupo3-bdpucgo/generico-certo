@@ -7,7 +7,15 @@
 \usepackage[utf8]{inputenc}
 \usepackage{amsmath,amssymb}
 \usepackage{newtxtext,newtxmath}
-\renewcommand{\ttdefault}{pcr}
+% Courier nas listagens; fora do pdfLaTeX (XeTeX, Tectonic), o equivalente TeX Gyre Cursor.
+\usepackage{iftex}
+\ifPDFTeX
+  \renewcommand{\ttdefault}{pcr}
+\else
+  \usepackage{fontspec}
+  \setmonofont{texgyrecursor}[Extension=.otf, UprightFont=*-regular, BoldFont=*-bold,
+    ItalicFont=*-italic, BoldItalicFont=*-bolditalic]
+\fi
 \usepackage{indentfirst}
 \usepackage{graphicx}
 \usepackage{xcolor}
@@ -229,6 +237,7 @@ A Figura~\ref{fig:arquitetura} apresenta o fluxo de dados. Um script de limpeza 
   \centering
   \caption{Arquitetura do Genérico Certo}
   \label{fig:arquitetura}
+  \resizebox{\textwidth}{!}{%
   \begin{tikzpicture}[
       caixa/.style={draw, rounded corners=3pt, align=center, font=\footnotesize, minimum height=1.0cm, inner sep=4pt},
       seta/.style={-{Stealth[length=2.2mm]}, semithick},
@@ -249,9 +258,10 @@ A Figura~\ref{fig:arquitetura} apresenta o fluxo de dados. Um script de limpeza 
     \draw[seta] (ingerir) -- (qdrant);
     \draw[seta] (pg) -- (neon);
     \draw[seta] (usuario) -- (app);
-    \draw[seta] (app.east) -- ++(1.2,0) |- (qdrant.south west);
-    \draw[seta] (app.east) -- ++(1.2,0) |- (neon.west);
-  \end{tikzpicture}
+    % As setas da aplicação contornam as caixas por baixo e pela direita, sem cruzar o fluxo de carga.
+    \draw[seta] (app.east) -| (neon.south);
+    \draw[seta] (app.east) -| ([xshift=6mm]neon.east) |- (qdrant.east);
+  \end{tikzpicture}}
   \fonte{Elaborada pelos autores.}
 \end{figure}
 
@@ -362,7 +372,9 @@ await cliente.createCollection("medicamentos", {
 
 \section{Índices de payload e chave de equivalência}
 
+\begin{sloppypar}
 Foram criados índices de \emph{payload} para os campos usados em filtros e agrupamentos: \campo{tipo\_produto}, \campo{selo}, \campo{tarja}, \campo{chave\_equivalencia} e \campo{chave\_equivalencia\_ampla} como palavras-chave; \campo{generico} e \campo{restricao\_hospitalar} como booleanos; e \campo{pmc} e \campo{preco\_por\_unidade} como números. Para os filtros de apresentação do site, foram acrescentados \campo{forma\_grupo} (o grupo da forma farmacêutica, como comprimido, cápsula ou gotas) e \campo{doses} (cada dose da apresentação na forma canônica) como palavras-chave, e \campo{quantidade\_num} como número. Com esses índices, o Qdrant aplica os filtros durante a busca no grafo, em vez de filtrar depois.
+\end{sloppypar}
 
 A equivalência entre apresentações usa duas chaves. A chave estrita junta as substâncias canônicas ordenadas, a dosagem canônica, a forma farmacêutica simplificada e a quantidade, por exemplo ``CAFEINA + CITRATO DE ORFENADRINA + DIPIRONA | 300 MG + 35 MG + 50 MG | COM | 24''; ela compara caixas iguais. A chave ampla é a mesma sem a quantidade e permite comparar caixas de tamanhos diferentes pelo preço por unidade, calculado como o PMC dividido pela quantidade. Na forma simplificada, drágea é tratada como comprimido e os qualificadores ``revestido'', ``dura'' e ``mole'' são ignorados, assim como o ``GEL'' de ``CAP GEL DURA'', que indica cápsula gelatinosa e não a forma gel. A quantidade conta os recipientes quando a apresentação os informa (``CT 6 SACH X 1G'' são 6 sachês, e não 1 g), e multiplica as unidades internas quando há uma contagem dentro de cada recipiente (``CT 25 STR X 10'' são 250 comprimidos). Essas duas regras foram corrigidas depois da publicação, a partir de casos apontados no uso do site: sem elas, o Floratil com 4 e com 6 sachês caíam no mesmo grupo, e o Repoflor em cápsula dura não encontrava o Floratil em cápsula gelatinosa de mesma dose. A correção alterou a chave de 622 registros e o texto vetorizado de 6, cujos vetores foram regerados; os resultados do benchmark do Capítulo~6 foram obtidos antes dela. Pela mesma via surgiram outras duas regras. A primeira trata como uma única forma o pó oral em envelope ou sachê descrito como ``PO OR'', ``PO LIOF'' ou ``PO PREP EXTEMP'', quando nada indica uso injetável e a forma não traz outro qualificador (como vaginal ou efervescente), e converte a dose por grama em dose por envelope (``200 MG/G'' em envelope de 1 g passa a 200 mg). A segunda é uma tabela de sinônimos de substâncias (\campo{data/sinonimos-substancias.json}), curada e versionada como o dicionário: a própria CMED registra produtos da mesma marca com nomes diferentes para o princípio ativo, como o Florent e o Repoflor, ora como ``LEVEDURA'', ora como ``SACCHAROMYCES BOULARDII'', e o Floralon com e sem a indicação da cepa (``- 17''). A tabela unifica esses nomes apenas na chave de equivalência, mantendo a exibição como na fonte, e cada entrada registra a evidência; a troca de ``LEVEDURA'' só vale quando ela é a única substância e a classe é a de antidiarreicos com microrganismos, para não alcançar associações como o Pantogar, em que a levedura é outro insumo. Para encontrar os demais casos de forma sistemática, foi criada uma auditoria automática (\campo{scripts/auditar-equivalencia.ts}, com relatório em \campo{docs/auditoria-equivalencia.md}). Ela lista marcas registradas com mais de um nome de substância, nomes que diferem só por espaço ou hífen, grupos com mesma substância, dose e quantidade separados apenas pela grafia da forma, e apresentações cuja leitura falhou. A partir dela, a tabela de sinônimos passou a 25 entradas, todas com uma marca registrada com os dois nomes como evidência (por exemplo, clorfenamina e clorfeniramina, mesalazina e messalazina, tiamazol e metimazol); os descritores de hidratação passaram a ser reconhecidos em qualquer grafia (``TRIHIDRATADA'', ``HEPTAIDRATADO''), o que juntou a amoxicilina com clavulanato do Clavulin aos genéricos; e as grafias da mesma forma foram unificadas (``CREM DERM'' e ``CREME'', ``SOL GOT OR'' e ``SOL OR'', ``SUS OC'' e ``SUS OFT''). Ficaram separados, de propósito, os sais diferentes (diclofenaco sódico, potássico e dietilamônio; ácido valproico e valproato de sódio) e as formas diferentes de verdade (comprimido e cápsula, creme e pomada, liberação imediata, prolongada, controlada e modificada, orodispersível, mastigável e efervescente). Com as regras atuais, a base tem 4.660 chaves estritas, das quais 1.558 agrupam dois ou mais registros e 1.340 contêm ao menos um genérico, e 3.082 chaves amplas, das quais 1.442 agrupam dois ou mais registros. No caso do Dorflex em caixa com 24 comprimidos, a chave estrita encontra apenas o similar Doricin, enquanto a chave ampla encontra 16 apresentações em outras caixas, como o Fenaflex e o Nevralgex.
 
@@ -552,6 +564,7 @@ Um verificador confere, sem executar nenhum motor, se o gabarito de cada consult
   \caption{Consultas de teste, gabarito e dificuldade}
   \label{tab:consultas}
   \scriptsize
+  \setlength{\tabcolsep}{4pt}
   \begin{tabular}{|r|p{1.9cm}|p{3.7cm}|p{5.2cm}|r|r|r|}
     \hline
     \textbf{Nº} & \textbf{Categoria} & \textbf{Consulta} & \textbf{Correto quando} & \textbf{K} & \textbf{$p$ (\%)} & \textbf{Coinc.} \\ \hline
@@ -597,7 +610,8 @@ A Tabela~\ref{tab:acuracia} e a Figura~\ref{fig:acerto} apresentam os resultados
   \centering
   \caption{Acurácia dos cinco motores}
   \label{tab:acuracia}
-  \footnotesize
+  \scriptsize
+  \setlength{\tabcolsep}{4pt}
   \begin{tabular}{|l|c|c|c|c|c|c|}
     \hline
     \textbf{Motor} & \textbf{Acerto top 5} & \textbf{Ponderado} & \textbf{MRR@10} & \textbf{Precisão top 5} & \textbf{Posição média} & \textbf{Sem acerto} \\ \hline
@@ -662,7 +676,7 @@ Por categoria (Figura~\ref{fig:categoria}), cada abordagem vence em uma frente. 
   \centering
   \caption{Posição do primeiro resultado correto, por consulta e motor}
   \label{fig:posicoes}
-  \includegraphics[height=0.82\textheight]{figuras/fig5-posicao-por-consulta.pdf}
+  \includegraphics[height=0.82\textheight,width=\textwidth,keepaspectratio]{figuras/fig5-posicao-por-consulta.pdf}
   \fonte{Elaborada pelos autores a partir de \campo{benchmark/resultados.json}.}
 \end{figure}
 
@@ -756,6 +770,9 @@ Como trabalhos futuros, ficam a avaliação de modelos de embedding maiores ou e
 
 % ================================================================ REFERÊNCIAS
 \postextual
+% As referências não são capítulo numerado: o cabeçalho corrido passa a dizer "Referências".
+\makeoddhead{relatorio}{\small\itshape Referências}{}{\small\thepage}
+\makeevenhead{relatorio}{\small\itshape Referências}{}{\small\thepage}
 \bibliography{referencias}
 
 \end{document}
