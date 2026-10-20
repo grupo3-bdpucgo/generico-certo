@@ -35,13 +35,13 @@ function Economia({ item, base, porUnidadeDe }: { item: ItemComparacao; base: nu
   return <p className="text-xs text-tinta-3">Mesmo preço</p>;
 }
 
-function Caixa({ item, base, modo }: { item: ItemComparacao; base: number; modo: "caixa" | "unidade" }) {
+function Caixa({ item, base, modo, consulta }: { item: ItemComparacao; base: number; modo: "caixa" | "unidade"; consulta: string }) {
   const m = item.medicamento;
   const escolhido = m.id === base;
   return (
     <li className="w-48 shrink-0 snap-start">
       <Link
-        href={`/medicamento/${m.id}`}
+        href={`/medicamento/${m.id}${consulta}`}
         className={`flex h-full flex-col gap-2 rounded-xl border bg-papel p-3 transition hover:border-tinta-3 ${escolhido ? "border-tinta ring-2 ring-tinta" : "border-linha"}`}
       >
         <Embalagem m={m} uid={`${modo}-${m.id}`} className="w-full" titulo={false} />
@@ -89,14 +89,18 @@ export default async function PaginaMedicamento({
 
   const sp = new URLSearchParams();
   for (const [k, v] of Object.entries(await searchParams)) for (const x of [v].flat()) if (x) sp.append(k, x);
-  const voltar = sp.get("q") ? `/buscar?${sp}` : "/";
+  // A busca de origem segue para as caixinhas, para o "voltar" continuar funcionando ao navegar
+  // entre equivalentes. Sem busca de origem (link direto ou vindo do comparativo), oferece nova busca.
+  const temBusca = Boolean(sp.get("q"));
+  const voltar = temBusca ? `/buscar?${sp}` : "/";
+  const consulta = temBusca ? `?${sp}` : "";
   const b = c.base;
   const unidade = b.unidade;
 
   return (
     <main className="mx-auto max-w-6xl px-4 py-6">
       <Link href={voltar} className="text-sm font-medium text-tinta-2 hover:text-marca">
-        ← Voltar à busca
+        {temBusca ? `← Voltar aos resultados de “${sp.get("q")}”` : "← Nova busca"}
       </Link>
 
       <section className="mt-4 grid gap-6 rounded-2xl border border-linha bg-papel p-5 md:grid-cols-[minmax(0,340px)_1fr]">
@@ -162,7 +166,7 @@ export default async function PaginaMedicamento({
         </p>
         <ul className="flex snap-x gap-3 overflow-x-auto pb-3">
           {c.mesmaCaixa.map((item) => (
-            <Caixa key={item.medicamento.id} item={item} base={b.id} modo="caixa" />
+            <Caixa key={item.medicamento.id} item={item} base={b.id} modo="caixa" consulta={consulta} />
           ))}
         </ul>
       </section>
@@ -175,7 +179,7 @@ export default async function PaginaMedicamento({
         {c.qualquerCaixa.length ? (
           <ul className="flex snap-x gap-3 overflow-x-auto pb-3">
             {c.qualquerCaixa.map((item) => (
-              <Caixa key={item.medicamento.id} item={item} base={b.id} modo="unidade" />
+              <Caixa key={item.medicamento.id} item={item} base={b.id} modo="unidade" consulta={consulta} />
             ))}
           </ul>
         ) : (
