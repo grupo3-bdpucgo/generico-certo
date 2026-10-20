@@ -1,9 +1,10 @@
 {
   "_meta": {
     "descricao": "Sinônimos de substâncias usados só na chave de equivalência (a exibição mantém o nome como a CMED registra). Curado manualmente; cada entrada traz a evidência.",
-    "versao": "1.0",
+    "versao": "1.1",
     "data": "2026-10-20",
-    "regra": "de = nome canônico (maiúsculas, sem acento, sem descritor de hidratação); quando = condições opcionais: unica_substancia (o registro tem só esta substância) e classe (prefixo do código da classe terapêutica)."
+    "regra": "de = nome canônico (maiúsculas, sem acento, sem descritor de hidratação); quando = condições opcionais: unica_substancia (o registro tem só esta substância) e classe (prefixo do código da classe terapêutica).",
+    "revisao": "1.1: entradas vindas da varredura scripts/auditar-equivalencia.ts; cada uma tem como evidência uma marca que a Lista CMED registra com os dois nomes. Sais diferentes de verdade (diclofenaco sódico x potássico, esomeprazol magnésico x sódico, ácido valproico x valproato de sódio) ficaram de fora de propósito. Nomes que diferem só por espaço ou hífen são unificados por regra geral no 01-limpar.ts."
   },
   "sinonimos": [
     {
@@ -14,8 +15,126 @@
     {
       "de": "LEVEDURA",
       "para": "SACCHAROMYCES BOULARDII",
-      "quando": { "unica_substancia": true, "classe": "A7F" },
+      "quando": {
+        "unica_substancia": true,
+        "classe": "A7F"
+      },
       "evidencia": "FLORENT e REPOFLOR aparecem na Lista CMED ora como LEVEDURA, ora como SACCHAROMYCES BOULARDII; as bulas de Florent e Flomicin informam Saccharomyces boulardii-17 liofilizado. A condição exclui associações como o PANTOGAR, em que a levedura é outro insumo."
+    },
+    {
+      "de": "MALEATO DE CLORFENAMINA",
+      "para": "MALEATO DE CLORFENIRAMINA",
+      "evidencia": "Clorfenamina e clorfeniramina são o mesmo fármaco; RESFENOL, STILGRIP, CIMEGRIPE e APRACUR DUO aparecem com as duas grafias."
+    },
+    {
+      "de": "MESSALAZINA",
+      "para": "MESALAZINA",
+      "evidencia": "Grafia com dois S; MESACOL, PENTASA e CHRON-ASA 5 aparecem com as duas."
+    },
+    {
+      "de": "GLICAZIDA",
+      "para": "GLICLAZIDA",
+      "evidencia": "Grafia sem o L; AZUKON MR aparece com as duas."
+    },
+    {
+      "de": "TIAMAZOL",
+      "para": "METIMAZOL",
+      "evidencia": "Tiamazol é a denominação internacional do metimazol; TAPAZOL aparece com as duas."
+    },
+    {
+      "de": "NITROFURAZONA",
+      "para": "NITROFURAL",
+      "evidencia": "Nitrofurazona e nitrofural são o mesmo fármaco; CAZIDERM aparece com os dois nomes."
+    },
+    {
+      "de": "ORLIPASTAT",
+      "para": "ORLISTATE",
+      "evidencia": "Grafia incorreta de orlistate; LIPIBLOCK e ORLISTATE (Brainfarma) aparecem com as duas."
+    },
+    {
+      "de": "TROMETAMOL CETOROLACO",
+      "para": "CETOROLACO TROMETAMINA",
+      "evidencia": "Trometamol e trometamina são o mesmo sal; DEOCIL, TORAGESIC e OPTILAR aparecem com os dois nomes."
+    },
+    {
+      "de": "LISINATO DE CLONIXINA",
+      "para": "CLONIXINATO DE LISINA",
+      "evidencia": "O mesmo sal em ordem invertida; BENZIFLEX LIS e DOLAMIN FLEX aparecem com as duas."
+    },
+    {
+      "de": "FLURANDRENOLIDA",
+      "para": "FLUDROXICORTIDA",
+      "evidencia": "Sinônimos do mesmo corticoide; DRENISON aparece com os dois nomes."
+    },
+    {
+      "de": "ERITROPOIETINA",
+      "para": "ALFAEPOETINA",
+      "evidencia": "ALFAEPOETINA (Blau) aparece com os dois nomes."
+    },
+    {
+      "de": "FLAVONOIDES EXPRESSOS EM HESPERIDINA",
+      "para": "HESPERIDINA",
+      "evidencia": "DAFLON, VENAFLON, DIOSMIN, FLAVENOS e DIOEH aparecem ora com 'hesperidina', ora com 'flavonoides expressos em hesperidina'."
+    },
+    {
+      "de": "PASSIFLORA INCARNATA L.",
+      "para": "PASSIFLORA INCARNATA",
+      "evidencia": "Mesmo nome com e sem a abreviatura do autor botânico; PASALIX PI aparece com as duas."
+    },
+    {
+      "de": "EXTRATO SECO DE VALERIANA OFFICINALIS L.",
+      "para": "VALERIANA OFFICINALIS L.",
+      "evidencia": "SONOTABS e VALESSONE aparecem com as duas descrições."
+    },
+    {
+      "de": "HEDERA HELIX L.",
+      "para": "EXTRATO DE HEDERA HELIX (HERA)",
+      "evidencia": "HEDERA CIMED aparece com as duas descrições."
+    },
+    {
+      "de": "PROMETAZINA",
+      "para": "CLORIDRATO DE PROMETAZINA",
+      "evidencia": "PROFERGAN e CLORIDRATO DE PROMETAZINA (Teuto) aparecem com e sem o sal."
+    },
+    {
+      "de": "PSEUDOEFEDRINA",
+      "para": "SULFATO DE PSEUDOEFEDRINA",
+      "evidencia": "HISTADIN D aparece com e sem o sal."
+    },
+    {
+      "de": "ISOCONAZOL",
+      "para": "NITRATO DE ISOCONAZOL",
+      "evidencia": "ICADEN aparece com e sem o sal."
+    },
+    {
+      "de": "FOSFATO SODICO DE PREDNISOLONA",
+      "para": "PREDNISOLONA",
+      "evidencia": "PRENI, PERCOIDE, ZASTAT, PRELONE e PREDSIM aparecem com e sem o sal."
+    },
+    {
+      "de": "HEMITARTARATO DE RIVASTIGMINA",
+      "para": "HIDROGENOTARTARATO DE RIVASTIGMINA",
+      "evidencia": "Duas descrições do mesmo sal; EXELON aparece com as duas."
+    },
+    {
+      "de": "ETANOLATO DE DARUNAVIR",
+      "para": "DARUNAVIR",
+      "evidencia": "PREZISTA aparece com e sem o solvato; a dose é expressa em darunavir."
+    },
+    {
+      "de": "BUDESONIDA MICRONIZADA",
+      "para": "BUDESONIDA",
+      "evidencia": "Micronizada descreve o processo, não outra substância; SYMBICORT TURBUHALER aparece com as duas."
+    },
+    {
+      "de": "CEFTRIAXONA SODICA",
+      "para": "CEFTRIAXONA DISSODICA",
+      "evidencia": "O sal da ceftriaxona é dissódico; CEFTRIAXONA DISSÓDICA HEMIEPTAIDRATADA (Eurofarma) aparece com as duas descrições."
+    },
+    {
+      "de": "SULFATO DE TRIMETOPRIMA",
+      "para": "TRIMETOPRIMA",
+      "evidencia": "BACTERACIN aparece com as duas descrições."
     }
   ]
 }

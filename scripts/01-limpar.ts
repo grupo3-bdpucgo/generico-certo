@@ -43,6 +43,23 @@ if (!aba) throw new Error(`Aba "${ABA}" não encontrada. Abas: ${wb.SheetNames.j
 const linhas = XLSX.utils.sheet_to_json<Record<string, unknown>>(aba, { defval: null, raw: false });
 if (!(COL_PMC in linhas[0])) throw new Error(`Coluna "${COL_PMC}" não existe na planilha`);
 
+// Nomes que diferem só por espaço, hífen ou pontuação ("ACIDO ACETIL SALICILICO" e
+// "ACIDO ACETILSALICILICO") passam a usar a grafia mais frequente na lista.
+const compacto = (nome: string) => nome.replace(/[^A-Z0-9]/g, "");
+const frequencia = new Map<string, number>();
+for (const l of linhas) {
+  for (const s of separarSubstancias(limparCampo(l["SUBSTÂNCIA"]))) {
+    const c = substanciaCanonica(s);
+    frequencia.set(c, (frequencia.get(c) ?? 0) + 1);
+  }
+}
+const grafiaPreferida = new Map<string, string>();
+for (const [nome, n] of [...frequencia].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))) {
+  if (!grafiaPreferida.has(compacto(nome))) grafiaPreferida.set(compacto(nome), nome);
+  void n;
+}
+const unificarGrafia = (nome: string) => grafiaPreferida.get(compacto(nome)) ?? nome;
+
 const descarte = { naoComercializado: 0, semPmc: 0, ggremDuplicado: 0 };
 const vistos = new Set<string>();
 const saida: Medicamento[] = [];
@@ -72,7 +89,9 @@ for (const l of linhas) {
   const partes = analisarApresentacao(apresentacao);
   const textoBase = montarTextoEmbedding({ produto, substancia, classe, dosagem: partes.dosagem, forma: partes.forma });
 
-  const substanciasChave = [...new Set(aplicarSinonimos(substancia.map(substanciaCanonica), classe, sinonimos))].sort();
+  const substanciasChave = [
+    ...new Set(aplicarSinonimos(substancia.map(substanciaCanonica).map(unificarGrafia), classe, sinonimos).map(unificarGrafia)),
+  ].sort();
   const termos = termosPopulares(dicionario, classe, substanciasChave);
   // estrita: mesma caixa; ampla: qualquer caixa (comparada por preço por unidade)
   const chaveAmpla = [substanciasChave.join(" + "), partes.dosagem, partes.formaBase].join(" | ");

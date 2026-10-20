@@ -182,8 +182,9 @@ export function colunaPreco(tipo: "PMC" | "PF", aliquota: string): string {
 
 // ---------------------------------------------------------------- substâncias
 
-const DESCRITORES_HIDRATACAO =
-  /\b(ANIDRA|ANIDRO|MONOIDRATADA|MONOIDRATADO|MONO-HIDRATADA|MONO-HIDRATADO|DI-HIDRATADA|DI-HIDRATADO|DIIDRATADA|DIIDRATADO|TRI-HIDRATADA|TRI-HIDRATADO|TRIIDRATADA|TRIIDRATADO|HEMI-HIDRATADA|HEMI-HIDRATADO|HEMIIDRATADA|HEMIIDRATADO|SESQUI-HIDRATADA|SESQUI-HIDRATADO|PENTA-HIDRATADA|PENTA-HIDRATADO|HIDRATADA|HIDRATADO)\b/g;
+// Qualquer grafia de descritor de hidratação: "MONOIDRATADA", "TRI-HIDRATADA", "TRIHIDRATADA",
+// "HEMIEPTAIDRATADA", "PENTAIDRATADO"... (a CMED escreve das várias formas, até na mesma marca).
+const DESCRITORES_HIDRATACAO = /\b(ANIDRA|ANIDRO|(?:MONO|DI|TRI|TETRA|PENTA|HEXA|HEPTA|EPTA|HEMI|SESQUI|HEMIEPTA|HEMIPENTA)?-?H?IDRATAD[AO])\b/g;
 
 export function separarSubstancias(s: string | null): string[] {
   if (!s) return [];
@@ -212,6 +213,50 @@ const PARADA_FORMA = new Set([
   "BL+", "CJ", "FRAS", "SIST", "CAN", "APLIC", "EMB",
 ]);
 
+// Grafias da mesma palavra de forma farmacêutica.
+const GRAFIA_FORMA: Record<string, string> = {
+  DRG: "COM", COMP: "COM", CAPS: "CAP", CR: "CREM", CREME: "CREM", ORAL: "OR", OC: "OFT", OCU: "OFT",
+  SUSP: "SUS", XAMP: "SHAMP", SHAMPOO: "SHAMP", EFERV: "EFEV", BUCAL: "BUC", NASAL: "NAS", SPRAY: "SPR",
+  "SUB-LING": "SUBL", RET: "RETARD", RETARDCT: "RETARD", DER: "DERM", "REV.": "REV",
+};
+// Palavras que não mudam o produto: qualificadores de aparência, embalagem e público do xarope.
+const RUIDO_FORMA = new Set([
+  "REV", "DURA", "DUR", "MOLE", "DISPLAY", "DE", "CARTOLINA", "PACK", "CL", "GT", "VER", "BCO", "AMARELO",
+  "P/", "EXT", "PED", "INF", "ADU", "AD", "TRANSD", "TRANS", "C/", "MCGRAN", "MGRAN", "MICROG", "MICROGRAN",
+]);
+// Vias implícitas: creme, pomada, gel, loção e emulsão são de pele; comprimido e cápsula, orais.
+const PELE = new Set(["CREM", "POM", "GEL", "LOC", "EMU", "ESM"]);
+const VIAS_INJECAO = new Set(["IV", "IM", "SC", "EV", "SC/IV", "IV/SC", "IM/IV", "IV/IM", "IV/INAL"]);
+
+/**
+ * Forma simplificada para a equivalência. Junta só grafias da mesma forma ("CREM DERM" e "CREME",
+ * "SOL OR GOT" e "SOL GOT OR", "SOL INJ IV" e "SOL INJ") e mantém separadas as formas diferentes de
+ * verdade (liberação prolongada, orodispersível, mastigável, efervescente, creme x pomada...).
+ */
+function simplificarForma(tokens: string[]): string {
+  // Sabor não muda o produto: "PAST SBR MEL E LIMAO" e "PAST SBR MENTA" são a mesma pastilha.
+  const sabor = tokens.indexOf("SBR");
+  const semSabor = sabor >= 0 ? tokens.slice(0, sabor) : tokens;
+  let ts = semSabor.map((t) => GRAFIA_FORMA[t] ?? t).filter((t) => !RUIDO_FORMA.has(t));
+  // Depois da primeira palavra, CAP é capilar ("SOL CAP" = "SOL CAPI"), não cápsula.
+  ts = ts.map((t, i) => (i > 0 && t === "CAP" ? "CAPI" : t));
+  // Solução de pele: "SOL DERM" e "SOL TOP" são a mesma via.
+  if (ts[0] === "SOL") ts = ts.map((t) => (t === "TOP" ? "DERM" : t));
+  // "CAP GEL": cápsula gelatinosa, não a forma gel
+  ts = ts.filter((t, i) => !(t === "GEL" && ts[i - 1] === "CAP"));
+  // "RETARD" sozinho é liberação retardada
+  ts = ts.flatMap((t, i) => (t === "RETARD" && ts[i - 1] !== "LIB" ? ["LIB", "RETARD"] : [t]));
+  if (PELE.has(ts[0])) ts = ts.filter((t) => t !== "DERM" && t !== "TOP");
+  if (ts[0] === "COM" || ts[0] === "CAP") ts = ts.filter((t) => t !== "OR");
+  if (ts.includes("INJ") || ts.includes("INFUS")) ts = ts.filter((t) => !VIAS_INJECAO.has(t));
+  // Gotas orais: "SOL GOT OR", "SOL OR GOT" e "SOL GOT" são a mesma solução oral
+  if ((ts[0] === "SOL" || ts[0] === "SUS") && ts.includes("GOT") && !ts.some((t) => ["OFT", "NAS", "DERM", "TOP", "AUR", "OTO"].includes(t))) {
+    ts = [ts[0], "OR", ...ts.slice(1).filter((t) => t !== "GOT" && t !== "OR")];
+  }
+  if (ts.includes("OFT")) ts = ts.filter((t) => t !== "GOT");
+  return [...new Set(ts)].join(" ");
+}
+
 // Recipientes equivalentes na chave de quantidade.
 const CODIGO_RECIPIENTE: Record<string, string> = { SACH: "ENV", SACHE: "ENV", SACHES: "ENV", ENVL: "ENV", ENVE: "ENV" };
 
@@ -219,6 +264,12 @@ function tokenizar(apresentacao: string): string[] {
   return semAcento(apresentacao.toUpperCase())
     // "250 MG / 1.25 G" e "250 MG/1,25 G": dose por envelope de pó; o peso do envelope sai da dose
     .replace(/\b(MG|MCG|UI)\s*\/\s*\d+(?:[.,]\d+)?\s*G\b/g, "$1")
+    // "(1 MG + 5 MG + 6000 UI)/ML" -> "1 MG/ML + 5 MG/ML + 6000 UI/ML"
+    .replace(/\(([^()]*\b(?:MG|MCG|UI|G)\b[^()]*)\)\s*\/\s*([A-Z]+)\b/g, (_, dentro: string, por: string) =>
+      dentro.split("+").map((p) => `${p.trim()}/${por}`).join(" + "),
+    )
+    // "5 MG / ML" e "20MG /G" -> "5 MG/ML", "20MG/G": a barra com espaços quebrava a leitura da forma
+    .replace(/(?<=\d|\s)(MG|MCG|UI|G|ML|MEQ)\s*\/\s*(?=\d|[A-Z])/g, "$1/")
     .replace(/(\d)([A-Z%])/g, "$1 $2")
     .replace(/([+()])/g, " $1 ")
     .split(/\s+/)
@@ -275,12 +326,8 @@ export function analisarApresentacao(apresentacao: string): PartesApresentacao {
     formaTokens.push(t);
   }
   const forma = formaTokens.join(" ");
-  // Forma simplificada para a equivalência: drágea conta como comprimido; revestido, duro e mole
-  // são qualificadores; em "CAP GEL DURA", GEL é cápsula gelatinosa, não a forma gel.
-  let formaBase = formaTokens
-    .map((t) => (t === "DRG" ? "COM" : t === "CAPS" ? "CAP" : t))
-    .filter((t, i, ts) => !["REV", "DURA", "DUR", "MOLE"].includes(t) && !(t === "GEL" && ts[i - 1] === "CAP"))
-    .join(" ");
+  // Forma simplificada para a equivalência (só na chave; a exibição usa a forma original).
+  let formaBase = simplificarForma(formaTokens);
 
   const normal = tokens.join(" ");
   let quantidade = "";
