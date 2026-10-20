@@ -189,6 +189,8 @@ const PARADA_FORMA = new Set([
 
 function tokenizar(apresentacao: string): string[] {
   return semAcento(apresentacao.toUpperCase())
+    // "250 MG / 1.25 G" e "250 MG/1,25 G": dose por envelope de pó; o peso do envelope sai da dose
+    .replace(/\b(MG|MCG|UI)\s*\/\s*\d+(?:[.,]\d+)?\s*G\b/g, "$1")
     .replace(/(\d)([A-Z%])/g, "$1 $2")
     .replace(/([+()])/g, " $1 ")
     .split(/\s+/)
@@ -245,16 +247,31 @@ export function analisarApresentacao(apresentacao: string): PartesApresentacao {
     formaTokens.push(t);
   }
   const forma = formaTokens.join(" ");
+  // Forma simplificada para a equivalência: drágea conta como comprimido; revestido, duro e mole
+  // são qualificadores; em "CAP GEL DURA", GEL é cápsula gelatinosa, não a forma gel.
   const formaBase = formaTokens
-    .map((t) => (t === "DRG" ? "COM" : t))
-    .filter((t) => !["REV", "DURA", "MOLE"].includes(t))
+    .map((t) => (t === "DRG" ? "COM" : t === "CAPS" ? "CAP" : t))
+    .filter((t, i, ts) => !["REV", "DURA", "DUR", "MOLE"].includes(t) && !(t === "GEL" && ts[i - 1] === "CAP"))
     .join(" ");
 
   const normal = tokens.join(" ");
   let quantidade = "";
   let quantidadeNum: number | null = null;
   const porX = [...normal.matchAll(/\bX (\d[\d.,]*)(?: (ML|L|G|MG|UN|DOSES?))?\b/g)];
-  if (porX.length) {
+  // "CT 6 SACH X 1G": 6 sachês de 1 g. A contagem de recipientes vale mais que o conteúdo de cada um.
+  const recipientes = normal.match(/\b(?:CT|CX|EMB) (\d+) (SACH|SACHE|SACHES|ENV|ENVL|ENVE|FLAC|FA|AMP|BOLS|SER|CARP|STR)\b/);
+  // Recipiente seguido de contagem sem unidade ("CT 25 STR X 10", "CT 2 SACH X 5 ADES"): são
+  // unidades dentro de cada recipiente, então o total é o produto, na unidade da forma.
+  const contagemInterna = recipientes
+    ? normal.slice(normal.indexOf(recipientes[0]) + recipientes[0].length).match(/\bX (\d+)(?![\d.,])(?! ?(?:ML|L|G|MG|MCG)\b)/)
+    : null;
+  if (recipientes && contagemInterna) {
+    quantidadeNum = Number(recipientes[1]) * Number(contagemInterna[1]);
+    quantidade = String(quantidadeNum);
+  } else if (recipientes) {
+    quantidadeNum = Number(recipientes[1]);
+    quantidade = `${recipientes[1]} ${recipientes[2]}`;
+  } else if (porX.length) {
     const m = porX[porX.length - 1];
     quantidadeNum = numeroBR(m[1]);
     quantidade = [quantidadeNum !== null ? formatarNumero(quantidadeNum) : m[1], m[2]]
@@ -298,6 +315,8 @@ const UNIDADE_POR_FORMA: Record<string, [string, string]> = {
   FA: ["frasco-ampola", "frascos-ampola"], AMP: ["ampola", "ampolas"], ENV: ["envelope", "envelopes"],
   SER: ["seringa", "seringas"], BOLS: ["bolsa", "bolsas"], FR: ["frasco", "frascos"],
   CARP: ["carpule", "carpules"], STR: ["strip", "strips"],
+  SACH: ["sachê", "sachês"], SACHE: ["sachê", "sachês"], SACHES: ["sachê", "sachês"],
+  ENVL: ["envelope", "envelopes"], ENVE: ["envelope", "envelopes"], FLAC: ["flaconete", "flaconetes"],
 };
 const UNIDADE_MEDIDA: Record<string, string> = { ML: "mL", L: "L", G: "g", MG: "mg", DOSE: "dose", DOSES: "dose", UN: "unidade" };
 

@@ -26,7 +26,7 @@ const PLURAL: Record<string, string> = {
   comprimido: "comprimidos", "cápsula": "cápsulas", "drágea": "drágeas", pastilha: "pastilhas",
   "supositório": "supositórios", goma: "gomas", "frasco-ampola": "frascos-ampola", ampola: "ampolas",
   envelope: "envelopes", seringa: "seringas", bolsa: "bolsas", frasco: "frascos", carpule: "carpules",
-  strip: "strips", dose: "doses", unidade: "unidades",
+  strip: "strips", dose: "doses", unidade: "unidades", "sachê": "sachês", flaconete: "flaconetes",
 };
 
 // Qualificadores da forma farmacêutica, no singular e no plural, por gênero do substantivo.
