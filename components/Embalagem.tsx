@@ -305,11 +305,11 @@ export default function Embalagem({
       <text x={TX} y="19" fontSize="6.3" fontWeight="700" fill="#ffffff" fillOpacity="0.8" letterSpacing="0.3">
         {cortar(m.laboratorio.toUpperCase(), 42)}
       </text>
-      <g transform="translate(200 12)">
+      <g transform="translate(197 5)">
         <DesenhoIcone tipo={icone} cor={cor} />
       </g>
       {rotulo && (
-        <text x="213" y="49" textAnchor="middle" fontSize="6.6" fontWeight="700" fill="#ffffff" letterSpacing="0.3">
+        <text x="211" y="41" textAnchor="middle" fontSize="6.6" fontWeight="700" fill="#ffffff" letterSpacing="0.3">
           {rotulo}
         </text>
       )}

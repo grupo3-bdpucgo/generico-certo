@@ -25,6 +25,9 @@ const amostra = [
   achar("STAMARIL"),
   achar("FLORATIL", (m) => /CAP/.test(m.forma)),
   achar("AMOXICILINA", (m) => /SUS/.test(m.forma)),
+  // Dosagem longa (três substâncias) ao lado do ícone.
+  achar("DORFLEX", (m) => /SOL/.test(m.forma)),
+  achar("TRANSPULMIN XAROPE INFANTIL"),
 ].filter((m): m is Medicamento => Boolean(m));
 
 const COLUNAS = 4;
