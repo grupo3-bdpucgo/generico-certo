@@ -7,6 +7,7 @@ import { embedConsulta } from "./embeddings";
 import { vetorTrigramasConsulta } from "./lexical";
 import { CAMPOS_EXIBIDOS, type MedicamentoResumo } from "./normalizacao";
 import { EF_BUSCA, VETOR, consultarQdrant } from "./qdrant";
+import { reordenar } from "./reordenacao";
 
 export type MotorVetorial = "denso_base" | "denso" | "hibrido";
 
@@ -16,6 +17,12 @@ export interface FiltrosBusca {
   tarjas?: string[];
   /** Esconde apresentações de uso restrito a hospitais (padrão: true). */
   ocultarHospitalares?: boolean;
+  /** Grupo da forma farmacêutica (ver GRUPOS_FORMA). */
+  forma?: string;
+  /** Uma das doses da apresentação, no formato canônico ("75 MG"). */
+  dose?: string;
+  /** Unidades na caixa (comprimidos, cápsulas, mL...). */
+  quantidade?: number;
 }
 
 export interface ResultadoBusca {
@@ -61,6 +68,9 @@ export function filtroQdrant(f: FiltrosBusca = {}) {
   if (f.precoMaximo !== undefined) must.push({ key: "pmc", range: { lte: f.precoMaximo } });
   if (f.tarjas?.length) must.push({ key: "tarja", match: { any: f.tarjas } });
   if (f.ocultarHospitalares ?? true) must.push({ key: "restricao_hospitalar", match: { value: false } });
+  if (f.forma) must.push({ key: "forma_grupo", match: { value: f.forma } });
+  if (f.dose) must.push({ key: "doses", match: { value: f.dose } });
+  if (f.quantidade !== undefined) must.push({ key: "quantidade_num", range: { gte: f.quantidade, lte: f.quantidade } });
   return must.length ? { must } : undefined;
 }
 
@@ -80,13 +90,25 @@ async function similaridades(vetor: number[], using: string, ids: number[]): Pro
 export async function buscarVetorial(
   consulta: string,
   motor: MotorVetorial,
-  opcoes: { filtros?: FiltrosBusca; limite?: number; deslocamento?: number; comSimilaridade?: boolean } = {},
+  opcoes: {
+    filtros?: FiltrosBusca;
+    limite?: number;
+    deslocamento?: number;
+    comSimilaridade?: boolean;
+    /**
+     * Reordena o híbrido pelo que a consulta pede de forma explícita (nome, dose, quantidade, forma;
+     * ver lib/reordenacao.ts). Usado pelo site. O benchmark mede o híbrido sem reordenação.
+     */
+    reordenar?: boolean;
+  } = {},
 ): Promise<RespostaBusca> {
   const limite = opcoes.limite ?? 10;
   const offset = opcoes.deslocamento ?? 0;
   const filter = filtroQdrant(opcoes.filtros);
   const params = { hnsw_ef: EF_BUSCA };
-  const buscar = offset + limite + FOLGA_DESEMPATE;
+  const comReordenacao = motor === "hibrido" && opcoes.reordenar === true;
+  // Para reordenar, a lista fundida inteira precisa vir de uma vez.
+  const buscar = comReordenacao ? MAX_RESULTADOS_HIBRIDO : offset + limite + FOLGA_DESEMPATE;
   const usingDenso = motor === "denso_base" ? VETOR.base : VETOR.denso;
 
   const t0 = performance.now();
@@ -110,9 +132,13 @@ export async function buscarVetorial(
   const { points, tempoServidorMs } = await consultarQdrant(corpo);
   const tempoBancoMs = performance.now() - t1;
 
-  const resultados: ResultadoBusca[] = ordenar(
+  const ordenados = ordenar(
     points.map((p) => ({ id: Number(p.id), score: p.score, medicamento: p.payload as unknown as MedicamentoResumo })),
-  ).slice(offset, offset + limite);
+  );
+  const resultados: ResultadoBusca[] = (comReordenacao ? reordenar(consulta, ordenados) : ordenados).slice(
+    offset,
+    offset + limite,
+  );
 
   if (opcoes.comSimilaridade) {
     const cos = motor === "hibrido" ? await similaridades(vetor, usingDenso, resultados.map((r) => r.id)) : null;

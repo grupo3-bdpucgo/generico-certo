@@ -26,6 +26,10 @@ export const INDICES_PAYLOAD = {
   preco_por_unidade: "float",
   chave_equivalencia: "keyword",
   chave_equivalencia_ampla: "keyword",
+  // filtros de apresentação do site
+  forma_grupo: "keyword",
+  doses: "keyword",
+  quantidade_num: "float",
 } as const;
 
 const global_ = globalThis as unknown as { __qdrant?: QdrantClient };

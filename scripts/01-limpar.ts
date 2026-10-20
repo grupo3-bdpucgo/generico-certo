@@ -6,6 +6,7 @@ import * as XLSX from "xlsx";
 import {
   analisarApresentacao,
   colunaPreco,
+  grupoForma,
   limparCampo,
   montarTextoEmbedding,
   montarTextoEnriquecido,
@@ -98,6 +99,8 @@ for (const l of linhas) {
     quantidade: partes.quantidade,
     quantidade_num: partes.quantidadeNum,
     unidade: unidadeDoPreco(partes.forma, partes.quantidade),
+    forma_grupo: grupoForma(partes.forma, apresentacao),
+    doses: partes.dosagem ? partes.dosagem.split(" + ") : [],
     preco_por_unidade: precoPorUnidade,
     chave_equivalencia: chave,
     chave_equivalencia_ampla: chaveAmpla,
@@ -133,6 +136,7 @@ console.log(`Com termos populares:       ${saida.filter((m) => m.termos_populare
 console.log(`Sem dosagem extraída:       ${saida.filter((m) => !m.dosagem).length}`);
 console.log(`Sem quantidade extraída:    ${saida.filter((m) => !m.quantidade).length}`);
 console.log("Por unidade:", contar((m) => m.unidade));
+console.log("Por grupo de forma:", contar((m) => m.forma_grupo));
 console.log("Por selo:", contar((m) => m.selo));
 console.log("Por tarja:", contar((m) => m.tarja));
 console.log(`\nGerado ${SAIDA}`);

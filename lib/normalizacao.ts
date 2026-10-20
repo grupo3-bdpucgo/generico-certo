@@ -24,6 +24,10 @@ export interface Medicamento {
   quantidade: string;
   quantidade_num: number | null;
   unidade: string;
+  /** Grupo da forma farmacêutica para o filtro do site (comprimido, cápsula, gotas, xarope...). */
+  forma_grupo: string;
+  /** Doses separadas, como na dosagem canônica: ["300 MG", "35 MG", "50 MG"]. */
+  doses: string[];
   preco_por_unidade: number | null;
   chave_equivalencia: string;
   chave_equivalencia_ampla: string;
@@ -47,6 +51,48 @@ export const CAMPOS_EXIBIDOS = [
 ] as const;
 
 export type MedicamentoResumo = Pick<Medicamento, (typeof CAMPOS_EXIBIDOS)[number]>;
+
+/** Grupos de forma oferecidos no filtro, na ordem em que aparecem. */
+export const GRUPOS_FORMA: [string, string][] = [
+  ["comprimido", "Comprimido"],
+  ["capsula", "Cápsula"],
+  ["gotas", "Gotas"],
+  ["xarope", "Xarope"],
+  ["solucao_oral", "Solução oral"],
+  ["suspensao_oral", "Suspensão oral"],
+  ["po_granulado", "Pó ou granulado"],
+  ["pastilha", "Pastilha"],
+  ["pomada", "Pomada"],
+  ["creme", "Creme"],
+  ["gel", "Gel"],
+  ["spray", "Spray ou aerossol"],
+  ["colirio", "Colírio"],
+  ["injetavel", "Injetável"],
+  ["supositorio", "Supositório"],
+  ["outro", "Outras formas"],
+];
+
+/** Grupo da forma farmacêutica a partir da forma extraída e da apresentação. */
+export function grupoForma(forma: string, apresentacao: string): string {
+  const f = ` ${forma} `;
+  const a = ` ${semAcento(apresentacao.toUpperCase())} `;
+  if (/ (INJ|LIOF) /.test(f) || / INJ /.test(a)) return "injetavel";
+  if (/ OFT /.test(f)) return "colirio";
+  if (/ (SPR|AER|INAL) /.test(f)) return "spray";
+  if (/ SUP /.test(f)) return "supositorio";
+  if (/ CAP /.test(f)) return "capsula";
+  if (/ PAS /.test(f)) return "pastilha";
+  if (/ (COM|DRG) /.test(f)) return "comprimido";
+  if (/ GOT /.test(f) || (/ (SOL|SUS) /.test(f) && / GOT /.test(a))) return "gotas";
+  if (/ XPE /.test(f)) return "xarope";
+  if (/ SUS /.test(f)) return "suspensao_oral";
+  if (/ SOL /.test(f) && / OR /.test(f)) return "solucao_oral";
+  if (/ POM /.test(f)) return "pomada";
+  if (/ CREM /.test(f)) return "creme";
+  if (/ GEL /.test(f)) return "gel";
+  if (/ (PO|GRAN|ENV) /.test(f)) return "po_granulado";
+  return "outro";
+}
 
 export interface DicionarioIndicacoes {
   classes: Record<string, string[]>;

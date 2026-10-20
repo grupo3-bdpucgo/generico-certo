@@ -3,6 +3,7 @@
 // Uso: npm run ingerir                 (recria a collection)
 //      npm run ingerir -- --manter      (só faz upsert na collection existente)
 //      npm run ingerir -- --so-lexical  (regrava apenas o vetor esparso, sem gerar embeddings)
+//      npm run ingerir -- --so-payload  (atualiza só campos de payload e índices, sem gerar embeddings)
 //
 // Os vetores da linha de base (texto sem enriquecimento) são lidos de data/vetores-base.json
 // quando o arquivo existe, para não recalcular; senão são gerados a partir de texto_embedding.
@@ -19,6 +20,20 @@ const ARQUIVO_BASE = "data/vetores-base.json";
 const recriar = !process.argv.includes("--manter");
 
 const dados: Medicamento[] = JSON.parse(readFileSync("data/dados.json", "utf-8"));
+
+if (process.argv.includes("--so-payload")) {
+  const t = Date.now();
+  const campos = ["forma_grupo", "doses"] as const;
+  for (let i = 0; i < dados.length; i += 500) {
+    const operations = dados.slice(i, i + 500).map((m) => ({
+      set_payload: { payload: Object.fromEntries(campos.map((c) => [c, m[c]])), points: [m.id] },
+    }));
+    await qdrant().batchUpdate(COLLECTION, { wait: true, operations });
+  }
+  await criarCollection(false); // cria os índices que faltarem
+  console.log(`Payload (${campos.join(", ")}) atualizado em ${dados.length} pontos e índices conferidos (${((Date.now() - t) / 1000).toFixed(1)} s)`);
+  process.exit(0);
+}
 
 if (process.argv.includes("--so-lexical")) {
   const t = Date.now();

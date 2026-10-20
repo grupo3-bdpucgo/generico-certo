@@ -19,7 +19,7 @@ export default async function Buscar({ searchParams }: { searchParams: Promise<P
       // O site usa o motor híbrido; a escolha de motor fica só em /comparativo.
       // A lista fundida inteira (no máximo 100 itens) vem numa chamada só, para saber o total de
       // páginas; a paginação é feita aqui.
-      resposta = await buscarVetorial(busca.q, "hibrido", { filtros: busca.filtros, limite: MAX_RESULTADOS_HIBRIDO });
+      resposta = await buscarVetorial(busca.q, "hibrido", { filtros: busca.filtros, limite: MAX_RESULTADOS_HIBRIDO, reordenar: true });
     } catch (e) {
       console.error(e);
       erro = "Não foi possível consultar o banco agora. Tente de novo em instantes.";

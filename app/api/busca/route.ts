@@ -25,6 +25,7 @@ export async function GET(req: Request) {
       filtros: busca.filtros,
       limite: MAX_RESULTADOS_HIBRIDO,
       comSimilaridade: true,
+      reordenar: url.searchParams.get("reordenar") !== "0",
     });
     const total = r.resultados.length;
     const totalPaginas = Math.max(1, Math.ceil(total / POR_PAGINA));

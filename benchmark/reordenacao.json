@@ -1,0 +1,202 @@
+{
+  "gerado_em": "2026-10-20T01:39:05.368Z",
+  "nota": "Reordenação criada depois do benchmark; avaliação separada, não substitui benchmark/resultados.json.",
+  "sem_desenvolvimento": {
+    "hibrido": {
+      "consultas": 25,
+      "acerto_top5": 0.8,
+      "mrr_top10": 0.6574444444444444,
+      "precisao_top5": 0.424
+    },
+    "hibrido_reordenado": {
+      "consultas": 25,
+      "acerto_top5": 0.88,
+      "mrr_top10": 0.7857777777777778,
+      "precisao_top5": 0.664
+    }
+  },
+  "todas": {
+    "hibrido": {
+      "consultas": 28,
+      "acerto_top5": 0.8214285714285714,
+      "mrr_top10": 0.6941468253968254,
+      "precisao_top5": 0.45714285714285713
+    },
+    "hibrido_reordenado": {
+      "consultas": 28,
+      "acerto_top5": 0.8928571428571429,
+      "mrr_top10": 0.7849206349206349,
+      "precisao_top5": 0.6642857142857143
+    }
+  },
+  "por_consulta": [
+    {
+      "id": 1,
+      "consulta": "dorflex",
+      "hibrido": 1,
+      "hibrido_reordenado": 3
+    },
+    {
+      "id": 2,
+      "consulta": "allegra",
+      "hibrido": 2,
+      "hibrido_reordenado": 1
+    },
+    {
+      "id": 3,
+      "consulta": "buscopan",
+      "hibrido": 2,
+      "hibrido_reordenado": 1
+    },
+    {
+      "id": 4,
+      "consulta": "novalgina",
+      "hibrido": 1,
+      "hibrido_reordenado": 1
+    },
+    {
+      "id": 5,
+      "consulta": "puran t4",
+      "hibrido": 1,
+      "hibrido_reordenado": 1
+    },
+    {
+      "id": 6,
+      "consulta": "loratadna",
+      "hibrido": null,
+      "hibrido_reordenado": null
+    },
+    {
+      "id": 7,
+      "consulta": "omeprasol",
+      "hibrido": 2,
+      "hibrido_reordenado": 2
+    },
+    {
+      "id": 8,
+      "consulta": "amoxilina",
+      "hibrido": 5,
+      "hibrido_reordenado": 5
+    },
+    {
+      "id": 9,
+      "consulta": "iboprofeno",
+      "hibrido": 2,
+      "hibrido_reordenado": 2
+    },
+    {
+      "id": 28,
+      "consulta": "nimezulida",
+      "hibrido": 1,
+      "hibrido_reordenado": 1
+    },
+    {
+      "id": 10,
+      "consulta": "simvastatina",
+      "hibrido": null,
+      "hibrido_reordenado": null
+    },
+    {
+      "id": 11,
+      "consulta": "losartana 50 mg",
+      "hibrido": 6,
+      "hibrido_reordenado": 1
+    },
+    {
+      "id": 12,
+      "consulta": "atorvastatina",
+      "hibrido": 1,
+      "hibrido_reordenado": 1
+    },
+    {
+      "id": 13,
+      "consulta": "cloridrato de sertralina",
+      "hibrido": 2,
+      "hibrido_reordenado": 1
+    },
+    {
+      "id": 14,
+      "consulta": "amoxicilina com clavulanato",
+      "hibrido": 1,
+      "hibrido_reordenado": 1
+    },
+    {
+      "id": 15,
+      "consulta": "metformina 850",
+      "hibrido": 1,
+      "hibrido_reordenado": 1
+    },
+    {
+      "id": 16,
+      "consulta": "alergia sem sonolência",
+      "hibrido": 1,
+      "hibrido_reordenado": 1
+    },
+    {
+      "id": 17,
+      "consulta": "cabeça latejando",
+      "hibrido": 1,
+      "hibrido_reordenado": 1
+    },
+    {
+      "id": 18,
+      "consulta": "costas travadas de tanto pegar peso",
+      "hibrido": 9,
+      "hibrido_reordenado": 9
+    },
+    {
+      "id": 19,
+      "consulta": "queimação no estômago depois de comer",
+      "hibrido": 1,
+      "hibrido_reordenado": 1
+    },
+    {
+      "id": 20,
+      "consulta": "nariz escorrendo e espirrando o tempo todo",
+      "hibrido": 1,
+      "hibrido_reordenado": 1
+    },
+    {
+      "id": 21,
+      "consulta": "intestino travado há dias",
+      "hibrido": 3,
+      "hibrido_reordenado": 3
+    },
+    {
+      "id": 22,
+      "consulta": "pressão sempre lá em cima",
+      "hibrido": 1,
+      "hibrido_reordenado": 1
+    },
+    {
+      "id": 23,
+      "consulta": "anti-inflamatório barato genérico",
+      "hibrido": 1,
+      "hibrido_reordenado": 1
+    },
+    {
+      "id": 24,
+      "consulta": "dipirona gotas genérico",
+      "hibrido": 8,
+      "hibrido_reordenado": 1
+    },
+    {
+      "id": 25,
+      "consulta": "xarope pra tosse carregada",
+      "hibrido": 1,
+      "hibrido_reordenado": 1
+    },
+    {
+      "id": 26,
+      "consulta": "remédio pra dor de cabeça",
+      "hibrido": 1,
+      "hibrido_reordenado": 1
+    },
+    {
+      "id": 27,
+      "consulta": "antialérgico que não dá sono",
+      "hibrido": 1,
+      "hibrido_reordenado": 1
+    }
+  ]
+}
