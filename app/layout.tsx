@@ -3,8 +3,8 @@ import { Archivo } from "next/font/google";
 import Link from "next/link";
 import "./globals.css";
 
-// Archivo, com eixo de largura: o nome nas ilustrações de caixa usa a versão condensada.
-const archivo = Archivo({ subsets: ["latin"], axes: ["wdth"], variable: "--font-caixa" });
+// Archivo: fonte do site e das ilustrações de caixa.
+const archivo = Archivo({ subsets: ["latin"], variable: "--font-caixa" });
 
 export const metadata: Metadata = {
   title: "Genérico Certo",

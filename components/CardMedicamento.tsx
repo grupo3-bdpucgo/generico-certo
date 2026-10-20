@@ -11,7 +11,7 @@ export default function CardMedicamento({ r, voltar }: { r: ResultadoBusca; volt
       href={`/medicamento/${r.id}${voltar ? `?${voltar}` : ""}`}
       className="group flex flex-col overflow-hidden rounded-md border border-linha bg-papel transition-colors hover:border-tinta"
     >
-      <div className="border-b border-linha bg-prateleira px-5 pt-5 pb-3">
+      <div className="px-4 pt-4">
         <Embalagem m={m} uid={`card-${r.id}`} className="w-full" titulo={false} />
       </div>
       <div className="flex flex-1 flex-col gap-1.5 px-4 pt-3 pb-4">
@@ -27,7 +27,7 @@ export default function CardMedicamento({ r, voltar }: { r: ResultadoBusca; volt
             (a similaridade aparece só em /comparativo). O preço da CMED é um teto, não o preço de
             balcão, então fica pequeno e rotulado; o destaque é o convite para comparar. */}
         <div className="mt-auto flex flex-col gap-1 pt-2">
-          <p className="text-sm font-semibold text-marca-escura underline decoration-1 underline-offset-2">Ver equivalentes e economia</p>
+          <p className="text-sm font-semibold text-tinta">Ver equivalentes e economia</p>
           <p className="numeros text-[11px] leading-snug text-marca-escura">
             Preço máximo: até {brl(m.pmc)}
             {m.preco_por_unidade !== null && (
