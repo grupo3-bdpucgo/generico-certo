@@ -1,6 +1,7 @@
 // Ilustração SVG simples de uma caixa de medicamento, montada só com os campos do registro da CMED
 // (a fonte oficial não fornece imagens): um retângulo na cor da marca com
 //  - nome, dosagem, princípio ativo, conteúdo ("Contém 20 comprimidos") e via de uso
+//  - ícone branco da forma farmacêutica (comprimido, cápsula, gotas, frasco...) no canto
 //  - tarja vermelha ou preta com a frase de venda, conforme o campo TARJA
 //  - faixa amarela com "G", identificação obrigatória dos genéricos (Lei nº 9.787/1999), só neles
 // A cor vem de uma paleta fixa, escolhida pelo nome da marca (nos genéricos, pelo laboratório,
@@ -94,6 +95,96 @@ function fraseTarja(tarja: string): { cor: string; linhas: string[] } | null {
   return null;
 }
 
+type Icone = "comprimido" | "capsula" | "bisnaga" | "frasco" | "gotas" | "ampola" | "spray" | "supositorio" | "outro";
+
+function iconeDaForma(forma: string): Icone {
+  const t = ` ${forma} `;
+  if (/ (SPR|AER|INAL) /.test(t)) return "spray";
+  if (/ SUP /.test(t)) return "supositorio";
+  if (/ CAP /.test(t)) return "capsula";
+  if (/ (COM|DRG|PAS|GOMA) /.test(t)) return "comprimido";
+  if (/ (CREM|POM|GEL|UNG) /.test(t)) return "bisnaga";
+  if (/ GOT /.test(t)) return "gotas";
+  if (/ (INJ|LIOF|AMP) /.test(t)) return "ampola";
+  if (/ (SOL|SUS|XPE|EMU|ELX|LOC|SHAMP|XAMP) /.test(t)) return "frasco";
+  return "outro";
+}
+
+/** Silhueta branca da forma, numa área de 28 x 28; os detalhes saem na cor da caixa. */
+function DesenhoIcone({ tipo, cor }: { tipo: Icone; cor: string }) {
+  const branco = "#ffffff";
+  switch (tipo) {
+    case "comprimido":
+      // Comprimido visto de lado (face e espessura): um círculo com traço seria lido como "proibido".
+      return (
+        <g>
+          <path d="M3 13v4c0 3.3 5 6 11 6s11-2.7 11-6v-4z" fill={branco} opacity="0.75" />
+          <ellipse cx="14" cy="13" rx="11" ry="6" fill={branco} />
+          <path d="M8 13h12" stroke={cor} strokeWidth="1.4" strokeLinecap="round" />
+        </g>
+      );
+    case "capsula":
+      return (
+        <g transform="rotate(-40 14 14)">
+          <path d="M14 8.5H8.5a5.5 5.5 0 0 0 0 11H14z" fill={branco} />
+          <path d="M14.8 8.5h4.7a5.5 5.5 0 0 1 0 11h-4.7z" fill={branco} opacity="0.7" />
+        </g>
+      );
+    case "gotas":
+      return (
+        <g>
+          <path d="M14 3c4.5 6 7.5 9.5 7.5 13.5a7.5 7.5 0 0 1-15 0C6.5 12.5 9.5 9 14 3z" fill={branco} />
+          <path d="M10.5 17a3.5 3.5 0 0 0 3.5 3.5" stroke={cor} strokeWidth="1.4" fill="none" strokeLinecap="round" />
+        </g>
+      );
+    case "frasco":
+      return (
+        <g>
+          <rect x="10" y="2" width="8" height="4" rx="1" fill={branco} />
+          <path d="M11 7h6v2.5l3.5 3V24a2 2 0 0 1-2 2h-9a2 2 0 0 1-2-2V12.5L11 9.5z" fill={branco} />
+          <path d="M7.5 16h13" stroke={cor} strokeWidth="1.4" />
+        </g>
+      );
+    case "bisnaga":
+      return (
+        <g>
+          <path d="M7 3h14l-2 16H9z" fill={branco} />
+          <rect x="11" y="19" width="6" height="5" rx="1" fill={branco} />
+          <path d="M8.5 7h11" stroke={cor} strokeWidth="1.4" />
+        </g>
+      );
+    case "ampola":
+      return (
+        <g>
+          <path d="M12 2h4v5l2.5 3.5V24a2 2 0 0 1-2 2h-5a2 2 0 0 1-2-2V10.5L12 7z" fill={branco} />
+          <path d="M9.5 11h9" stroke={cor} strokeWidth="1.4" />
+        </g>
+      );
+    case "spray":
+      return (
+        <g>
+          <rect x="8" y="11" width="10" height="15" rx="2" fill={branco} />
+          <path d="M10 11V7h6v4M16 7.5h3" stroke={branco} strokeWidth="2" fill="none" />
+          <circle cx="22.5" cy="5" r="1" fill={branco} />
+          <circle cx="24" cy="8" r="1" fill={branco} />
+          <circle cx="22" cy="10.5" r="1" fill={branco} />
+        </g>
+      );
+    case "supositorio":
+      return <path d="M14 3c4 3 6 8 6 13v8H8v-8c0-5 2-10 6-13z" fill={branco} />;
+    default:
+      // Cartela com bolhas.
+      return (
+        <g>
+          <rect x="3" y="6" width="22" height="16" rx="2" fill={branco} />
+          {[8, 14, 20].flatMap((x) =>
+            [11, 17].map((y) => <circle key={`${x}${y}`} cx={x} cy={y} r="2" fill={cor} opacity="0.5" />),
+          )}
+        </g>
+      );
+  }
+}
+
 const capitalizar = (s: string) => s.toLowerCase();
 
 export default function Embalagem({
@@ -123,7 +214,7 @@ export default function Embalagem({
 
   const nome = m.produto;
   const tamanho = nome.length <= 10 ? 21 : nome.length <= 16 ? 17 : 14;
-  const linhasNome = quebrarLinhas(nome, Math.floor(212 / (tamanho * 0.64)), 2);
+  const linhasNome = quebrarLinhas(nome, Math.floor(178 / (tamanho * 0.64)), 2);
   const yNome = 40;
   const yDose = yNome + (linhasNome.length - 1) * tamanho * 1.05 + 17;
   const dosagem = dosagemExibicao(m);
@@ -179,8 +270,11 @@ export default function Embalagem({
       </g>
 
       <text x={TX} y="19" fontSize="6.3" fontWeight="700" fill="#ffffff" fillOpacity="0.8" letterSpacing="0.3">
-        {cortar(m.laboratorio.toUpperCase(), 50)}
+        {cortar(m.laboratorio.toUpperCase(), 42)}
       </text>
+      <g transform="translate(200 12)">
+        <DesenhoIcone tipo={iconeDaForma(m.forma)} cor={cor} />
+      </g>
       <text x={TX} y={yNome} fontSize={tamanho} fontWeight="800" fill="#ffffff">
         {linhasNome.map((linha, i) => (
           <tspan key={i} x={TX} dy={i === 0 ? 0 : tamanho * 1.05}>
