@@ -8,31 +8,50 @@ import { classeSemCodigo } from "@/lib/normalizacao";
 
 export const dynamic = "force-dynamic";
 
-function Economia({ item, base, porUnidadeDe }: { item: ItemComparacao; base: number; porUnidadeDe?: string }) {
+// Os valores da CMED são tetos (o preço de fábrica é uma fração quase fixa do máximo), então a
+// comparação mais confiável entre equivalentes é a relativa: "X% mais barato". O teto aparece
+// pequeno, em vermelho, como limite legal.
+
+/** Diferença relativa em relação ao escolhido, em destaque. */
+function Diferenca({ item, base, porUnidadeDe }: { item: ItemComparacao; base: number; porUnidadeDe?: string }) {
   if (item.medicamento.id === base) {
-    return <p className="text-xs font-semibold text-tinta-2">Você escolheu este</p>;
+    return <p className="text-lg leading-tight font-extrabold text-tinta">Você escolheu este</p>;
   }
   const e = item.economia;
   if (!e) return null;
   const sufixo = porUnidadeDe ? ` ${porUnidade(porUnidadeDe)}` : "";
-  const valor = porUnidadeDe ? brlUnidade(Math.abs(e.reais)) : brl(Math.abs(e.reais));
-  if (e.reais > 0.005) {
+  if (e.fracao > 0.005) {
     return (
-      <p className="rounded-md bg-economia-fundo px-2 py-1 text-xs font-semibold text-economia">
-        Você economiza {valor}
-        {sufixo} ({pct(e.fracao)})
+      <p className="text-economia">
+        <span className="numeros text-2xl leading-tight font-extrabold">{pct(e.fracao)}</span>
+        <span className="block text-xs font-semibold">mais barato{sufixo}</span>
       </p>
     );
   }
-  if (e.reais < -0.005) {
+  if (e.fracao < -0.005) {
     return (
-      <p className="text-xs text-tinta-3">
-        {valor}
-        {sufixo} a mais
+      <p className="text-tinta-2">
+        <span className="numeros text-2xl leading-tight font-extrabold">{pct(-e.fracao)}</span>
+        <span className="block text-xs font-semibold">mais caro{sufixo}</span>
       </p>
     );
   }
-  return <p className="text-xs text-tinta-3">Mesmo preço</p>;
+  return <p className="text-lg leading-tight font-extrabold text-tinta-2">Mesmo preço</p>;
+}
+
+/** Teto legal da CMED, pequeno e em vermelho. */
+function PrecoMaximo({ valor, unidade, porUnidadeValor }: { valor: number; unidade?: string; porUnidadeValor?: number | null }) {
+  return (
+    <p className="numeros text-[11px] leading-snug text-marca-escura">
+      Preço máximo: até {brl(valor)}
+      {porUnidadeValor != null && unidade && (
+        <>
+          {" "}
+          · {brlUnidade(porUnidadeValor)} {porUnidade(unidade)}
+        </>
+      )}
+    </p>
+  );
 }
 
 function Caixa({ item, base, modo, consulta }: { item: ItemComparacao; base: number; modo: "caixa" | "unidade"; consulta: string }) {
@@ -53,21 +72,14 @@ function Caixa({ item, base, modo, consulta }: { item: ItemComparacao; base: num
         <p className="line-clamp-1 text-[11px] text-tinta-2" title={m.laboratorio}>
           {m.laboratorio}
         </p>
-        <div className="mt-auto">
-          {modo === "caixa" ? (
-            <p className="numeros text-2xl font-extrabold">{brl(m.pmc)}</p>
-          ) : (
-            <>
-              <p className="numeros text-xl leading-tight font-extrabold">{brlUnidade(m.preco_por_unidade!)}</p>
-              <p className="text-xs font-semibold text-tinta-2">{porUnidade(m.unidade)}</p>
-              <p className="numeros text-[11px] text-tinta-3">
-                {quantidadePorExtenso(m)} · {brl(m.pmc)}
-              </p>
-            </>
-          )}
-          <div className="mt-1.5">
-            <Economia item={item} base={base} porUnidadeDe={modo === "unidade" ? m.unidade : undefined} />
-          </div>
+        <div className="mt-auto flex flex-col gap-1">
+          <Diferenca item={item} base={base} porUnidadeDe={modo === "unidade" ? m.unidade : undefined} />
+          {modo === "unidade" && <p className="text-[11px] text-tinta-3">{quantidadePorExtenso(m)}</p>}
+          <PrecoMaximo
+            valor={m.pmc}
+            unidade={modo === "unidade" ? m.unidade : undefined}
+            porUnidadeValor={modo === "unidade" ? m.preco_por_unidade : undefined}
+          />
         </div>
       </Link>
     </li>
@@ -121,20 +133,9 @@ export default async function PaginaMedicamento({
             <dt className="text-tinta-3">Tarja</dt>
             <dd>{rotuloTarja(b.tarja)}</dd>
           </dl>
-          <p className="numeros mt-2 text-3xl font-extrabold">
-            {brl(b.pmc)}
-            {b.preco_por_unidade !== null && (
-              <span className="ml-2 text-sm font-semibold text-tinta-2">
-                {brlUnidade(b.preco_por_unidade)} {porUnidade(unidade)}
-              </span>
-            )}
-          </p>
-
           {c.melhorMesmaCaixa ? (
             <p className="mt-2 rounded-xl bg-economia-fundo p-3 text-economia">
-              <strong className="text-lg">
-                Você economiza {brl(c.melhorMesmaCaixa.economia!.reais)} ({pct(c.melhorMesmaCaixa.economia!.fracao)})
-              </strong>
+              <strong className="text-2xl">{pct(c.melhorMesmaCaixa.economia!.fracao)} mais barato</strong>
               <br />
               <span className="text-sm">
                 levando {c.melhorMesmaCaixa.medicamento.produto} ({c.melhorMesmaCaixa.medicamento.selo.toLowerCase()},{" "}
@@ -150,12 +151,22 @@ export default async function PaginaMedicamento({
           )}
           {c.melhorPorUnidade && c.melhorPorUnidade.medicamento.id !== c.melhorMesmaCaixa?.medicamento.id && (
             <p className="text-sm text-tinta-2">
-              Em outra caixa, o menor preço {porUnidade(c.melhorPorUnidade.medicamento.unidade)} é{" "}
-              <strong className="text-tinta">{brlUnidade(c.melhorPorUnidade.medicamento.preco_por_unidade!)}</strong> (
-              {c.melhorPorUnidade.medicamento.produto}, {quantidadePorExtenso(c.melhorPorUnidade.medicamento)}),{" "}
-              {pct(c.melhorPorUnidade.economia!.fracao)} a menos {porUnidade(c.melhorPorUnidade.medicamento.unidade)}.
+              Em outra caixa sai{" "}
+              <strong className="text-tinta">
+                {pct(c.melhorPorUnidade.economia!.fracao)} mais barato {porUnidade(c.melhorPorUnidade.medicamento.unidade)}
+              </strong>
+              : {c.melhorPorUnidade.medicamento.produto} ({c.melhorPorUnidade.medicamento.selo.toLowerCase()},{" "}
+              {quantidadePorExtenso(c.melhorPorUnidade.medicamento)}).
             </p>
           )}
+
+          <div className="mt-1 border-t border-linha pt-2">
+            <PrecoMaximo valor={b.pmc} unidade={unidade} porUnidadeValor={b.preco_por_unidade} />
+            <p className="mt-0.5 text-[11px] leading-snug text-tinta-3">
+              É o teto definido pela CMED: a farmácia não pode cobrar mais que isso. Na prática o preço costuma ser bem menor,
+              principalmente nos genéricos, por isso a comparação entre equivalentes é feita em porcentagem.
+            </p>
+          </div>
         </div>
       </section>
 

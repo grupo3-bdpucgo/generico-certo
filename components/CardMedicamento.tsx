@@ -23,15 +23,20 @@ export default function CardMedicamento({ r, voltar }: { r: ResultadoBusca; volt
         <p className="line-clamp-2 text-xs text-tinta-3" title={m.apresentacao}>
           {m.apresentacao}
         </p>
-        {/* Sem percentual de similaridade aqui: ao lado do preço ele seria lido como desconto.
-            A similaridade aparece só em /comparativo. */}
-        <div className="mt-auto pt-2">
-          <p className="numeros text-xl font-extrabold text-tinta">{brl(m.pmc)}</p>
-          {m.preco_por_unidade !== null && (
-            <p className="numeros text-[11px] text-tinta-3">
-              {brlUnidade(m.preco_por_unidade)} {porUnidade(m.unidade)}
-            </p>
-          )}
+        {/* Sem percentual de similaridade aqui: ao lado do preço ele seria lido como desconto
+            (a similaridade aparece só em /comparativo). O preço da CMED é um teto, não o preço de
+            balcão, então fica pequeno e rotulado; o destaque é o convite para comparar. */}
+        <div className="mt-auto flex flex-col gap-1 pt-2">
+          <p className="text-sm font-bold text-tinta group-hover:underline">Ver equivalentes e economia →</p>
+          <p className="numeros text-[11px] leading-snug text-marca-escura">
+            Preço máximo: até {brl(m.pmc)}
+            {m.preco_por_unidade !== null && (
+              <>
+                {" "}
+                · {brlUnidade(m.preco_por_unidade)} {porUnidade(m.unidade)}
+              </>
+            )}
+          </p>
         </div>
       </div>
     </Link>
