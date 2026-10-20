@@ -80,7 +80,7 @@ export function grupoForma(forma: string, apresentacao: string): string {
   if (/ OFT /.test(f)) return "colirio";
   if (/ (SPR|AER|INAL) /.test(f)) return "spray";
   if (/ SUP /.test(f)) return "supositorio";
-  if (/ CAP /.test(f)) return "capsula";
+  if (/ CAPS? /.test(f)) return "capsula";
   if (/ PAS /.test(f)) return "pastilha";
   if (/ (COM|DRG) /.test(f)) return "comprimido";
   if (/ GOT /.test(f) || (/ (SOL|SUS) /.test(f) && / GOT /.test(a))) return "gotas";
