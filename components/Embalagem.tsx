@@ -110,6 +110,37 @@ function iconeDaForma(forma: string): Icone {
   return "outro";
 }
 
+/** Nome da forma escrito embaixo do ícone; frasco e bisnaga dizem o que há dentro. */
+function rotuloDaForma(forma: string, icone: Icone): string | null {
+  const t = ` ${forma} `;
+  switch (icone) {
+    case "comprimido":
+      return / (DRG) /.test(t) ? "DRÁGEA" : / PAS /.test(t) ? "PASTILHA" : "COMPRIMIDO";
+    case "capsula":
+      return "CÁPSULA";
+    case "gotas":
+      return "GOTAS";
+    case "frasco":
+      if (/ XPE /.test(t)) return "XAROPE";
+      if (/ SUS /.test(t)) return "SUSPENSÃO";
+      if (/ EMU /.test(t)) return "EMULSÃO";
+      if (/ ELX /.test(t)) return "ELIXIR";
+      if (/ LOC /.test(t)) return "LOÇÃO";
+      if (/ (SHAMP|XAMP) /.test(t)) return "XAMPU";
+      return "SOLUÇÃO";
+    case "bisnaga":
+      return / CREM /.test(t) ? "CREME" : / POM /.test(t) ? "POMADA" : / GEL /.test(t) ? "GEL" : "POMADA";
+    case "ampola":
+      return "INJETÁVEL";
+    case "spray":
+      return / (AER|INAL) /.test(t) ? "AEROSSOL" : "SPRAY";
+    case "supositorio":
+      return "SUPOSITÓRIO";
+    default:
+      return null;
+  }
+}
+
 /** Silhueta branca da forma, numa área de 28 x 28; os detalhes saem na cor da caixa. */
 function DesenhoIcone({ tipo, cor }: { tipo: Icone; cor: string }) {
   const branco = "#ffffff";
@@ -203,6 +234,8 @@ export default function Embalagem({
   const cor = PALETA[hash(generico ? m.laboratorio : `${m.produto}|${m.laboratorio}`) % PALETA.length];
   const tarja = fraseTarja(m.tarja);
   const via = viaDeUso(m.forma, m.apresentacao);
+  const icone = iconeDaForma(m.forma);
+  const rotulo = rotuloDaForma(m.forma, icone);
   const clip = `emb-${uid}`;
 
   // Retângulo de (2, 2) a (238, 166) no viewBox 240 x 168; tarja e faixa do genérico embaixo.
@@ -273,8 +306,13 @@ export default function Embalagem({
         {cortar(m.laboratorio.toUpperCase(), 42)}
       </text>
       <g transform="translate(200 12)">
-        <DesenhoIcone tipo={iconeDaForma(m.forma)} cor={cor} />
+        <DesenhoIcone tipo={icone} cor={cor} />
       </g>
+      {rotulo && (
+        <text x="213" y="49" textAnchor="middle" fontSize="6.6" fontWeight="700" fill="#ffffff" letterSpacing="0.3">
+          {rotulo}
+        </text>
+      )}
       <text x={TX} y={yNome} fontSize={tamanho} fontWeight="800" fill="#ffffff">
         {linhasNome.map((linha, i) => (
           <tspan key={i} x={TX} dy={i === 0 ? 0 : tamanho * 1.05}>
