@@ -1,0 +1,39 @@
+{
+  "_meta": {
+    "descricao": "Expressões leigas reconhecidas na consulta do site e as classes terapêuticas da Lista CMED a que se referem. Complementa data/dicionario-indicacoes.json só do lado da consulta: nada aqui entra no texto indexado nem no benchmark congelado.",
+    "origem": "Curadoria manual do grupo Genérico Certo (PUC Goiás, 2026), criada depois do benchmark a partir de consultas reais testadas no site (\"ânsia de vômito\", \"vômito\", \"azia depois de comer\").",
+    "limitacoes": "Cobre só sintomas e problemas comuns no varejo. Não tem valor clínico e não substitui orientação médica ou farmacêutica.",
+    "regras": "classes: código da classe terapêutica ou prefixo dele (\"S1\" vale para todas as classes oftalmológicas). As expressões são comparadas sem acento, sem plural e sem palavras vazias (de, para, no...). As paráfrases das consultas de teste do benchmark (latejando, travado, escorrendo, espirrando, carregada, lá em cima) ficaram de fora de propósito; termos genéricos como tosse, estômago e queimação foram mantidos e aparecem em algumas delas, por isso a reordenação é avaliada à parte (scripts/05-avaliar-reordenacao.ts).",
+    "versao": "1.0",
+    "data": "2026-10-21"
+  },
+  "expressoes": [
+    { "expressoes": ["ânsia", "ânsia de vômito", "vômito", "vomitar", "vomitando", "enjoo", "enjoado", "enjoada", "enjoo de viagem", "náusea", "mal-estar no estômago"], "classes": ["A4A", "A3F"] },
+    { "expressoes": ["azia", "acidez", "acidez no estômago", "queimação", "dor de estômago", "estômago"], "classes": ["A2A1", "A2A4", "A2A6", "A2B"] },
+    { "expressoes": ["gases", "flatulência", "barriga inchada", "barriga estufada", "estufamento", "cólica de bebê"], "classes": ["A2A2", "A2A4"] },
+    { "expressoes": ["má digestão", "digestão"], "classes": ["A3F", "A2A1", "A9A"] },
+    { "expressoes": ["diarreia", "intestino solto", "caganeira", "desidratação"], "classes": ["A7F", "A7G", "A7H"] },
+    { "expressoes": ["prisão de ventre", "intestino preso", "constipação"], "classes": ["A6A"] },
+    { "expressoes": ["enxaqueca", "dor de cabeça"], "classes": ["N2B", "N2C"] },
+    { "expressoes": ["cólica menstrual", "cólica de menstruação"], "classes": ["A3D", "M1A1", "N2B", "G2X1"] },
+    { "expressoes": ["tosse"], "classes": ["R5C", "R5D"] },
+    { "expressoes": ["garganta", "rouquidão"], "classes": ["R2A"] },
+    { "expressoes": ["insônia", "não consigo dormir", "dormir mal"], "classes": ["N5B"] },
+    { "expressoes": ["piolho", "lêndea", "sarna"], "classes": ["P3A"] },
+    { "expressoes": ["acne", "espinha", "cravo"], "classes": ["D10A", "D10B"] },
+    { "expressoes": ["queimadura", "ferida", "cicatrização"], "classes": ["D3A9", "D6A"] },
+    { "expressoes": ["assadura"], "classes": ["D2A", "D7B2", "D7B3"] },
+    { "expressoes": ["conjuntivite", "olho vermelho", "olho irritado"], "classes": ["S1A", "S1C1", "S1G"] },
+    { "expressoes": ["olho seco", "lágrima artificial"], "classes": ["S1K"] },
+    { "expressoes": ["colírio"], "classes": ["S1"] },
+    { "expressoes": ["dor de ouvido", "ouvido", "otite"], "classes": ["S2"] },
+    { "expressoes": ["cera no ouvido"], "classes": ["S2D1"] },
+    { "expressoes": ["afta", "dor de dente", "gengiva"], "classes": ["A1A"] },
+    { "expressoes": ["herpes", "herpes labial"], "classes": ["J5B3", "D6D1"] },
+    { "expressoes": ["infecção urinária", "ardência ao urinar"], "classes": ["J1G1", "G4A9"] },
+    { "expressoes": ["pílula do dia seguinte", "contracepção de emergência"], "classes": ["G3A6"] },
+    { "expressoes": ["parar de fumar", "cigarro", "tabagismo"], "classes": ["N7B"] },
+    { "expressoes": ["queda de cabelo", "calvície"], "classes": ["D11A"] },
+    { "expressoes": ["ressaca"], "classes": ["N2B2", "A2A1"] }
+  ]
+}

@@ -7,7 +7,9 @@
 // Regras, em ordem de prioridade (o escore RRF só desempata dentro de cada nível):
 //  1. nome: a consulta contém uma palavra que é nome de produto ou de princípio ativo do item
 //     (palavras de sal, descritores químicos e formas farmacêuticas não contam)
-//  2. apresentação: quantos itens explícitos batem (dosagem "75 mg", quantidade "30 cápsulas",
+//  2. indicação: quantos sintomas escritos na consulta a classe ou a substância do item atende
+//     ("ânsia de vômito" -> antieméticos; ver lib/indicacoes.ts)
+//  3. apresentação: quantos itens explícitos batem (dosagem "75 mg", quantidade "30 cápsulas",
 //     forma "cápsula")
 // Quando a consulta não tem nome nem apresentação (linguagem coloquial), a ordem não muda.
 //
@@ -17,6 +19,7 @@
 // "febre amarela" e "vacina gripe" continuam encontrando as vacinas pelo nome.
 
 import dicionario from "../data/dicionario-indicacoes.json";
+import { conceitosAtendidos, conceitosDaConsulta } from "./indicacoes";
 import { semAcento, type MedicamentoResumo } from "./normalizacao";
 
 // Vocabulário que não identifica um medicamento: sais, descritores de hidratação e de forma.
@@ -140,8 +143,10 @@ function vacinaPorSintoma(i: IntencaoConsulta, m: Reordenavel["medicamento"]): b
 export function reordenar<T extends Reordenavel>(consulta: string, todos: T[]): T[] {
   const i = lerIntencao(consulta);
   const itens = todos.filter((x) => !vacinaPorSintoma(i, x.medicamento));
+  const conceitos = conceitosDaConsulta(consulta);
   const algoExplicito =
-    i.nomes.length || i.doses.length || i.quantidade !== null || i.numerosSoltos.length || i.formas.length || i.generico;
+    i.nomes.length || conceitos.length || i.doses.length || i.quantidade !== null || i.numerosSoltos.length ||
+    i.formas.length || i.generico;
   if (!algoExplicito) return itens;
   const nota = (x: T) => {
     const m = x.medicamento;
@@ -154,12 +159,15 @@ export function reordenar<T extends Reordenavel>(consulta: string, todos: T[]): 
     const textoForma = `${m.forma} ${semAcento(m.apresentacao.toUpperCase())}`;
     const forma = i.formas.length && i.formas.some((f) => f.test(textoForma)) ? 1 : 0;
     const generico = i.generico && m.generico ? 1 : 0;
-    return { nome, apresentacao: dose + qtd + solto + forma + generico };
+    return { nome, indicacao: conceitosAtendidos(conceitos, m), apresentacao: dose + qtd + solto + forma + generico };
   };
   const notas = new Map(itens.map((x) => [x.id, nota(x)]));
   return [...itens].sort((a, b) => {
     const na = notas.get(a.id)!;
     const nb = notas.get(b.id)!;
-    return nb.nome - na.nome || nb.apresentacao - na.apresentacao || b.score - a.score || a.id - b.id;
+    return (
+      nb.nome - na.nome || nb.indicacao - na.indicacao || nb.apresentacao - na.apresentacao || b.score - a.score ||
+      a.id - b.id
+    );
   });
 }

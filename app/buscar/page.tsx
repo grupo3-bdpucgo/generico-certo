@@ -77,8 +77,9 @@ export default async function Buscar({ searchParams }: { searchParams: Promise<P
               </div>
               {total > 0 && (
                 <p className="-mt-2 mb-4 max-w-3xl text-xs leading-relaxed text-tinta-3">
-                  Ordenados por proximidade com a sua busca: até 50 medicamentos mais parecidos no significado e até 50
-                  mais parecidos na escrita, combinados pela posição em cada lista. Não há corte por porcentagem, então os
+                  Ordenados por proximidade com a sua busca: até 50 medicamentos mais parecidos no significado, até 50
+                  mais parecidos na escrita e, quando a busca descreve um sintoma, até 50 das classes de remédio
+                  indicadas para ele, combinados pela posição em cada lista. Não há corte por porcentagem, então os
                   últimos podem ser só parecidos. Os equivalentes de verdade (mesmo princípio ativo, dosagem e forma)
                   aparecem ao abrir um resultado.
                 </p>

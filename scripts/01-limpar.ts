@@ -134,6 +134,9 @@ for (const l of linhas) {
 }
 
 writeFileSync(SAIDA, JSON.stringify(saida));
+// Nomes completos das classes, para o filtro por indicação do site (lib/indicacoes.ts).
+const classes = [...new Set(saida.map((m) => m.classe).filter((c): c is string => !!c))].sort();
+writeFileSync("data/classes-terapeuticas.json", JSON.stringify(classes, null, 1) + "\n");
 
 // ---------------------------------------------------------------- relatório no console
 const contar = (f: (m: Medicamento) => string) =>

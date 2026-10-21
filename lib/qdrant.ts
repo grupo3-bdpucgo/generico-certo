@@ -30,6 +30,8 @@ export const INDICES_PAYLOAD = {
   forma_grupo: "keyword",
   doses: "keyword",
   quantidade_num: "float",
+  // candidatos por classe terapêutica quando a consulta descreve um sintoma (lib/indicacoes.ts)
+  classe: "keyword",
 } as const;
 
 const global_ = globalThis as unknown as { __qdrant?: QdrantClient };

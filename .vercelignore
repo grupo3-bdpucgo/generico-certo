@@ -1,7 +1,9 @@
 # Não sobe para a Vercel: dados brutos (grandes, só usados pelos scripts de carga),
-# exceto o dicionário de indicações, que a reordenação da busca importa; modelo (baixado no build por scripts/baixar-modelo.mjs), caches e artefatos locais.
+# exceto o dicionário de indicações, a expansão das consultas e a lista de classes, que a busca importa; modelo (baixado no build por scripts/baixar-modelo.mjs), caches e artefatos locais.
 /data/*
 !/data/dicionario-indicacoes.json
+!/data/expansao-consulta.json
+!/data/classes-terapeuticas.json
 /models
 /.cache
 /.next

@@ -2,7 +2,10 @@
 //  denso_base  vetor denso do texto só com dados da CMED (linha de base)
 //  denso       vetor denso do texto enriquecido
 //  hibrido     denso enriquecido + esparso de trigramas, fundidos por RRF numa única chamada
+//              (no site, com reordenação, uma consulta paralela acrescenta candidatos das classes
+//              terapêuticas ligadas ao sintoma escrito na consulta; ver lib/indicacoes.ts)
 
+import { classesDosConceitos, conceitosDaConsulta } from "./indicacoes";
 import { vetorTrigramasConsulta } from "./lexical";
 import { CAMPOS_EXIBIDOS, type MedicamentoResumo } from "./normalizacao";
 import { EF_BUSCA, VETOR, consultarQdrant } from "./qdrant";
@@ -46,10 +49,11 @@ export interface RespostaBusca {
 // Quantos candidatos cada ramo entrega para a fusão RRF.
 export const CANDIDATOS_FUSAO = 50;
 /**
- * A fusão só ordena o que os dois ramos trouxeram: no máximo 50 + 50 itens (menos quando as listas
- * coincidem). Não há corte por porcentagem de similaridade; esse é o total de resultados do híbrido.
+ * A fusão só ordena o que os ramos trouxeram: no máximo 50 + 50 itens, mais 50 do ramo por indicação
+ * quando a consulta descreve um sintoma (menos quando as listas coincidem). Não há corte por
+ * porcentagem de similaridade; esse é o total de resultados do híbrido.
  */
-export const MAX_RESULTADOS_HIBRIDO = 2 * CANDIDATOS_FUSAO;
+export const MAX_RESULTADOS_HIBRIDO = 3 * CANDIDATOS_FUSAO;
 // Folga além do corte, para que o desempate não dependa da ordem em que o Qdrant devolve empatados.
 const FOLGA_DESEMPATE = 10;
 
@@ -113,7 +117,7 @@ export async function buscarVetorial(
   const params = { hnsw_ef: EF_BUSCA };
   const comReordenacao = motor === "hibrido" && opcoes.reordenar === true;
   // Para reordenar, a lista fundida inteira precisa vir de uma vez.
-  const buscar = comReordenacao ? MAX_RESULTADOS_HIBRIDO : offset + limite + FOLGA_DESEMPATE;
+  const buscar = comReordenacao ? 2 * CANDIDATOS_FUSAO : offset + limite + FOLGA_DESEMPATE;
   const usingDenso = motor === "denso_base" ? VETOR.base : VETOR.denso;
 
   const t0 = performance.now();
@@ -133,13 +137,35 @@ export async function buscarVetorial(
         }
       : { query: vetor, using: usingDenso, filter, params, limit: buscar, with_payload: CAMPOS_EXIBIDOS };
 
+  // Ramo por indicação: os itens mais próximos da consulta dentro das classes do sintoma. Só amplia
+  // os candidatos; não entra na fusão, para não mudar a ordem entre os itens que a RRF já trouxe.
+  const classes = comReordenacao ? classesDosConceitos(conceitosDaConsulta(consulta)) : [];
+  const corpoIndicacao = {
+    query: vetor,
+    using: VETOR.denso,
+    filter: { must: [...(filter?.must ?? []), { key: "classe", match: { any: classes } }] },
+    params,
+    limit: CANDIDATOS_FUSAO,
+    with_payload: CAMPOS_EXIBIDOS,
+  };
+
   const t1 = performance.now();
-  const { points, tempoServidorMs } = await consultarQdrant(corpo);
+  const [fundidos, indicacao] = await Promise.all([
+    consultarQdrant(corpo),
+    classes.length ? consultarQdrant(corpoIndicacao) : null,
+  ]);
   const tempoBancoMs = performance.now() - t1;
+  const tempoServidorMs = fundidos.tempoServidorMs + (indicacao?.tempoServidorMs ?? 0);
 
   const ordenados = ordenar(
-    points.map((p) => ({ id: Number(p.id), score: p.score, medicamento: p.payload as unknown as MedicamentoResumo })),
+    fundidos.points.map((p) => ({ id: Number(p.id), score: p.score, medicamento: p.payload as unknown as MedicamentoResumo })),
   );
+  // Os que só o ramo por indicação trouxe vão para o fim, na ordem dele (escore negativo, abaixo de qualquer RRF).
+  const vistos = new Set(ordenados.map((x) => x.id));
+  const extras = (indicacao?.points ?? [])
+    .filter((p) => !vistos.has(Number(p.id)))
+    .map((p, i) => ({ id: Number(p.id), score: -(i + 1) / 1000, medicamento: p.payload as unknown as MedicamentoResumo }));
+  ordenados.push(...extras);
   const resultados: ResultadoBusca[] = (comReordenacao ? reordenar(consulta, ordenados) : ordenados).slice(
     offset,
     offset + limite,

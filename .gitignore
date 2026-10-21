@@ -1,8 +1,10 @@
 # dados brutos e derivados (arquivo da CMED tem 12 MB e é público);
-# o dicionário de indicações é curado pelo grupo e fica versionado
+# o dicionário de indicações e a expansão das consultas são curados pelo grupo e ficam versionados
 /data/*
 !/data/dicionario-indicacoes.json
 !/data/sinonimos-substancias.json
+!/data/expansao-consulta.json
+!/data/classes-terapeuticas.json
 
 # dependências e build
 node_modules/
