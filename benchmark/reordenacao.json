@@ -1,18 +1,18 @@
 {
-  "gerado_em": "2026-10-20T01:39:05.368Z",
+  "gerado_em": "2026-10-21T19:52:55.478Z",
   "nota": "Reordenação criada depois do benchmark; avaliação separada, não substitui benchmark/resultados.json.",
   "sem_desenvolvimento": {
     "hibrido": {
       "consultas": 25,
       "acerto_top5": 0.8,
       "mrr_top10": 0.6574444444444444,
-      "precisao_top5": 0.424
+      "precisao_top5": 0.432
     },
     "hibrido_reordenado": {
       "consultas": 25,
       "acerto_top5": 0.88,
       "mrr_top10": 0.7857777777777778,
-      "precisao_top5": 0.664
+      "precisao_top5": 0.68
     }
   },
   "todas": {
@@ -20,13 +20,13 @@
       "consultas": 28,
       "acerto_top5": 0.8214285714285714,
       "mrr_top10": 0.6941468253968254,
-      "precisao_top5": 0.45714285714285713
+      "precisao_top5": 0.4642857142857143
     },
     "hibrido_reordenado": {
       "consultas": 28,
       "acerto_top5": 0.8928571428571429,
       "mrr_top10": 0.7849206349206349,
-      "precisao_top5": 0.6642857142857143
+      "precisao_top5": 0.6928571428571428
     }
   },
   "por_consulta": [
